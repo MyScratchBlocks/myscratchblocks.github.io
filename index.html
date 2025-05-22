@@ -121,7 +121,7 @@
     <!-- Project Info -->
     <section id="project-info">
       <h1 id="project-title">Loading project title...</h1>
-      <p>By <strong id="project-author">Loading author...</strong></p>
+      <p>By <a id="author" href="#"><strong id="project-author">Loading author...</strong></a></p>
       <p id="project-description">Loading description...</p>
     </section>
 
@@ -167,6 +167,7 @@
         // Update project info
         projectTitle.textContent = title;
         projectAuthor.textContent = author;
+        document.getElementById('author2').href = `https://scratch.mit.edu/users/${author}/`;
         projectDescription.textContent = description;
 
         // Fetch comments
