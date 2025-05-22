@@ -1,1 +1,63 @@
-<iframe src="https://myscratchblocks.github.io/scratch-gui/" style="width: 100vw; height: 100vh; border: none;"></iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyScratchBlocks</title>
+</head>
+<body>
+  <div class="container">
+    <!-- Project Display -->
+    <iframe id="id-frame" src="#" width="800" height="600"></iframe>
+
+    <!-- Comments Section -->
+    <section id="comments-section">
+      <h2>Comments</h2>
+      <div id="comments-container">Loading comments...</div>
+    </section>
+  </div>
+
+  <script>
+    window.onload = async function () {
+      const id = window.location.hash.slice(1); // Get project ID from URL hash
+      const iframe = document.getElementById('id-frame');
+      const commentsContainer = document.getElementById('comments-container');
+
+      // Load the Scratch GUI iframe
+      iframe.src = `https://myscratchblocks.github.io/scratch-gui/#${id}`;
+
+      // Fetch comments using the official Scratch API
+      function loadScratchComments() {
+        fetch(`https://api.scratch.mit.edu/projects/${id}`)
+          .then(res => res.json()) 
+          .then(data => {
+            const author = data.author;
+          }
+        fetch(`https://api.scratch.mit.edu/users/${author}/projects/${id}`)
+          .then(res => res.json())
+          .then(data => {
+            commentsContainer.innerHTML = '';
+            if (!Array.isArray(data) || data.length === 0) {
+              commentsContainer.textContent = "No comments yet.";
+            } else {
+              data.forEach(comment => {
+                const commentDiv = document.createElement('div');
+                commentDiv.classList.add('comment');
+                commentDiv.innerHTML = `
+                  <p><strong>${comment.author.username}:</strong></p>
+                  <p>${comment.content}</p>
+                `;
+                commentsContainer.appendChild(commentDiv);
+              });
+            }
+          })
+          .catch(() => {
+            commentsContainer.textContent = "Failed to load comments.";
+          });
+      }
+
+      loadScratchComments();
+    };
+  </script>
+</body>
+</html>
