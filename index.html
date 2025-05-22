@@ -1,63 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MyScratchBlocks</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyScratchBlocks</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    #comments-section {
+      margin-top: 20px;
+    }
+
+    #comments-section h2 {
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .comment {
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      border-left: 4px solid #4caf50;
+      border-radius: 5px;
+    }
+
+    .comment strong {
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Project Display -->
-    <iframe id="id-frame" src="#" width="800" height="600"></iframe>
+  <div class="container">
+    <!-- Project Display -->
+    <iframe id="id-frame" src="#"></iframe>
 
-    <!-- Comments Section -->
-    <section id="comments-section">
-      <h2>Comments</h2>
-      <div id="comments-container">Loading comments...</div>
-    </section>
-  </div>
+    <!-- Comments Section -->
+    <section id="comments-section">
+      <h2>Comments</h2>
+      <div id="comments-container">Loading comments...</div>
+    </section>
+  </div>
 
-  <script>
-    window.onload = async function () {
-      const id = window.location.hash.slice(1); // Get project ID from URL hash
-      const iframe = document.getElementById('id-frame');
-      const commentsContainer = document.getElementById('comments-container');
+  <script>
+    window.onload = async function () {
+      const id = window.location.hash.slice(1);
+      const iframe = document.getElementById('id-frame');
+      const commentsContainer = document.getElementById('comments-container');
 
-      // Load the Scratch GUI iframe
-      iframe.src = `https://myscratchblocks.github.io/scratch-gui/#${id}`;
+      if (!id) {
+        commentsContainer.textContent = "No project ID found in URL hash.";
+        return;
+      }
 
-      // Fetch comments using the official Scratch API
-      function loadScratchComments() {
-        fetch(`https://api.scratch.mit.edu/projects/${id}`)
-          .then(res => res.json()) 
-          .then(data => {
-            const author = data.author;
-          }
-        fetch(`https://api.scratch.mit.edu/users/${author}/projects/${id}`)
-          .then(res => res.json())
-          .then(data => {
-            commentsContainer.innerHTML = '';
-            if (!Array.isArray(data) || data.length === 0) {
-              commentsContainer.textContent = "No comments yet.";
-            } else {
-              data.forEach(comment => {
-                const commentDiv = document.createElement('div');
-                commentDiv.classList.add('comment');
-                commentDiv.innerHTML = `
-                  <p><strong>${comment.author.username}:</strong></p>
-                  <p>${comment.content}</p>
-                `;
-                commentsContainer.appendChild(commentDiv);
-              });
-            }
-          })
-          .catch(() => {
-            commentsContainer.textContent = "Failed to load comments.";
-          });
-      }
+      iframe.src = `https://myscratchblocks.github.io/scratch-gui/#${id}`;
 
-      loadScratchComments();
-    };
-  </script>
+      try {
+        // Get project info to find author username
+        const projectRes = await fetch(`https://api.scratch.mit.edu/projects/${id}`);
+        if (!projectRes.ok) throw new Error('Project not found');
+        const projectData = await projectRes.json();
+        const author = projectData.author?.username;
+        if (!author) throw new Error('Author not found');
+
+        // Fetch comments using correct API endpoint
+        const commentsRes = await fetch(`https://api.scratch.mit.edu/users/${author}/projects/${id}/comments`);
+        if (!commentsRes.ok) throw new Error('Failed to fetch comments');
+        const comments = await commentsRes.json();
+
+        commentsContainer.innerHTML = '';
+
+        if (!Array.isArray(comments) || comments.length === 0) {
+          commentsContainer.textContent = "No comments yet.";
+        } else {
+          comments.forEach(comment => {
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment');
+            commentDiv.innerHTML = `
+              <p><strong>${comment.author.username}:</strong></p>
+              <p>${comment.content}</p>
+            `;
+            commentsContainer.appendChild(commentDiv);
+          });
+        }
+      } catch (error) {
+        commentsContainer.textContent = "Failed to load comments.";
+        console.error(error);
+      }
+    };
+  </script>
 </body>
 </html>
