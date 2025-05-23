@@ -47,7 +47,7 @@
         <a href="#access" class="text-gray-600 hover:text-indigo-600 font-medium">Access</a>
         <a href="#community" class="text-gray-600 hover:text-indigo-600 font-medium">Community</a>
         <a href="#about" class="text-gray-600 hover:text-indigo-600 font-medium">About</a>
-        <a href="account" class="text-gray-600 hover:text-indigo-600 font-medium">Login</a>
+        <a id="account" href="account" class="text-gray-600 hover:text-indigo-600 font-medium">Login</a>
       </nav>
     </div>
   </header>
@@ -120,6 +120,15 @@
 
     // Fetch projects after DOM loads
     document.addEventListener('DOMContentLoaded', fetchFeaturedProjects);
+
+    const username = localStorage.getItem('username');
+    if (username) {
+        const accountElement = document.getElementById('account');
+        if (accountElement) {
+            accountElement.textContent = username;
+        }
+    }
+
   </script>
 </body>
 </html>
