@@ -1,1 +1,228 @@
-coming soon
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ScratchyFetch Search</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      background-color: #0e1621;
+      color: #ffffff;
+    }
+
+    .light-mode {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+
+    .dark-mode {
+      background-color: #0e1621 !important;
+      color: #ffffff !important;
+    }
+
+    .navbar {
+      background-color: #3b82f6;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-left a,
+    .nav-right a {
+      color: #ffffff;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .search-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-form input {
+      border-radius: 8px;
+      border: none;
+      padding: 8px 15px;
+      width: 400px;
+    }
+
+    .search-form button {
+      border-radius: 8px;
+      padding: 8px 15px;
+      border: none;
+    }
+
+    .header {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .featured {
+      margin: 3rem auto;
+      max-width: 800px;
+      background: #1e293b;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .light-mode .featured {
+      background: #e2e8f0;
+    }
+
+    .featured h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+
+    .scratchers {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .scratcher {
+      text-align: center;
+    }
+
+    .scratcher img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #ccc;
+      margin-bottom: 0.5rem;
+    }
+
+    .scratcher a {
+      color: #60a5fa;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .container {
+      margin-top: 50px;
+      padding: 2rem;
+    }
+
+    .btn-toggle {
+      margin-top: 20px;
+    }
+
+    .btn-logout {
+      margin-top: 20px;
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-left">
+      <a id="link" href="login">Login With Scratch</a>
+    </div>
+    <form id="search-form" class="search-form">
+      <input type="text" id="search-input" name="search" placeholder="Username Or A Project ID" required>
+      <button type="submit" class="btn btn-light">Search</button>
+    </form>
+    <div class="nav-right">
+      <a href="#settings">Settings</a>
+    </div>
+  </div>
+
+  <div class="header">
+    <h1>Welcome to ScratchyFetch!</h1>
+    <p>Your source for Scratch community statistics</p>
+  </div>
+
+  <div class="featured">
+    <h2>Featured Scratchers</h2>
+    <div class="scratchers" id="featured-users"></div>
+  </div>
+
+  <div class="container" id="settings">
+    <h1>Settings</h1>
+    <button class="btn btn-primary btn-toggle" onclick="toggleMode()">Toggle Light/Dark Mode</button>
+    <button class="btn btn-danger btn-logout" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    async function fetchFeaturedUsers() {
+      const featuredContainer = document.getElementById('featured-users');
+      const contribs = ['kRxZy_kRxZy', 'MyScratchedAccount'];
+
+      const proxy = 'https://corsproxy.io/?url=';
+      const trendingUrl = proxy + encodeURIComponent('https://api.scratch.mit.edu/explore/projects?q=games&mode=trending&language=en');
+
+      try {
+        const trendingRes = await fetch(trendingUrl);
+        const projects = await trendingRes.json();
+        const topUsers = projects.slice(0, 15).map(p => ({
+          username: p.author.username,
+          id: p.author.id
+        }));
+
+        for (const name of contribs) {
+          const userUrl = proxy + encodeURIComponent(`https://api.scratch.mit.edu/users/${name}`);
+          const userRes = await fetch(userUrl);
+          const user = await userRes.json();
+          topUsers.unshift({ username: name, id: user.id });
+        }
+
+        const uniqueUsers = Array.from(new Map(topUsers.map(u => [u.username, u])).values()).slice(0, 15);
+
+        featuredContainer.innerHTML = uniqueUsers.map(user => `
+          <div class="scratcher">
+            <img src="https://uploads.scratch.mit.edu/get_image/user/${user.id}_100x100.png">
+            <a href="/users/${user.username}">${user.username}</a>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Failed to fetch data', err);
+        featuredContainer.innerHTML = `<p>Error loading featured users.</p>`;
+      }
+    }
+
+    document.getElementById('search-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const input = document.getElementById('search-input').value.trim();
+      if (!input) return;
+      const isProject = /^\d+$/.test(input);
+      window.location.href = `${isProject ? '/projects' : '/users'}#${encodeURIComponent(input)}`;
+    });
+
+    function toggleMode() {
+      const body = document.body;
+      body.classList.toggle('light-mode');
+      body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+    }
+
+    function logout() {
+      localStorage.removeItem('user');
+      location.reload();
+    }
+
+    (function init() {
+      const savedTheme = localStorage.getItem('theme');
+      document.body.classList.add(savedTheme === 'light' ? 'light-mode' : 'dark-mode');
+      if (localStorage.getItem('user')) {
+        const link = document.getElementById('link');
+        link.textContent = `${localStorage.getItem('user')}'s Account`;
+        link.href = '/account';
+      }
+      fetchFeaturedUsers();
+    })();
+  </script>
+</body>
+</html>
