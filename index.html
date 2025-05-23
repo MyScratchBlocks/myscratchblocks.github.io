@@ -46,6 +46,7 @@
                 <a href="#features" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Features</a>
                 <a href="#block-ideas" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Block Ideas</a>
                 <a href="#project-ideas" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Project Ideas</a>
+                <a href="#featured-projects" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Featured Projects</a>
                 <a href="#access" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Access</a>
                 <a href="#community" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Community</a>
                 <a href="#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">About</a>
@@ -64,6 +65,7 @@
                 <a href="#features" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Features</a>
                 <a href="#block-ideas" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Block Ideas</a>
                 <a href="#project-ideas" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Project Ideas</a>
+                <a href="#featured-projects" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Featured Projects</a>
                 <a href="#access" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Access</a>
                 <a href="#community" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Community</a>
                 <a href="#about" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">About</a>
@@ -177,6 +179,15 @@
         </div>
     </section>
 
+    <section id="featured-projects" class="py-16 px-4 bg-gray-100">
+        <div class="container mx-auto max-w-6xl text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">🌟 Featured Projects 🌟</h2>
+            <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <p id="projects-loading" class="text-center text-gray-600 col-span-full">Loading featured projects... <span class="loading-spinner"></span></p>
+                <p id="projects-error" class="text-center text-red-500 col-span-full hidden">Failed to load projects. Please try again later.</p>
+            </div>
+        </div>
+    </section>
     <section id="access" class="py-16 px-4 bg-gray-100">
         <div class="container mx-auto max-w-4xl text-center">
             <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">Access MyScratchBlocks</h2>
@@ -373,6 +384,69 @@
                     generateProjectIdeaButton.disabled = false;
                 }
             });
+
+            // Function to fetch and display featured projects
+            async function fetchFeaturedProjects() {
+                const projectsContainer = document.getElementById('projects-container');
+                const projectsLoading = document.getElementById('projects-loading');
+                const projectsError = document.getElementById('projects-error');
+
+                // Show loading spinner and hide any previous error
+                projectsLoading.classList.remove('hidden');
+                projectsError.classList.add('hidden');
+                projectsContainer.innerHTML = ''; // Clear previous projects
+
+                const PROJECTS_API_URL = 'https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects';
+                const THUMBNAIL_URL = 'https://myscratchblocks.github.io/thumbnail.png'; // Example thumbnail URL
+
+                try {
+                    const response = await fetch(PROJECTS_API_URL);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const rawData = await response.json(); // Data is likely an array of objects
+
+                    // The API returns an object where keys are project IDs and values are project data
+                    const projects = rawData; 
+
+                    if (projects.length === 0) {
+                        projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
+                        return;
+                    }
+
+                    projects.forEach(project => {
+                        // Assuming project data structure might be similar to:
+                        // { id: "projectId", title: "Project Title", file: { name: "project.sb3" } }
+                        const projectName = project.name;
+                        // Assuming an 'id' field for the project link
+
+                        const projectCard = document.createElement('div');
+                        projectCard.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
+                        projectCard.innerHTML = `
+                            <img src="${project.thumbnail}" alt="${projectName} thumbnail" class="w-full h-40 object-cover rounded-md mb-4">
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">${projectName}</h3>
+                            <p class="text-gray-600 text-sm mb-4">Genre: ${project.genre}</p>
+                            <a href="${project.link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
+                                View Project
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </a>
+                        `;
+                        projectsContainer.appendChild(projectCard);
+                    });
+
+                } catch (error) {
+                    console.error('Error fetching featured projects:', error);
+                    projectsError.classList.remove('hidden');
+                    projectsError.textContent = 'Failed to load projects. Please try again later. (Error: ' + error.message + ')';
+                } finally {
+                    projectsLoading.classList.add('hidden');
+                }
+            }
+
+            // Call the function to fetch projects when the page loads
+            fetchFeaturedProjects();
         });
     </script>
 </body>
