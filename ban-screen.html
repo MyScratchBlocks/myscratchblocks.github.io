@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Suspended - MyScratchBlocks - A Scratch & TurboWarp Modification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+    }
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <header class="bg-white shadow-sm py-4">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <a href="#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/>
+        </svg>
+        <span>MyScratchBlocks</span>
+      </a>
+      <nav class="hidden md:flex space-x-6">
+        <a href="/" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
+        <a href="/#features" class="text-gray-600 hover:text-indigo-600 font-medium">Features</a>
+        <a href="/#block-ideas" class="text-gray-600 hover:text-indigo-600 font-medium">Block Ideas</a>
+        <a href="/#project-ideas" class="text-gray-600 hover:text-indigo-600 font-medium">Project Ideas</a>
+        <a href="/#featured-projects" class="text-gray-600 hover:text-indigo-600 font-medium">Featured Projects</a>
+        <a href="/#access" class="text-gray-600 hover:text-indigo-600 font-medium">Access</a>
+        <a href="/#community" class="text-gray-600 hover:text-indigo-600 font-medium">Community</a>
+        <a href="/#about" class="text-gray-600 hover:text-indigo-600 font-medium">About</a>
+        <a id="account" href="account" class="text-gray-600 hover:text-indigo-600 font-medium">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <section id="home" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20 px-4 text-center rounded-b-lg shadow-lg">
+    <div class="container mx-auto max-w-4xl">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+        Account<br class="hidden sm:inline">Suspended
+      </h1>
+    </div>
+  </section>
+
+  <section id="featured-projects" class="py-16 bg-gray-100">
+    <div class="container mx-auto px-4">
+    The MyScratchBlocks Admins have chose to suspend your account since there has been recent violations of the Terms Of Service under this Scratch Account.
+    We currently don't provide the actual reason, but it could be for lots of reasons, like suspected spamming, scamming, or this account may of been hacked
+    Please contact an Admin such as MyScratchedAccount to appeal.
+
+    In the meantime, you have been logged out and you can access the MyScratchBlocks editor without any community features enabled.
+    Ban evasion is also against the TOS, and will get you IP Banned forever.
+
+    Before choosing to appeal, please have another look at the TOS.
+    </div>
+    </div>
+  </section>
+
+  <script>
+    async function fetchFeaturedProjects() {
+      const projectsContainer = document.getElementById('projects-container');
+      const projectsLoading = document.getElementById('projects-loading');
+      const projectsError = document.getElementById('projects-error');
+
+      projectsLoading.classList.remove('hidden');
+      projectsError.classList.add('hidden');
+      projectsContainer.innerHTML = '';
+
+      const PROJECTS_API_URL = 'https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects';
+
+      try {
+        const response = await fetch(PROJECTS_API_URL);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const projects = await response.json();
+
+        if (!projects || projects.length === 0) {
+          projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
+          return;
+        }
+
+        projects.forEach(project => {
+          const projectCard = document.createElement('div');
+          projectCard.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
+          projectCard.innerHTML = `
+            <img src="${project.thumbnail}" alt="${project.name} thumbnail" class="w-full h-40 object-cover rounded-md mb-4">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">${project.name}</h3>
+            <p class="text-gray-600 text-sm mb-4">Genre: ${project.genre}</p>
+            <a href="${project.link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
+              View Project
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          `;
+          projectsContainer.appendChild(projectCard);
+        });
+      } catch (error) {
+        console.error('Error fetching featured projects:', error);
+        projectsError.classList.remove('hidden');
+        projectsError.textContent = `Failed to load projects. Please try again later. (Error: ${error.message})`;
+      } finally {
+        projectsLoading.classList.add('hidden');
+      }
+    }
+
+    // Fetch projects after DOM loads
+    document.addEventListener('DOMContentLoaded', fetchFeaturedProjects);
+
+    const username = localStorage.getItem('username');
+    if (username) {
+        const accountElement = document.getElementById('account');
+        if (accountElement) {
+            accountElement.textContent = username;
+        }
+    }
+
+  </script>
+</body>
+</html>
