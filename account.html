@@ -106,18 +106,18 @@
                 document.getElementById('loggedInContent').style.display = 'block';
                 document.getElementById('welcomeMessage').textContent = `Welcome to your account, ${username}!`;
 
-                const res = await fetch(`https://scratch-coding-hut.github.io/api/orders?username=${username}`);
+                const res = await fetch(`https://scratch-coding-hut.github.io/API/userstats?username=${username}`);
                 if (!res.ok) throw new Error('Failed to fetch order data');
 
                 const rawText = await res.text();
                 const json = JSON.parse(rawText);
 
-                const completedOrders = json["completed-orders"] ?? "N/A";
-                const pendingOrders = json["pending-orders"] ?? "N/A";
+                const uploadedprojects = json["uploadedprojects"] ?? "N/A";
+                const followers = json["followers"] ?? "N/A";
 
                 document.getElementById('mainText').innerHTML = `
-                    <p>Completed Orders: ${completedOrders}</p>
-                    <p>Pending Orders: ${pendingOrders}</p>
+                    <p>Uploaded Projects: ${uploadedprojects}</p>
+                    <p>Followers: ${followers}</p>
                     <p>Raw Data:</p>
                     <pre>${JSON.stringify(json, null, 2)}</pre>
                 `;
@@ -126,7 +126,7 @@
             }
         } catch (error) {
             console.error(error);
-            document.getElementById('mainText').innerHTML = `<p>Something went wrong! Please try again later.</p>`;
+            document.getElementById('mainText').innerHTML = `<p>Something went wrong while finding your user stats!! Please try again later.</p>`;
         }
     };
 
@@ -190,7 +190,7 @@
     function myprojects() {
         const username = localStorage.getItem('username');
         if (username) {
-            window.location.href = `https://myscratchblocks.io/Users?username=${username}`;
+            window.location.href = `https://myscratchblocks.github.io/users?username=${username}`;
         }
     }
 
@@ -200,7 +200,7 @@
 
         if (username && devTokens) {
             const token = btoa(username);
-            const joined = "Your dev token is: " + token + " - Make sure to only share it with Coding Hut services and partners or else you can get hacked!";
+            const joined = "Your dev token is: " + token + " - Make sure to only share it with your own personal development projects!";
             devTokens.style.color = "green";
             devTokens.textContent = joined;
         }
@@ -231,18 +231,18 @@
         <!-- Developer Token -->
         <div class="container">
             <h2>Developer Tokens</h2>
-            <h3>Used for linking Scratch account to forums account</h3>
+            <h3>Used for your personal projects, leave this alone if you are not developing an app that requires the MyScratchBlocks API with authentication.</h3>
             <p id="devTokens" class="message" aria-live="polite"></p>
             <button onclick="devToken()">Generate Dev Token</button>
             <br>
-            <a href="https://sch.flarum.cloud/d/195-coding-hut-website-api-documentation-scratch-coding-hutgithubio">
+            <a href="https://myscratchblocks.github.io/API/docs">
                 <button>Developer Documentation</button>
         </a>
             <br>
             <h4>Developer Key Status</h4>
             <h5>You can see the status of your account's key, upgrade your account's key, and disable your account's developer key here</h5>
             -PUT STATUS HERE-
-             <a href="https://sch.flarum.cloud/placeholder">
+             <a href="https://myscratchblocks.github.io/API/status/upgrade">
                 <button>Upgrade Developer Key To Verfied Status</button>
             </a>
         </div>
