@@ -1,9 +1,3 @@
-
-
-
-
-
-
 <!DOCTYPE html>
 <html <!DOCTYPE html>
 <html lang="en">
@@ -85,6 +79,8 @@
   </section>
 
   <script>
+    const id = window.location.hash.slice(1);
+    const iframe = document.getElementById('id-frame');
     async function fetchFeaturedProjects() {
       const projectsContainer = document.getElementById('projects-container');
       const projectsLoading = document.getElementById('projects-loading');
