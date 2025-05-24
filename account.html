@@ -210,13 +210,11 @@
 </head>
 
 <body>
-    <!-- Header Content -->
-    <div class="header">
-        <h1>Scratch Authentication</h1>
-    </div>
-
     <!-- Logged In Section -->
     <div id="loggedInContent">
+        <div class="header">
+        <h1>My MyScratchBlocks Account Dashboard Page</h1>
+        </div>
         <div class="container">
             <h2 id="welcomeMessage"></h2>
             <div id="mainText"></div>
@@ -250,18 +248,20 @@
 
     <!-- Auth Section -->
     <div id="authSection" class="content">
+        <div class="header">
+        <h1>Scratch Authentication</h1>
+        </div>
         <div class="container">
             <h2>Welcome! Please log in to continue.</h2>
-            <button onclick="registerScratchAuth()">Sign In With ScratchID (working)</button>
+            <button onclick="registerScratchAuth()">Sign In With Scratch (working)</button>
             <p id="scratchMessage" class="devTokens" aria-live="polite"></p>
             <p>Please note: You will be redirected to an external site (ScratchID) for authentication.</p>
         </div>
 
         <div class="container">
-            <a href="https://github.com/Scratch-Coding-Hut/Scratch-Coding-Hut.github.io/issues/new">
-                <button>Having trouble signing in? Report an issue</button>
+            <a href="https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues">
+                <button>Having trouble signing in? Report an issue.</button>
             </a>
-            <a href="https://sch.flarum.cloud/compose?title=[BUG]?content=Describe the bug (make sure to put this bug report in the discussions then the bugs tag):"><b>Don't have access to Github? Or do you perfer the Coding Hut Forums?</b></a>
         </div>
     </div>
 </body>
