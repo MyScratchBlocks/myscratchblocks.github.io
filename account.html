@@ -2,271 +2,186 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MyScratchBlocks Login | Login & Dashboard | Coding Hut</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            text-align: center;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyScratchBlocks Login | Login & Dashboard | Coding Hut</title>
 
-        .header {
-            background-color: #c04d4d;
-            color: white;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        .content,
-        .container {
-            padding: 20px;
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+  <!-- Inter Font -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 
-        .message,
-        .devTokens {
-            color: red;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 10px 0;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #c04d4d;
-            color: white;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #a03a3a;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        p {
-            line-height: 1.5;
-        }
-
-        a {
-            text-decoration: none;
-            color: white;
-        }
-
-        a.kRxZy-link {
-            color: #4caf50;
-            font-weight: bold;
-        }
-
-        a.kRxZy-link:hover {
-            color: #388e3c;
-        }
-
-        #loggedInContent {
-            display: none;
-            padding: 20px;
-        }
-    </style>
-
-<script>
+  <script>
     function encodeUsername(username) {
-        return btoa(username);
+      return btoa(username);
     }
 
     function decodeUsername(encodedUsername) {
-        return atob(encodedUsername);
+      return atob(encodedUsername);
     }
 
     window.onload = async function () {
-        try {
-            if (localStorage.getItem('loggedIn') === 'true') {
-                const username = localStorage.getItem('username');
+      try {
+        if (localStorage.getItem('loggedIn') === 'true') {
+          const username = localStorage.getItem('username');
 
-                document.getElementById('authSection').style.display = 'none';
-                document.getElementById('loggedInContent').style.display = 'block';
-                document.getElementById('welcomeMessage').textContent = `Welcome to your account, ${username}!`;
+          document.getElementById('authSection').classList.add('hidden');
+          document.getElementById('loggedInContent').classList.remove('hidden');
+          document.getElementById('welcomeMessage').textContent = `Welcome to your account, ${username}!`;
 
-                const res = await fetch(`https://scratch-coding-hut.github.io/API/userstats?username=${username}`);
-                if (!res.ok) throw new Error('Failed to fetch userstats data');
+          const res = await fetch(`https://scratch-coding-hut.github.io/API/userstats?username=${username}`);
+          if (!res.ok) throw new Error('Failed to fetch userstats data');
 
-                const rawText = await res.text();
-                const json = JSON.parse(rawText);
+          const rawText = await res.text();
+          const json = JSON.parse(rawText);
 
-                const uploadedprojects = json["uploadedprojects"] ?? "N/A";
-                const followers = json["followers"] ?? "N/A";
+          const uploadedprojects = json["uploadedprojects"] ?? "N/A";
+          const followers = json["followers"] ?? "N/A";
 
-                document.getElementById('mainText').innerHTML = `
-                    <p>Uploaded Projects: ${uploadedprojects}</p>
-                    <p>Followers: ${followers}</p>
-                    <p>Raw Data:</p>
-                    <pre>${JSON.stringify(json, null, 2)}</pre>
-                `;
-            } else {
-                await checkAuth();
-            }
-        } catch (error) {
-            console.error(error);
-            document.getElementById('mainText').innerHTML = `<p>Something went wrong while finding your user stats! Please try again later.</p>`;
+          document.getElementById('mainText').innerHTML = `
+            <p>Uploaded Projects: ${uploadedprojects}</p>
+            <p>Followers: ${followers}</p>
+            <p>Raw Data:</p>
+            <pre>${JSON.stringify(json, null, 2)}</pre>
+          `;
+        } else {
+          await checkAuth();
         }
+      } catch (error) {
+        console.error(error);
+        document.getElementById('mainText').innerHTML = `<p class="text-red-600">Something went wrong while finding your user stats. Please try again later.</p>`;
+      }
     };
 
     async function checkAuth() {
-        const PC = new URLSearchParams(window.location.search).get('id');
+      const PC = new URLSearchParams(window.location.search).get('id');
 
-        if (PC) {
-            try {
-                const res = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${PC}`);
-                const data = await res.json();
-                const key = Object.keys(data)[0]; // Get the first key (the unique ID)
-                const plainUsername = data[key].user;
-                const encodedUsername = btoa(plainUsername);
+      if (PC) {
+        try {
+          const res = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${PC}`);
+          const data = await res.json();
+          const key = Object.keys(data)[0];
+          const plainUsername = data[key].user;
+          const encodedUsername = btoa(plainUsername);
 
-                if (encodedUsername === 'YmFubmllNg==') {
-                    localStorage.removeItem('loggedIn');
-                    localStorage.removeItem('username');
-                    window.location.href = 'banscreen.html?reason=spam';
-                    return;
-                }
+          if (encodedUsername === 'YmFubmllNg==') {
+            localStorage.clear();
+            window.location.href = 'banscreen.html?reason=spam';
+            return;
+          }
 
-                localStorage.setItem('usernameEnc', encodedUsername);
-                localStorage.setItem('username', plainUsername);
-                localStorage.setItem('loggedIn', 'true');
-                window.location.href = 'account.html';
-            } catch (err) {
-                console.error('Token verification failed:', err);
-            }
+          localStorage.setItem('usernameEnc', encodedUsername);
+          localStorage.setItem('username', plainUsername);
+          localStorage.setItem('loggedIn', 'true');
+          window.location.href = 'account.html';
+        } catch (err) {
+          console.error('Token verification failed:', err);
         }
+      }
 
-        const DK = new URLSearchParams(window.location.search).get('devKey');
-
-        if (DK) {
-            const username = atob(DK);
-            localStorage.setItem('usernameEnc', DK);
-            localStorage.setItem('username', username);
-            localStorage.setItem('loggedIn', 'true');
-            window.location.href = 'account.html';
-        }
+      const DK = new URLSearchParams(window.location.search).get('devKey');
+      if (DK) {
+        const username = atob(DK);
+        localStorage.setItem('usernameEnc', DK);
+        localStorage.setItem('username', username);
+        localStorage.setItem('loggedIn', 'true');
+        window.location.href = 'account.html';
+      }
     }
 
     function registerScratchAuth() {
-        const messageBox = document.getElementById("scratchMessage");
-        const redirectLocation = btoa(window.location.href);
-        const authUrl = `https://scratch-id.onrender.com/?redirect=${redirectLocation}&name=MyScratchBlocks`;
+      const messageBox = document.getElementById("scratchMessage");
+      const redirectLocation = btoa(window.location.href);
+      const authUrl = `https://scratch-id.onrender.com/?redirect=${redirectLocation}&name=MyScratchBlocks`;
 
-        messageBox.style.color = "green";
-        messageBox.textContent = "Redirecting to ScratchID... Follow the steps there.";
-        setTimeout(() => {
-            window.location.href = authUrl;
-        }, 2000);
+      messageBox.classList.remove('text-red-600');
+      messageBox.classList.add('text-green-600');
+      messageBox.textContent = "Redirecting to ScratchID... Follow the steps there.";
+      setTimeout(() => {
+        window.location.href = authUrl;
+      }, 2000);
     }
 
     function logout() {
-        localStorage.removeItem('loggedIn');
-        localStorage.removeItem('username');
-        localStorage.removeItem('usernameEnc');
-        window.location.href = 'account.html';
+      localStorage.clear();
+      window.location.href = 'account.html';
     }
 
     function myprojects() {
-        const username = localStorage.getItem('username');
-        if (username) {
-            window.location.href = `https://myscratchblocks.github.io/users?username=${username}`;
-        }
+      const username = localStorage.getItem('username');
+      if (username) {
+        window.location.href = `https://myscratchblocks.github.io/users?username=${username}`;
+      }
     }
 
     function devToken() {
-        const username = localStorage.getItem('username');
-        const devTokens = document.getElementById('devTokens');
-
-        if (username && devTokens) {
-            const token = btoa(username);
-            const joined = "Your dev token is: " + token + " - Make sure to only share it with your own personal development projects!";
-            devTokens.style.color = "green";
-            devTokens.textContent = joined;
-        }
+      const username = localStorage.getItem('username');
+      const devTokens = document.getElementById('devTokens');
+      if (username && devTokens) {
+        const token = btoa(username);
+        devTokens.classList.remove('text-red-600');
+        devTokens.classList.add('text-green-600');
+        devTokens.textContent = `Your dev token is: ${token} - Make sure to only share it with your own personal development projects!`;
+      }
     }
-</script>
-
+  </script>
 </head>
 
-<body>
-    <!-- Logged In Section -->
-    <div id="loggedInContent">
-        <div class="header">
-        <h1>My MyScratchBlocks Account Dashboard Page</h1>
-        </div>
-        <div class="container">
-            <h2 id="welcomeMessage"></h2>
-            <div id="mainText"></div>
-            <button onclick="logout()">Logout</button>
-        </div>
-
-        <div class="container">
-            <h2>For You</h2>
-            <button onclick="myprojects()">Uploaded Projects</button>
-        </div>
-
-        <!-- Developer Token -->
-            <div class="container">
-               <button type="button" class="collapsible">For Developers Using The API</button>
-            <div class="content">
-            <h2>Developer Tokens</h2>
-            <h3>Used for your personal projects, leave this alone if you are not developing an app that requires the MyScratchBlocks API with authentication.</h3>
-            <p id="devTokens" class="message" aria-live="polite"></p>
-            <button onclick="devToken()">Generate Dev Token</button>
-            <br>
-            <a href="https://myscratchblocks.github.io/API/docs">
-                <button>Developer Documentation</button>
-        </a>
-            <br>
-            <h4>Developer Key Status</h4>
-            <h5>You can see the status of your account's key, upgrade your account's key, and disable your account's developer key here</h5>
-            -PUT STATUS HERE-
-             <a href="https://myscratchblocks.github.io/API/status/upgrade">
-                <button>Upgrade Developer Key To Verfied Status</button>
-            </a>
-            </div>
-        </div>
+<body class="bg-gray-100 text-gray-800 p-4">
+  <!-- Logged In Section -->
+  <div id="loggedInContent" class="hidden">
+    <div class="bg-red-600 text-white p-6 rounded-md shadow">
+      <h1 class="text-xl font-bold">My MyScratchBlocks Account Dashboard Page</h1>
     </div>
 
-    <!-- Auth Section -->
-    <div id="authSection" class="content">
-        <div class="header">
-        <h1>Scratch Authentication</h1>
-        </div>
-        <div class="container">
-            <h2>Welcome! Please log in to continue.</h2>
-            <button onclick="registerScratchAuth()">Sign In With Scratch (working)</button>
-            <p id="scratchMessage" class="devTokens" aria-live="polite"></p>
-            <p>Please note: You will be redirected to an external site (ScratchID) for authentication.</p>
-        </div>
-
-        <div class="container">
-            <a href="https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues">
-                <button>Having trouble signing in? Report an issue.</button>
-            </a>
-        </div>
+    <div class="max-w-xl mx-auto my-6 bg-white p-6 rounded-lg shadow">
+      <h2 id="welcomeMessage" class="text-lg font-semibold mb-4"></h2>
+      <div id="mainText" class="text-sm whitespace-pre-wrap"></div>
+      <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded mt-4">Logout</button>
     </div>
+
+    <div class="max-w-xl mx-auto my-6 bg-white p-6 rounded-lg shadow">
+      <h2 class="text-lg font-semibold mb-2">For You</h2>
+      <button onclick="myprojects()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">Uploaded Projects</button>
+    </div>
+
+    <div class="max-w-xl mx-auto my-6 bg-white p-6 rounded-lg shadow">
+      <h2 class="text-lg font-semibold mb-2">For Developers Using The API</h2>
+      <p class="text-sm text-gray-600 mb-4">Used for your personal projects. Leave this alone if you're not developing an app that uses the API.</p>
+      <p id="devTokens" class="text-sm font-medium mb-3" aria-live="polite"></p>
+      <button onclick="devToken()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-3">Generate Dev Token</button>
+      <a href="https://myscratchblocks.github.io/API/docs" class="block w-full">
+        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-3">Developer Documentation</button>
+      </a>
+      <p class="text-sm text-gray-600">Developer Key Status</p>
+      <p class="text-xs text-gray-500 mb-2">You can see the status of your account's key, upgrade it, and disable it here.</p>
+      <a href="https://myscratchblocks.github.io/API/status/upgrade" class="block w-full">
+        <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded">Upgrade Developer Key To Verified Status</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Auth Section -->
+  <div id="authSection" class="max-w-xl mx-auto my-6 bg-white p-6 rounded-lg shadow">
+    <div class="bg-red-600 text-white p-4 rounded mb-4">
+      <h1 class="text-xl font-bold">Scratch Authentication</h1>
+    </div>
+    <div class="text-center">
+      <h2 class="text-lg font-semibold mb-2">Welcome! Please log in to continue.</h2>
+      <button onclick="registerScratchAuth()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded mb-3">Sign In With Scratch</button>
+      <p id="scratchMessage" class="text-sm font-medium mb-2" aria-live="polite"></p>
+      <p class="text-sm text-gray-600 mb-3">You will be redirected to ScratchID for authentication.</p>
+      <a href="https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues">
+        <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded">Having trouble signing in? Report an issue.</button>
+      </a>
+    </div>
+  </div>
 </body>
 
 </html>
