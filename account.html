@@ -107,7 +107,7 @@
                 document.getElementById('welcomeMessage').textContent = `Welcome to your account, ${username}!`;
 
                 const res = await fetch(`https://scratch-coding-hut.github.io/API/userstats?username=${username}`);
-                if (!res.ok) throw new Error('Failed to fetch order data');
+                if (!res.ok) throw new Error('Failed to fetch userstats data');
 
                 const rawText = await res.text();
                 const json = JSON.parse(rawText);
@@ -126,7 +126,7 @@
             }
         } catch (error) {
             console.error(error);
-            document.getElementById('mainText').innerHTML = `<p>Something went wrong while finding your user stats!! Please try again later.</p>`;
+            document.getElementById('mainText').innerHTML = `<p>Something went wrong while finding your user stats! Please try again later.</p>`;
         }
     };
 
