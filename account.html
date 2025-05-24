@@ -187,10 +187,10 @@
         window.location.href = 'account.html';
     }
 
-    function strikeinfo() {
+    function myprojects() {
         const username = localStorage.getItem('username');
         if (username) {
-            window.location.href = `https://scratch-coding-hut.github.io/Strikes/my-strikes?username=${username}`;
+            window.location.href = `https://myscratchblocks.io/Users?username=${username}`;
         }
     }
 
@@ -225,7 +225,7 @@
 
         <div class="container">
             <h2>For You</h2>
-            <button onclick="strikeinfo()">Strikes Received From Coding Hut</button>
+            <button onclick="myprojects()">Uploaded Projects</button>
         </div>
 
         <!-- Developer Token -->
