@@ -19,7 +19,7 @@
 <body class="antialiased">
   <header class="bg-white shadow-sm py-4">
     <div class="container mx-auto px-4 flex justify-between items-center">
-      <a href="#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
+      <a href="/#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z" />
         </svg>
@@ -146,7 +146,7 @@
         document.getElementById('welcomeMessage').textContent = `Welcome to your account, ${username}!`;
 
         try {
-          const res = await fetch(`https://scratch-coding-hut.github.io/API/userstats?username=${username}`);
+          const res = await fetch(`https://editor-compiler.onrender.com/api/userstats/${username}`);
           const json = await res.json();
           const uploadedprojects = json.uploadedprojects ?? "N/A";
           const followers = json.followers ?? "N/A";
