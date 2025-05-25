@@ -66,10 +66,19 @@
   </section>
 
   <script>
-    const userHeader = document.getElementById('userHeader');
-    const userProfileName = urlParams.get('username');
+    <script>
+  // Get the "userHeader" element
+  const userHeader = document.getElementById('userHeader');
+
+  // Get the username from the URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const userProfileName = urlParams.get('username');
+
+  // Only update if username exists
+  if (userHeader && userProfileName) {
     userHeader.innerHTML = `<b>${userProfileName}</b>`;
-    userHeader.appendChild(userHeader);
+    userHeader.classList.remove('hidden'); // Show the header if it was hidden
+  }
   </script>
 </body>
 </html>
