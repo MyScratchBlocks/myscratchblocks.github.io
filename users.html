@@ -67,7 +67,7 @@
 
   <script>
     const userProfileName = urlParams.get('username');
-    userHeader.innerHTML = '${userProfileName}';
+    userHeader.innerHTML = `${userProfileName}`;
     
     async function fetchFeaturedProjects() {
       const projectsContainer = document.getElementById('projects-container');
