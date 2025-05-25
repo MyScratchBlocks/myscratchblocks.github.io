@@ -68,11 +68,12 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const userProfileName = urlParams.get('username');
+    const userProfileName = urlParams.get('user');
     const iframe = document.getElementById('userFrame');
 
     if (userProfileName) {
       iframe.src = `https://editor-compiler.onrender.com/users/${encodeURIComponent(userProfileName)}`;
+      document.title = `${userProfileName}'s Profile | MyScratchBlocks
     } else {
       iframe.srcdoc = "<p style='text-align:center; padding: 2rem;'>No user specified.</p>";
     }
