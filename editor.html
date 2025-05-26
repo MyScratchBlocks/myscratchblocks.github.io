@@ -32,13 +32,13 @@
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                project: localStorage.getItem('sb3'),
+                project: getSB3BlobFromLocalStorage(),
                 projectName: localStorage.getItem('projectName'),
                 username: localStorage.getItem('username')
               })
             });
             const res = await response.json();
-            window.location.href = `https://myscratchblocks.github.io/editor#${res.id}`;
+            window.location.href = `https://myscratchblocks.github.io/editor#${res.sb3File.replace(".sb3", "")}`;
             return;  // Stop further execution as page will reload
           } catch (error) {
             console.error('Error fetching project ID:', error);
@@ -58,8 +58,26 @@
         }
       }
     }
+    
+function getSB3BlobFromLocalStorage () {
+    const base64 = localStorage.getItem('sb3');
+    if (!base64) {
+        console.error('No SB3 project found in localStorage under key "sb3"');
+        return null;
+    }
+
+    const binaryStr = atob(base64);
+    const len = binaryStr.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+    }
+
+    return new Blob([bytes], { type: 'application/octet-stream' });
+}
 
     init();
+    
   </script>
 </body>
 </html>
