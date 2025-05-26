@@ -22,28 +22,44 @@
   <iframe id="scratchFrame"></iframe>
 
   <script>
-  if(!window.location.hash.substring(1)) {
-    if(localStorage.getItem('username')) {
-      response = await fetch('https://editor-compiler.onrender.com/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ project: localStorage.getItem('sb3'), projectName: localStorage.getItem('projectName'), username: localStorage.getItem('username') })
+    async function init() {
+      if (!window.location.hash.substring(1)) {
+        if (localStorage.getItem('username')) {
+          try {
+            const response = await fetch('https://editor-compiler.onrender.com/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                project: localStorage.getItem('sb3'),
+                projectName: localStorage.getItem('projectName'),
+                username: localStorage.getItem('username')
+              })
+            });
+            const res = await response.json();
+            window.location.href = `https://myscratchblocks.github.io/editor#${res.id}`;
+            return;  // Stop further execution as page will reload
+          } catch (error) {
+            console.error('Error fetching project ID:', error);
+          }
+        }
       }
-      res = await response.json();
-      window.location.href = `https://myscratchblocks.github.io/editor#${res.id}`
-    }
-  }
-    const hash = window.location.hash.substring(1); // Remove the '#' character
-    const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
-    const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
-    document.getElementById("scratchFrame").src = finalUrl;
-    if(localStorage.getItem('username') === '.....') {
-      if(iframe.src === 'https://myscratchblocks.github.io/scratch-gui/') {
-        window.location.href = 'projects.html'
+
+      const hash = window.location.hash.substring(1); // Remove the '#' character
+      const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
+      const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
+      const iframe = document.getElementById("scratchFrame");
+      iframe.src = finalUrl;
+
+      if (localStorage.getItem('username') === '.....') {
+        if (iframe.src === 'https://myscratchblocks.github.io/scratch-gui/') {
+          window.location.href = 'projects.html';
+        }
       }
     }
+
+    init();
   </script>
 </body>
 </html>
