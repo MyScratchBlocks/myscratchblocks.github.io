@@ -21,7 +21,11 @@
 <body>
   <iframe id="scratchFrame"></iframe>
 
-  <script>
+  <script type="module">
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     async function init() {
       const username = localStorage.getItem('username');
       const sb3Base64 = localStorage.getItem('sb3');
@@ -85,13 +89,19 @@
 
       return new Blob([bytes], { type: 'application/octet-stream' });
     }
-  while (true) {
-    init();
-    if(window.location.hash.substring(1)) {
-      break;
-    }
-    await wait(5000);
-  }
+
+    // Run init() once on load
+    await init();
+
+    // Poll every 5 seconds until hash is set
+    const pollInterval = setInterval(async () => {
+      if (window.location.hash.substring(1)) {
+        clearInterval(pollInterval);
+        return;
+      }
+      await init();
+    }, 5000);
+
   </script>
 </body>
 </html>
