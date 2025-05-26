@@ -130,7 +130,7 @@
         const createdDate = new Date(meta.history?.created);
         document.getElementById('meta-date').textContent = createdDate.toLocaleDateString();
 
-        document.getElementById('meta-views').textContent = meta.stats?.views ?? 0;
+        document.getElementById('meta-views').textContent = meta.stats?.views ?? 1;
         document.getElementById('meta-loves').textContent = meta.stats?.loves ?? 0;
         document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
         document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
