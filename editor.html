@@ -22,10 +22,28 @@
   <iframe id="scratchFrame"></iframe>
 
   <script>
+  if(!window.location.hash.substring(1)) {
+    if(localStorage.getItem('username')) {
+      response = await fetch('https://editor-compiler.onrender.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ project: localStorage.getItem('sb3'), projectName: localStorage.getItem('projectName'), username: localStorage.getItem('username') })
+      }
+      res = await response.json();
+      window.location.href = `https://myscratchblocks.github.io/editor#${res.id}`
+    }
+  }
     const hash = window.location.hash.substring(1); // Remove the '#' character
     const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
     const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
     document.getElementById("scratchFrame").src = finalUrl;
+    if(localStorage.getItem('username') === '.....') {
+      if(iframe.src === 'https://myscratchblocks.github.io/scratch-gui/') {
+        window.location.href = 'projects.html'
+      }
+    }
   </script>
 </body>
 </html>
