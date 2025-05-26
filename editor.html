@@ -27,7 +27,7 @@
       const sb3Base64 = localStorage.getItem('sb3');
 
       // If no hash and both username and sb3 exist, try to share the project
-      if (!window.location.hash.substring(1) && username && sb3Base64) {
+      if (!window.location.hash.substring(1) && username) {
         try {
           const sb3Blob = getSB3BlobFromLocalStorage();
           if (!sb3Blob) return;
