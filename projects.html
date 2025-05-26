@@ -122,6 +122,7 @@
         const meta = await response.json();
 
         document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
+        document.title = meta.title || 'Untitled Project';
         document.getElementById('meta-description').textContent = meta.description || 'No description provided.';
         document.getElementById('meta-instructions').textContent = meta.instructions || '';
         document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
