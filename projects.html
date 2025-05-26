@@ -117,7 +117,7 @@
       const content = document.getElementById('meta-content');
 
       try {
-        const response = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+        const response = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const meta = await response.json();
 
