@@ -23,61 +23,70 @@
 
   <script>
     async function init() {
-      if (!window.location.hash.substring(1)) {
-        if (localStorage.getItem('username')) {
-          try {
-            const response = await fetch('https://editor-compiler.onrender.com/', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                project: getSB3BlobFromLocalStorage(),
-                projectName: localStorage.getItem('projectName'),
-                username: localStorage.getItem('username')
-              })
-            });
-            const res = await response.json();
+      const username = localStorage.getItem('username');
+      const sb3Base64 = localStorage.getItem('sb3');
+
+      // If no hash and both username and sb3 exist, try to share the project
+      if (!window.location.hash.substring(1) && username && sb3Base64) {
+        try {
+          const sb3Blob = getSB3BlobFromLocalStorage();
+          if (!sb3Blob) return;
+
+          const response = await fetch('https://editor-compiler.onrender.com/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              project: sb3Blob,
+              projectName: localStorage.getItem('projectName'),
+              username
+            })
+          });
+
+          const res = await response.json();
+
+          if (res?.sb3File) {
             window.location.href = `https://myscratchblocks.github.io/editor#${res.sb3File.replace(".sb3", "")}`;
-            return;  // Stop further execution as page will reload
-          } catch (error) {
-            console.error('Error fetching project ID:', error);
+            return; // Page will reload
+          } else {
+            console.error("No sb3File returned in response:", res);
           }
+        } catch (error) {
+          console.error('Error sharing project:', error);
         }
       }
 
-      const hash = window.location.hash.substring(1); // Remove the '#' character
+      // Load editor in iframe
+      const hash = window.location.hash.substring(1);
       const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
-      const iframe = document.getElementById("scratchFrame");
-      iframe.src = finalUrl;
+      document.getElementById("scratchFrame").src = finalUrl;
 
-      if (localStorage.getItem('username') === '.....') {
-        if (iframe.src === 'https://myscratchblocks.github.io/scratch-gui/') {
-          window.location.href = 'projects.html';
-        }
+      // Redirect specific usernames to projects.html
+      if (username === '.....' && !hash) {
+        window.location.href = 'projects.html';
       }
     }
-    
-function getSB3BlobFromLocalStorage () {
-    const base64 = localStorage.getItem('sb3');
-    if (!base64) {
+
+    function getSB3BlobFromLocalStorage() {
+      const base64 = localStorage.getItem('sb3');
+      if (!base64) {
         console.error('No SB3 project found in localStorage under key "sb3"');
         return null;
-    }
+      }
 
-    const binaryStr = atob(base64);
-    const len = binaryStr.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
+      const binaryStr = atob(base64);
+      const len = binaryStr.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
         bytes[i] = binaryStr.charCodeAt(i);
-    }
+      }
 
-    return new Blob([bytes], { type: 'application/octet-stream' });
-}
+      return new Blob([bytes], { type: 'application/octet-stream' });
+    }
 
     init();
-    
   </script>
 </body>
 </html>
