@@ -62,8 +62,16 @@
     </div>
   </header>
 
+    <section id="home" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20 px-4 text-center rounded-b-lg shadow-lg">
+    <div class="container mx-auto max-w-4xl">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+        <h1 id="userHeader" class="flex justify-center mb-6 hidden">
+      </h1>
+    </div>
+  </section>
+  
   <div id="iframe-container" class="flex-1">
-    <iframe id="userFrame" src="" title="User Profile"></iframe>
+    <!--- <iframe id="userFrame" src="" title="User Profile"></iframe> --->
   </div>
 
   <script>
@@ -71,12 +79,27 @@
     const userProfileName = urlParams.get('user');
     const iframe = document.getElementById('userFrame');
 
+    //
     if (userProfileName) {
       iframe.src = `https://editor-compiler.onrender.com/users/${encodeURIComponent(userProfileName)}`;
       document.title = `${userProfileName}'s Profile | MyScratchBlocks`
     } else {
       iframe.srcdoc = "<p style='text-align:center; padding: 2rem;'>No user specified.</p>";
     }
+    //
+
+    // Get the "userHeader" element
+  const userHeader = document.getElementById('userHeader');
+
+  // Get the username from the URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const userProfileName = urlParams.get('username');
+
+  // Only update if username exists
+  if (userHeader && userProfileName) {
+    userHeader.innerHTML = `<b>${userProfileName}</b>`;
+    userHeader.classList.remove('hidden'); // Show the header if it was hidden
+  }
   </script>
 </body>
 </html>
