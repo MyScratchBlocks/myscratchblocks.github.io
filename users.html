@@ -79,21 +79,19 @@
     const userProfileName = urlParams.get('user');
     const iframe = document.getElementById('userFrame');
 
-    //
     if (userProfileName) {
       iframe.src = `https://editor-compiler.onrender.com/users/${encodeURIComponent(userProfileName)}`;
       document.title = `${userProfileName}'s Profile | MyScratchBlocks`
     } else {
       iframe.srcdoc = "<p style='text-align:center; padding: 2rem;'>No user specified.</p>";
     }
-    //
 
     // Get the "userHeader" element
   const userHeader = document.getElementById('userHeader');
 
   // Get the username from the URL parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const userProfileName = urlParams.get('username');
+  const userProfileName = urlParams.get('user');
 
   // Only update if username exists
   if (userHeader && userProfileName) {
