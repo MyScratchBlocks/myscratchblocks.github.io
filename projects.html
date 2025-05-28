@@ -204,7 +204,7 @@
           try {
             await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
             localStorage.setItem(viewKey, today);
-            window.location.href = window.location.href;
+            window.location.href = window.location.pathname + window.location.hash;
           } catch (e) {
             console.warn('View POST failed');
           }
@@ -218,14 +218,14 @@
       document.getElementById('like-btn').addEventListener('click', async () => {
         if (!username) return showModal();
         await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/like`, { method: 'POST' });
-        window.location.href = window.location.href;
+        window.location.href = window.location.pathname + window.location.hash;
         fetchMeta();
       });
 
       document.getElementById('fav-btn').addEventListener('click', async () => {
         if (!username) return showModal();
         await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
-        window.location.href = window.location.pathname + window.location.href;
+        window.location.href = window.location.pathname + window.location.hash;
         fetchMeta();
       });
     };
