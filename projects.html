@@ -13,21 +13,6 @@
       background-color: #f8fafc;
       color: #334155;
     }
-    .loading-spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 8px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
 
     iframe {
       border: 8px solid #0c99d5;
@@ -36,7 +21,25 @@
       width: 100%;
       height: 600px;
       background: #e0f7fa;
-      transition: box-shadow 0.3s ease;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      max-width: 90%;
+      width: 400px;
     }
   </style>
 </head>
@@ -76,15 +79,11 @@
           <p class="text-gray-600 mb-4" id="meta-instructions"></p>
 
           <div class="mb-4">
-            <p class="text-sm text-gray-500">
-              <strong>Main Coder:</strong> <span id="meta-author"></span>
-            </p>
-            <p class="text-sm text-gray-500">
-              <strong>Created:</strong> <span id="meta-date"></span>
-            </p>
+            <p class="text-sm text-gray-500"><strong>Main Coder:</strong> <span id="meta-author"></span></p>
+            <p class="text-sm text-gray-500"><strong>Created:</strong> <span id="meta-date"></span></p>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-4">
             <div>
               <i class="fa-solid fa-eye" style="color: #63E6BE;"></i>
               <p class="text-lg font-semibold text-indigo-600" id="meta-views">0</p>
@@ -106,15 +105,39 @@
               <p class="text-sm text-gray-500">Remixes</p>
             </div>
           </div>
+
+          <div id="action-buttons" class="flex gap-4">
+            <button id="like-btn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg">
+              <i class="fa-solid fa-heart mr-2"></i> Like
+            </button>
+            <button id="fav-btn" class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg">
+              <i class="fa-solid fa-star mr-2"></i> Favourite
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Login Required Modal -->
+  <div id="login-modal" class="modal flex">
+    <div class="modal-content">
+      <h2 class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
+      <p class="mb-4">You need to be logged in to perform this action.</p>
+      <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
+    </div>
+  </div>
+
   <script>
     const id = window.location.hash.slice(1);
     const iframe = document.getElementById('id-frame');
     iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
+    const loginModal = document.getElementById('login-modal');
+
+    function showModal() {
+      loginModal.style.display = 'flex';
+      setTimeout(() => loginModal.style.display = 'none', 3000);
+    }
 
     async function fetchMeta() {
       const loading = document.getElementById('meta-loading');
@@ -122,18 +145,16 @@
       const content = document.getElementById('meta-content');
 
       try {
-        const response = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const meta = await response.json();
+        const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+        if (!res.ok) throw new Error(`Status: ${res.status}`);
+        const meta = await res.json();
 
         document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
         document.title = meta.title || 'Untitled Project';
-        document.getElementById('meta-description').textContent = meta.description || 'No description provided.';
+        document.getElementById('meta-description').textContent = meta.description || 'No description.';
         document.getElementById('meta-instructions').textContent = meta.instructions || '';
         document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
-
-        const createdDate = new Date(meta.history?.created);
-        document.getElementById('meta-date').textContent = createdDate.toLocaleDateString();
+        document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
 
         document.getElementById('meta-views').textContent = meta.stats?.views ?? 1;
         document.getElementById('meta-loves').textContent = meta.stats?.loves ?? 0;
@@ -141,24 +162,54 @@
         document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
 
         loading.classList.add('hidden');
-        error.classList.add('hidden');
         content.classList.remove('hidden');
       } catch (err) {
-        console.error('Error fetching meta:', err);
         loading.classList.add('hidden');
         error.classList.remove('hidden');
       }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchMeta);
+    window.onload = async () => {
+      fetchMeta();
 
-    const username = localStorage.getItem('username');
-    if (username) {
-      const accountElement = document.getElementById('account');
-      if (accountElement) {
-        accountElement.textContent = username;
+      const username = localStorage.getItem('username');
+      if (username) {
+        const acc = document.getElementById('account');
+        if (acc) acc.textContent = username;
+
+        const viewKey = `viewed_${id}`;
+        const today = new Date().toISOString().slice(0, 10);
+        const lastViewed = localStorage.getItem(viewKey);
+        if (lastViewed !== today) {
+          try {
+            await fetch(`https://editor-compiler.onrender.com/${id}/view`, { method: 'POST' });
+            localStorage.setItem(viewKey, today);
+          } catch (e) {
+            console.warn('Failed to record view');
+          }
+        }
       }
-    }
+
+      document.getElementById('like-btn').addEventListener('click', async () => {
+        if (!username) return showModal();
+        try {
+          await fetch(`https://editor-compiler.onrender.com/${id}/like`, { method: 'POST' });
+          fetchMeta();
+        } catch (e) {
+          console.error('Failed to like');
+        }
+      });
+
+      document.getElementById('fav-btn').addEventListener('click', async () => {
+        if (!username) return showModal();
+        try {
+          await fetch(`https://editor-compiler.onrender.com/${id}/favourite`, { method: 'POST' });
+          fetchMeta();
+        } catch (e) {
+          console.error('Failed to favourite');
+        }
+      });
+    };
   </script>
 </body>
 </html>
