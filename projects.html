@@ -208,7 +208,7 @@
       document.getElementById('fav-btn').addEventListener('click', async () => {
         if (!username) return showModal();
         await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
-        window.location.href = window.location.pathname + window.location.hash.substring(1);
+        window.location.href = window.location.pathname + window.location.hash;
         fetchMeta();
       });
     };
