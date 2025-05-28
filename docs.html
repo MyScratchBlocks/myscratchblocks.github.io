@@ -64,13 +64,14 @@
   <section id="featured-projects" class="py-16 bg-gray-100">
     <div class="container mx-auto px-4">
       <github-md><iframe id="id-frame" src="#" class="mb-6"></iframe></github-md>
+      <iframe id="id-frame" src="#" class="mb-6"></iframe>
     </div>
   </section>
 
   <script>
    const page = window.location.hash.slice(1);
    const iframe = document.getElementById('id-frame');
-   iframe.src = `https://myscratchblocks.github.io/documentation/${id}.md`;
+   iframe.src = `https://myscratchblocks.github.io/documentation/${page}.md`;
   </script>
 </body>
 </html>
