@@ -134,6 +134,7 @@
     const iframe = document.getElementById('id-frame');
     iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
     const loginModal = document.getElementById('login-modal');
+    loginModal.style.display = 'none';
 
     function showModal() {
       loginModal.style.display = 'flex';
