@@ -41,11 +41,7 @@
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              project: sb3Blob,
-              projectName: localStorage.getItem('projectName'),
-              username
-            })
+            body: JSON.stringify({})
           });
 
           const res = await response.json();
