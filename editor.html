@@ -96,6 +96,9 @@
       await init();
     }, 5000);
 
+    if(document.getElementById('scratchFrame').src === 'https://myscratchblocks.github.io/scratch-gui/#') {
+      window.location.href = `projects#${window.location.hash.substring(1)}`;
+    }
   </script>
 </body>
 </html>
