@@ -115,6 +115,13 @@
               <i class="fa-solid fa-star mr-2"></i> Favourite
             </button>
           </div>
+
+          <!-- Added See Inside button -->
+          <div class="mt-4">
+            <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
+              <i class="fa-solid fa-eye mr-2"></i> See Inside
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -204,195 +211,119 @@
           try {
             await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
             localStorage.setItem(viewKey, today);
-            window.location.href = window.location.pathname + window.location.hash;
-          } catch (e) {
-            console.warn('View POST failed');
+            window.location.reload();
+          } catch {
+            // Ignore errors silently
           }
         }
-      } else {
-        // Disable buttons if not logged in
-        document.getElementById('like-btn').classList.add('disabled-btn');
-        document.getElementById('fav-btn').classList.add('disabled-btn');
       }
 
+      // Like button logic
       document.getElementById('like-btn').addEventListener('click', async () => {
-        if (!username) return showModal();
-        await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/like`, { method: 'POST' });
-        window.location.href = window.location.pathname + window.location.hash;
-        fetchMeta();
+        if (!localStorage.getItem('username')) return showModal();
+
+        const likedKey = `liked_${id}`;
+        if (localStorage.getItem(likedKey)) {
+          window.location.reload();
+          return;
+        }
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/like`, { method: 'POST' });
+          if (res.ok) {
+            let countEl = document.getElementById('meta-loves');
+            countEl.textContent = Number(countEl.textContent) + 1;
+            localStorage.setItem(likedKey, 'true');
+            window.location.reload();
+          }
+        } catch (err) {
+          window.location.reload();
+        }
       });
 
+      // Favorite button logic
       document.getElementById('fav-btn').addEventListener('click', async () => {
-        if (!username) return showModal();
-        await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
-        window.location.href = window.location.pathname + window.location.hash;
-        fetchMeta();
+        if (!localStorage.getItem('username')) return showModal();
+
+        const favKey = `favorited_${id}`;
+        if (localStorage.getItem(favKey)) {
+          window.location.reload();
+          return;
+        }
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favorite`, { method: 'POST' });
+          if (res.ok) {
+            let countEl = document.getElementById('meta-favorites');
+            countEl.textContent = Number(countEl.textContent) + 1;
+            localStorage.setItem(favKey, 'true');
+            window.location.reload();
+          }
+        } catch (err) {
+          alert('Failed to favourite project.');
+        }
+      });
+
+      // See Inside button
+      document.getElementById('see-inside-btn').addEventListener('click', () => {
+        const hash = window.location.hash.substring(1);
+        window.location.href = `/editor#${hash}`;
+      });
+
+      // Comments logic
+      const commentsList = document.getElementById('comments-list');
+      const commentsLoading = document.getElementById('comments-loading');
+      const commentsError = document.getElementById('comments-error');
+      const commentForm = document.getElementById('comment-form');
+      const commentInput = document.getElementById('comment-input');
+      const commentSubmit = document.getElementById('comment-submit');
+
+      async function fetchComments() {
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+          if (!res.ok) throw new Error('Failed to fetch comments');
+          const comments = await res.json();
+
+          commentsLoading.style.display = 'none';
+          commentsError.classList.add('hidden');
+
+          commentsList.innerHTML = '';
+          comments.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'border rounded p-3 bg-gray-50';
+            div.innerHTML = `<p class="font-semibold text-indigo-700">${c.user}</p><p>${c.text}</p>`;
+            commentsList.appendChild(div);
+          });
+        } catch {
+          commentsLoading.style.display = 'none';
+          commentsError.classList.remove('hidden');
+        }
+      }
+
+      fetchComments();
+
+      commentForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!localStorage.getItem('username')) return showModal();
+
+        const commentText = commentInput.value.trim();
+        if (!commentText) return;
+
+        commentSubmit.disabled = true;
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: commentText })
+          });
+          if (!res.ok) throw new Error('Failed to post comment');
+
+          commentInput.value = '';
+          fetchComments();
+        } catch {
+          alert('Failed to post comment.');
+        }
+        commentSubmit.disabled = false;
       });
     };
-
-    // Comment system logic
-const commentsList = document.getElementById('comments-list');
-const commentsLoading = document.getElementById('comments-loading');
-const commentsError = document.getElementById('comments-error');
-const commentForm = document.getElementById('comment-form');
-const commentInput = document.getElementById('comment-input');
-
-async function fetchComments() {
-  commentsLoading.classList.remove('hidden');
-  commentsError.classList.add('hidden');
-  commentsList.innerHTML = '';
-  try {
-    // Fetch comments from your backend API, example endpoint
-    const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/comments`);
-    if (!res.ok) throw new Error('Failed to load comments');
-    const comments = await res.json();
-
-    if (!comments.length) {
-      commentsList.innerHTML = '<p class="text-gray-500">No comments yet.</p>';
-      commentsLoading.classList.add('hidden');
-      return;
-    }
-
-    commentsLoading.classList.add('hidden');
-
-    comments.forEach(comment => {
-      const commentEl = createCommentElement(comment);
-      commentsList.appendChild(commentEl);
-    });
-
-  } catch (e) {
-    commentsLoading.classList.add('hidden');
-    commentsError.classList.remove('hidden');
-  }
-}
-
-function createCommentElement(comment) {
-  const container = document.createElement('div');
-  container.className = 'border rounded p-4';
-
-  container.innerHTML = `
-    <div class="flex justify-between items-center mb-2">
-      <div class="font-semibold text-indigo-700">${escapeHtml(comment.user.username)}</div>
-      <div class="text-sm text-gray-500">${new Date(comment.createdAt).toLocaleString()}</div>
-    </div>
-    <p class="mb-2 whitespace-pre-wrap">${escapeHtml(comment.text)}</p>
-    <button class="reply-btn text-sm text-indigo-600 hover:underline cursor-pointer">Reply</button>
-    <div class="replies ml-6 mt-3 space-y-3"></div>
-  `;
-
-  // Render replies
-  const repliesContainer = container.querySelector('.replies');
-  if (comment.replies && comment.replies.length) {
-    comment.replies.forEach(reply => {
-      const replyEl = document.createElement('div');
-      replyEl.className = 'border-l-2 border-indigo-200 pl-4 text-gray-700';
-      replyEl.innerHTML = `
-        <div class="flex justify-between items-center mb-1">
-          <div class="font-semibold text-indigo-700">${escapeHtml(reply.user.username)}</div>
-          <div class="text-xs text-gray-500">${new Date(reply.createdAt).toLocaleString()}</div>
-        </div>
-        <p class="whitespace-pre-wrap">${escapeHtml(reply.text)}</p>
-      `;
-      repliesContainer.appendChild(replyEl);
-    });
-  }
-
-  // Reply button event
-  const replyBtn = container.querySelector('.reply-btn');
-  replyBtn.addEventListener('click', () => {
-    if (!isLoggedIn()) {
-      showModal();
-      return;
-    }
-
-    if (container.querySelector('form.reply-form')) {
-      // Already open, toggle visibility
-      const form = container.querySelector('form.reply-form');
-      form.remove();
-      return;
-    }
-
-    const replyForm = document.createElement('form');
-    replyForm.className = 'reply-form mt-2';
-    replyForm.innerHTML = `
-      <textarea required rows="2" placeholder="Write a reply..." 
-        class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-      <button type="submit" class="mt-1 px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">Send</button>
-    `;
-
-    replyForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const replyText = replyForm.querySelector('textarea').value.trim();
-      if (!replyText) return;
-
-      try {
-        replyForm.querySelector('button').disabled = true;
-        // Post reply API call
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments/${comment.id}/reply`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: replyText }),
-          credentials: 'include'
-        });
-        if (!res.ok) throw new Error('Failed to post reply');
-        // Refresh comments list
-        await fetchComments();
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        replyForm.querySelector('button').disabled = false;
-      }
-    });
-
-    container.appendChild(replyForm);
-  });
-
-  return container;
-}
-
-commentForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!isLoggedIn()) {
-    showModal();
-    return;
-  }
-  const text = commentInput.value.trim();
-  if (!text) return;
-
-  try {
-    commentForm.querySelector('button').disabled = true;
-    // Post new comment API call
-    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-      credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Failed to post comment');
-    commentInput.value = '';
-    await fetchComments();
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    commentForm.querySelector('button').disabled = false;
-  }
-});
-
-// Utility escape for safe text insertion
-function escapeHtml(text) {
-  return text.replace(/[&<>"']/g, (m) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[m]);
-}
-
-// Reuse your login check (example, adapt if different)
-function isLoggedIn() {
-  return !!localStorage.getItem('username');
-}
-// Reuse your modal function (adjust selector if needed)
-// Initial load
-fetchComments();
-
   </script>
 </body>
 </html>
