@@ -13,7 +13,6 @@
       background-color: #f8fafc;
       color: #334155;
     }
-
     iframe {
       border: 8px solid #0c99d5;
       border-radius: 12px;
@@ -22,7 +21,6 @@
       height: 600px;
       background: #e0f7fa;
     }
-
     .modal {
       display: none;
       position: fixed;
@@ -32,7 +30,6 @@
       align-items: center;
       justify-content: center;
     }
-
     .modal-content {
       background-color: white;
       padding: 2rem;
@@ -40,6 +37,10 @@
       text-align: center;
       max-width: 90%;
       width: 400px;
+    }
+    .disabled-btn {
+      opacity: 0.5;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -61,7 +62,7 @@
         <a href="/#access" class="text-gray-600 hover:text-indigo-600 font-medium">Access</a>
         <a href="/#community" class="text-gray-600 hover:text-indigo-600 font-medium">Community</a>
         <a href="/#about" class="text-gray-600 hover:text-indigo-600 font-medium">About</a>
-        <a id="account" href="account" class="text-gray-600 hover:text-indigo-600 font-medium">Account</a>
+        <a id="account" href="/account" class="text-gray-600 hover:text-indigo-600 font-medium">Account</a>
       </nav>
     </div>
   </header>
@@ -107,10 +108,10 @@
           </div>
 
           <div id="action-buttons" class="flex gap-4">
-            <button id="like-btn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg">
+            <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-heart mr-2"></i> Like
             </button>
-            <button id="fav-btn" class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg">
+            <button id="fav-btn" class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-star mr-2"></i> Favourite
             </button>
           </div>
@@ -123,7 +124,7 @@
   <div id="login-modal" class="modal flex">
     <div class="modal-content">
       <h2 class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
-      <p class="mb-4">You need to be logged in to perform this action.</p>
+      <p class="mb-4">You need to be logged in to use this feature.</p>
       <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
     </div>
   </div>
@@ -177,6 +178,7 @@
         const acc = document.getElementById('account');
         if (acc) acc.textContent = username;
 
+        // Send view only if logged in
         const viewKey = `viewed_${id}`;
         const today = new Date().toISOString().slice(0, 10);
         const lastViewed = localStorage.getItem(viewKey);
@@ -185,29 +187,25 @@
             await fetch(`https://editor-compiler.onrender.com/${id}/view`, { method: 'POST' });
             localStorage.setItem(viewKey, today);
           } catch (e) {
-            console.warn('Failed to record view');
+            console.warn('View POST failed');
           }
         }
+      } else {
+        // Disable buttons if not logged in
+        document.getElementById('like-btn').classList.add('disabled-btn');
+        document.getElementById('fav-btn').classList.add('disabled-btn');
       }
 
       document.getElementById('like-btn').addEventListener('click', async () => {
         if (!username) return showModal();
-        try {
-          await fetch(`https://editor-compiler.onrender.com/${id}/like`, { method: 'POST' });
-          fetchMeta();
-        } catch (e) {
-          console.error('Failed to like');
-        }
+        await fetch(`https://editor-compiler.onrender.com/${id}/like`, { method: 'POST' });
+        fetchMeta();
       });
 
       document.getElementById('fav-btn').addEventListener('click', async () => {
         if (!username) return showModal();
-        try {
-          await fetch(`https://editor-compiler.onrender.com/${id}/favourite`, { method: 'POST' });
-          fetchMeta();
-        } catch (e) {
-          console.error('Failed to favourite');
-        }
+        await fetch(`https://editor-compiler.onrender.com/${id}/favourite`, { method: 'POST' });
+        fetchMeta();
       });
     };
   </script>
