@@ -243,7 +243,7 @@ async function fetchComments() {
   commentsList.innerHTML = '';
   try {
     // Fetch comments from your backend API, example endpoint
-    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+    const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/comments`);
     if (!res.ok) throw new Error('Failed to load comments');
     const comments = await res.json();
 
