@@ -319,12 +319,12 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: commentText, username: localStorage.getItem('username') })
           });
-          if (!res.ok) throw new Error('Failed to post comment');
+          if (!res.ok) throw new Error(res.error);
 
           commentInput.value = '';
           fetchComments();
         } catch {
-          alert('Failed to post comment.');
+          alert(res.error);
         }
         commentSubmit.disabled = false;
       });
