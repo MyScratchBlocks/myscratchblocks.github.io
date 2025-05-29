@@ -121,6 +121,9 @@
             <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-code mr-2"></i> See Inside
             </button>
+            <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
+              <i class="fa-solid fa-code mr-2"></i> Remix
+            </button>
           </div>
         </div>
       </div>
@@ -157,6 +160,14 @@
   <script>
     const id = window.location.hash.slice(1);
     const iframe = document.getElementById('id-frame');
+    const remix = document.getElementById('remix-btn');
+    remix.addEventListener('click', async () => {
+      if(!localStorage.getItem('username')) {
+        showModal();
+      } else {
+        window.location.href = `editor?remix=${window.location.hash.substring(1)}`;
+      }
+    }
     iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
     const loginModal = document.getElementById('login-modal');
     loginModal.style.display = 'none';
