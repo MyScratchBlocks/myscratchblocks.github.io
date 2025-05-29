@@ -109,7 +109,7 @@
 
           <div id="action-buttons" class="flex gap-4">
             <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg">
-              <i class="fa-solid fa-heart mr-2"></i> Like
+              <i class="fa-solid fa-arrow-up mr-2"></i> Upvote
             </button>
             <button id="fav-btn" class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-star mr-2"></i> Favourite
@@ -119,7 +119,7 @@
           <!-- Added See Inside button -->
           <div class="mt-4">
             <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
-              <i class="fa-solid fa-eye mr-2"></i> See Inside
+              <i class="fa-solid fa-code mr-2"></i> See Inside
             </button>
           </div>
         </div>
@@ -128,7 +128,7 @@
   </section>
   
   <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
-  <h3 class="text-xl font-semibold mb-4 text-indigo-700">Comments</h3>
+  <h3 class="text-xl font-semibold mb-4 text-indigo-700"><i class="fa-solid fa-comments mr-2"></i> Comments</h3>
   
   <div id="comments-list" class="space-y-6">
     <p id="comments-loading" class="text-gray-500">Loading comments...</p>
@@ -140,7 +140,7 @@
       class="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
     <button type="submit"
       class="mt-2 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-      id="comment-submit">Post Comment</button>
+      id="comment-submit"><i class="fa-solid fa-plus mr-2"></i> Post Comment</button>
   </form>
 </section>
 
@@ -150,6 +150,7 @@
       <h2 class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
       <p class="mb-4">You need to be logged in to use this feature.</p>
       <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
+      <a onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Close</a>
     </div>
   </div>
 
@@ -193,6 +194,10 @@
         loading.classList.add('hidden');
         error.classList.remove('hidden');
       }
+    }
+
+    function closeLoginModal() {
+      loginModal.style.display = 'none';
     }
 
     window.onload = async () => {
