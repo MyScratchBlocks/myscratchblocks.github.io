@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://kit.fontawesome.com/1373677f05.js" crossorigin="anonymous"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MyScratchBlocks - Project Viewer</title>
+  <script src="https://kit.fontawesome.com/1373677f05.js" crossorigin="anonymous"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -38,10 +38,6 @@
       max-width: 90%;
       width: 400px;
     }
-    .disabled-btn {
-      opacity: 0.5;
-      pointer-events: none;
-    }
   </style>
 </head>
 <body class="antialiased">
@@ -53,24 +49,12 @@
         </svg>
         <span>MyScratchBlocks</span>
       </a>
-      <nav class="hidden md:flex space-x-6">
-        <a href="/" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
-        <a href="/#features" class="text-gray-600 hover:text-indigo-600 font-medium">Features</a>
-        <a href="/#block-ideas" class="text-gray-600 hover:text-indigo-600 font-medium">Block Ideas</a>
-        <a href="/#project-ideas" class="text-gray-600 hover:text-indigo-600 font-medium">Project Ideas</a>
-        <a href="/#featured-projects" class="text-gray-600 hover:text-indigo-600 font-medium">Featured Projects</a>
-        <a href="/#access" class="text-gray-600 hover:text-indigo-600 font-medium">Access</a>
-        <a href="/#community" class="text-gray-600 hover:text-indigo-600 font-medium">Community</a>
-        <a href="/#about" class="text-gray-600 hover:text-indigo-600 font-medium">About</a>
-        <a id="account" href="/account" class="text-gray-600 hover:text-indigo-600 font-medium">Account</a>
-      </nav>
     </div>
   </header>
 
-  <section id="featured-projects" class="py-16 bg-gray-100">
+  <section class="py-16 bg-gray-100">
     <div class="container mx-auto px-4">
       <iframe id="id-frame" src="#" class="mb-6"></iframe>
-
       <div id="project-meta" class="bg-white p-6 rounded-lg shadow-md">
         <div id="meta-loading" class="text-sm text-gray-500">Loading project metadata...</div>
         <div id="meta-error" class="hidden text-sm text-red-600">Failed to load metadata.</div>
@@ -116,7 +100,6 @@
             </button>
           </div>
 
-          <!-- Added See Inside button -->
           <div class="mt-4">
             <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-code mr-2"></i> See Inside
@@ -129,215 +112,124 @@
       </div>
     </div>
   </section>
-  
-  <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
-  <h3 class="text-xl font-semibold mb-4 text-indigo-700"><i class="fa-solid fa-comments mr-2"></i> Comments</h3>
-  
-  <div id="comments-list" class="space-y-6">
-    <p id="comments-loading" class="text-gray-500">Loading comments...</p>
-    <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
-  </div>
-  
-  <form id="comment-form" class="mt-8">
-    <textarea id="comment-input" rows="3" placeholder="Add a comment..." required
-      class="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-    <button type="submit"
-      class="mt-2 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-      id="comment-submit"><i class="fa-solid fa-plus mr-2"></i> Post Comment</button>
-  </form>
-</section>
 
-  <!-- Login Required Modal -->
   <div id="login-modal" class="modal flex">
     <div class="modal-content">
       <h2 class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
       <p class="mb-4">You need to be logged in to use this feature.</p>
       <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
-      <a onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Close</a>
+      <a onclick="closeLoginModal()" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded ml-2 cursor-pointer">Close</a>
     </div>
   </div>
 
   <script>
     const id = window.location.hash.slice(1);
     const iframe = document.getElementById('id-frame');
-    const remix = document.getElementById('remix-btn');
-    remix.addEventListener('click', async () => {
-      if(!localStorage.getItem('username')) {
-        showModal();
-      } else {
-        window.location.href = `editor?remix=${window.location.hash.substring(1)}`;
-      }
-    }
     iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
     const loginModal = document.getElementById('login-modal');
-    loginModal.style.display = 'none';
 
     function showModal() {
       loginModal.style.display = 'flex';
       setTimeout(() => loginModal.style.display = 'none', 3000);
     }
 
-    async function fetchMeta() {
-      const loading = document.getElementById('meta-loading');
-      const error = document.getElementById('meta-error');
-      const content = document.getElementById('meta-content');
-
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
-        if (!res.ok) throw new Error(`Status: ${res.status}`);
-        const meta = await res.json();
-
-        document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
-        document.title = meta.title || 'Untitled Project';
-        document.getElementById('meta-description').textContent = meta.description || 'No description.';
-        document.getElementById('meta-instructions').textContent = meta.instructions || '';
-        document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
-        document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
-
-        document.getElementById('meta-views').textContent = meta.stats?.views ?? 1;
-        document.getElementById('meta-loves').textContent = meta.stats?.loves ?? 0;
-        document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
-        document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
-
-        loading.classList.add('hidden');
-        content.classList.remove('hidden');
-      } catch (err) {
-        loading.classList.add('hidden');
-        error.classList.remove('hidden');
-      }
-    }
-
     function closeLoginModal() {
       loginModal.style.display = 'none';
     }
 
-    window.onload = async () => {
-      fetchMeta();
+    async function fetchMeta() {
+      try {
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+        if (!res.ok) throw new Error('Failed');
+        const meta = await res.json();
 
+        document.title = meta.title || 'Untitled Project';
+        document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
+        document.getElementById('meta-description').textContent = meta.description || 'No description';
+        document.getElementById('meta-instructions').textContent = meta.instructions || '';
+        document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
+        document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
+
+        document.getElementById('meta-views').textContent = meta.stats?.views ?? 0;
+        document.getElementById('meta-loves').textContent = meta.stats?.loves ?? 0;
+        document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
+        document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
+
+        document.getElementById('meta-loading').classList.add('hidden');
+        document.getElementById('meta-content').classList.remove('hidden');
+      } catch {
+        document.getElementById('meta-loading').classList.add('hidden');
+        document.getElementById('meta-error').classList.remove('hidden');
+      }
+    }
+
+    async function sendViewIfNeeded() {
+      const viewKey = `viewed_${id}`;
+      const today = new Date().toISOString().slice(0, 10);
+      if (localStorage.getItem(viewKey) === today) return;
+
+      try {
+        await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
+        localStorage.setItem(viewKey, today);
+      } catch {}
+    }
+
+    async function likeProject() {
+      if (!localStorage.getItem('username')) return showModal();
+      const likedKey = `liked_${id}`;
+      if (localStorage.getItem(likedKey)) return;
+
+      try {
+        await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/like`, { method: 'POST' });
+        localStorage.setItem(likedKey, 'true');
+        likeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        likeBtn.disabled = true;
+        fetchMeta();
+      } catch {}
+    }
+
+    async function favProject() {
+      if (!localStorage.getItem('username')) return showModal();
+      const favKey = `favorited_${id}`;
+      if (localStorage.getItem(favKey)) return;
+
+      try {
+        await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favorite`, { method: 'POST' });
+        localStorage.setItem(favKey, 'true');
+        favBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        favBtn.disabled = true;
+        fetchMeta();
+      } catch {}
+    }
+
+    window.onload = async () => {
       const username = localStorage.getItem('username');
       if (username) {
-        const acc = document.getElementById('account');
-        if (acc) acc.textContent = username;
-
-        // Send view only if logged in
-        const viewKey = `viewed_${id}`;
-        const today = new Date().toISOString().slice(0, 10);
-        const lastViewed = localStorage.getItem(viewKey);
-        if (lastViewed !== today) {
-          try {
-            await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
-            localStorage.setItem(viewKey, today);
-            window.location.reload();
-          } catch {
-            // Ignore errors silently
-          }
-        }
+        document.getElementById('account').textContent = username;
+        await sendViewIfNeeded();
       }
 
-      // Like button logic
-      document.getElementById('like-btn').addEventListener('click', async () => {
-        if (!localStorage.getItem('username')) return showModal();
+      const likedKey = `liked_${id}`;
+      const favKey = `favorited_${id}`;
+      if (localStorage.getItem(likedKey)) {
+        likeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        likeBtn.disabled = true;
+      }
+      if (localStorage.getItem(favKey)) {
+        favBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        favBtn.disabled = true;
+      }
 
-        const likedKey = `liked_${id}`;
-        if (localStorage.getItem(likedKey)) {
-          window.location.reload();
-          return;
-        }
-        try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/like`, { method: 'POST' });
-          if (res.ok) {
-            let countEl = document.getElementById('meta-loves');
-            countEl.textContent = Number(countEl.textContent) + 1;
-            localStorage.setItem(likedKey, 'true');
-            window.location.reload();
-          }
-        } catch (err) {
-          window.location.href = window.location.pathname + window.location.hash;
-        }
-      });
+      fetchMeta();
 
-      // Favorite button logic
-      document.getElementById('fav-btn').addEventListener('click', async () => {
-        if (!localStorage.getItem('username')) return showModal();
-
-        const favKey = `favorited_${id}`;
-        if (localStorage.getItem(favKey)) {
-          window.location.href = window.location.pathname + window.location.hash;
-          return;
-        }
-        try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favorite`, { method: 'POST' });
-          if (res.ok) {
-            let countEl = document.getElementById('meta-favorites');
-            countEl.textContent = Number(countEl.textContent) + 1;
-            localStorage.setItem(favKey, 'true');
-            window.location.href = window.location.pathname + window.location.hash;
-          }
-        } catch (err) {
-          alert('Failed to favourite project.');
-        }
-      });
-
-      // See Inside button
+      likeBtn.addEventListener('click', likeProject);
+      favBtn.addEventListener('click', favProject);
       document.getElementById('see-inside-btn').addEventListener('click', () => {
-        const hash = window.location.hash.substring(1);
-        window.location.href = `/editor#${hash}`;
+        window.location.href = `/editor#${id}`;
       });
-
-      // Comments logic
-      const commentsList = document.getElementById('comments-list');
-      const commentsLoading = document.getElementById('comments-loading');
-      const commentsError = document.getElementById('comments-error');
-      const commentForm = document.getElementById('comment-form');
-      const commentInput = document.getElementById('comment-input');
-      const commentSubmit = document.getElementById('comment-submit');
-
-      async function fetchComments() {
-        try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
-          if (!res.ok) throw new Error('Failed to fetch comments');
-          const comments = await res.json();
-
-          commentsLoading.style.display = 'none';
-          commentsError.classList.add('hidden');
-
-          commentsList.innerHTML = '';
-          comments.forEach(c => {
-            const div = document.createElement('div');
-            div.className = 'border rounded p-3 bg-gray-50';
-            div.innerHTML = `<p class="font-semibold text-indigo-700">${c.user}</p><p>${c.text}</p>`;
-            commentsList.appendChild(div);
-          });
-        } catch {
-          commentsLoading.style.display = 'none';
-          commentsError.classList.remove('hidden');
-        }
-      }
-
-      fetchComments();
-
-      commentForm.addEventListener('submit', async e => {
-        e.preventDefault();
-        if (!localStorage.getItem('username')) return showModal();
-
-        const commentText = commentInput.value.trim();
-        if (!commentText) return;
-
-        commentSubmit.disabled = true;
-        try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: commentText, username: localStorage.getItem('username') })
-          });
-          if (!res.ok) throw new Error(res.error);
-
-          commentInput.value = '';
-          fetchComments();
-        } catch {
-          alert(res.error);
-        }
-        commentSubmit.disabled = false;
+      document.getElementById('remix-btn').addEventListener('click', () => {
+        if (!username) return showModal();
+        window.location.href = `/editor?remix=${id}`;
       });
     };
   </script>
