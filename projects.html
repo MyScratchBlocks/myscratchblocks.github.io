@@ -172,7 +172,7 @@
       const content = document.getElementById('meta-content');
 
       try {
-        const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
         if (!res.ok) throw new Error(`Status: ${res.status}`);
         const meta = await res.json();
 
@@ -283,7 +283,7 @@
 
       async function fetchComments() {
         try {
-          const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
           if (!res.ok) throw new Error('Failed to fetch comments');
           const comments = await res.json();
 
@@ -314,7 +314,7 @@
 
         commentSubmit.disabled = true;
         try {
-          const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: commentText, username: localStorage.getItem('username') })
