@@ -241,7 +241,7 @@
             window.location.reload();
           }
         } catch (err) {
-          window.location.reload();
+          window.location.href = window.location.pathname + window.location.hash;
         }
       });
 
@@ -251,7 +251,7 @@
 
         const favKey = `favorited_${id}`;
         if (localStorage.getItem(favKey)) {
-          window.location.reload();
+          window.location.href = window.location.pathname + window.location.hash;
           return;
         }
         try {
@@ -260,7 +260,7 @@
             let countEl = document.getElementById('meta-favorites');
             countEl.textContent = Number(countEl.textContent) + 1;
             localStorage.setItem(favKey, 'true');
-            window.location.reload();
+            window.location.href = window.location.pathname + window.location.hash;
           }
         } catch (err) {
           alert('Failed to favourite project.');
@@ -283,7 +283,7 @@
 
       async function fetchComments() {
         try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+          const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/comments`);
           if (!res.ok) throw new Error('Failed to fetch comments');
           const comments = await res.json();
 
@@ -314,10 +314,10 @@
 
         commentSubmit.disabled = true;
         try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+          const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: commentText })
+            body: JSON.stringify({ text: commentText, username: localStorage.getItem('username') })
           });
           if (!res.ok) throw new Error('Failed to post comment');
 
