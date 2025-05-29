@@ -158,6 +158,7 @@
   </div>
 
   <script>
+    closeLoginModal();
     const id = window.location.hash.slice(1);
     const iframe = document.getElementById('id-frame');
     const remix = document.getElementById('remix-btn');
@@ -167,7 +168,7 @@
       } else {
         window.location.href = `editor?remix=${window.location.hash.substring(1)}`;
       }
-    }
+    });
     iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
     const loginModal = document.getElementById('login-modal');
     loginModal.style.display = 'none';
