@@ -60,6 +60,7 @@
       const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
       document.getElementById("scratchFrame").src = finalUrl;
+      window.location.href = `projects#${hash}`;
 
       // Redirect specific usernames to projects.html
       if (username === '.....' && !hash) {
