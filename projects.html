@@ -188,6 +188,8 @@
         const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
         if (!res.ok) throw new Error(`Status: ${res.status}`);
         const meta = await res.json();
+        if(meta.author?.username === localStorage.getItem('username')) {
+          document.getElementById('see-inside-btn').textContent = 'Edit Project';
 
         document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
         document.title = meta.title || 'Untitled Project';
