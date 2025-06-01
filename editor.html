@@ -45,7 +45,7 @@
           const res = await response.json();
 
           if (res?.sb3File) {
-            window.location.href = `https://myscratchblocks.github.io/editor#${res.sb3File.replace(".sb3", "")}`;
+            window.location.href = `https://myscratchblocks.github.io/projects#${res.sb3File.replace(".sb3", "")}`;
             localStorage.setItem('new-project', 'true');
             return; // Page will reload
           } else {
