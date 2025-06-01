@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/users/:username' (req, res) => {
+router.get('/users/:username', (req, res) => {
+  const username = req.params.username;
+
   return res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,18 +22,17 @@ router.get('/users/:username' (req, res) => {
       color: #334155;
     }
     header {
-      position: fixed; /* Fix header to top */
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 10;
       background: white;
       box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-      height: 56px; /* fixed height */
+      height: 56px;
       display: flex;
       align-items: center;
     }
-    /* Container inside header */
     header > div {
       width: 100%;
       max-width: 1024px;
@@ -58,7 +59,7 @@ router.get('/users/:username' (req, res) => {
     }
     iframe {
       position: fixed;
-      top: 56px; /* height of the fixed header */
+      top: 56px;
       left: 0;
       width: 100vw;
       height: calc(100vh - 56px);
@@ -90,18 +91,9 @@ router.get('/users/:username' (req, res) => {
     </div>
   </header>
 
-  <iframe id="iframe" src="#"></iframe>
-
-  <script>
-    // Get the username from the URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const userProfileName = urlParams.get('username');
-    if(userProfileName) {
-      document.getElementById('iframe').src = `https://editor-compiler.onrender.com/users/${userProfileName}`;
-    } else {
-      document.getElementById('iframe').srcdoc = 'User Not Found'; // or some default page
-    }
-  </script>
+  <iframe id="iframe" src="https://editor-compiler.onrender.com/users/${username}"></iframe>
 </body>
 </html>`);
 });
+
+module.exports = router;
