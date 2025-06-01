@@ -46,6 +46,7 @@
 
           if (res?.sb3File) {
             window.location.href = `https://myscratchblocks.github.io/editor#${res.sb3File.replace(".sb3", "")}`;
+            localStorage.setItem('new-project', 'true');
             return; // Page will reload
           } else {
             console.error("No sb3File returned in response:", res);
@@ -60,7 +61,10 @@
       const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
       document.getElementById("scratchFrame").src = finalUrl;
-      window.location.href = `projects#${hash}`;
+      if(localStorage.getItem('new-project')) {
+        window.location.href = `projects#${hash}`;
+        localStorage.setItem('new-project', '');
+      }
 
       // Redirect specific usernames to projects.html
       if (username === '.....' && !hash) {
