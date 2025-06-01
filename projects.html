@@ -119,7 +119,7 @@
           <!-- Added See Inside button -->
           <div class="mt-4">
             <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
-              <i class="fa-solid fa-code mr-2"></i> See Inside
+              <i class="fa-solid fa-code mr-2"></i> <a id="href-inside" href="#">See Inside</a>
             </button>
             <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-code mr-2"></i> Remix
@@ -158,6 +158,7 @@
   </div>
 
   <script>
+    document.getElementById('href-inside').href = `editor#${window.location.hash.substring(1)}`;
     closeLoginModal();
     const id = window.location.hash.slice(1);
     const iframe = document.getElementById('id-frame');
@@ -283,12 +284,6 @@
         } catch (err) {
           alert('Failed to favourite project.');
         }
-      });
-
-      // See Inside button
-      document.getElementById('see-inside-btn').addEventListener('click', () => {
-        const hash = window.location.hash.substring(1);
-        window.location.href = `/editor#${hash}`;
       });
 
       // Comments logic
