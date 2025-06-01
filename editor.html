@@ -61,7 +61,7 @@
       const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
       document.getElementById("scratchFrame").src = finalUrl;
-      if(localStorage.getItem('new-project')) {
+      if(!localStorage.getItem('new-project') === '') {
         window.location.href = `projects#${hash}`;
         localStorage.setItem('new-project', '');
       }
