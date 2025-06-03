@@ -257,6 +257,9 @@
             countEl.textContent = Number(countEl.textContent) + 1;
             localStorage.setItem(likedKey, 'true');
             window.location.reload();
+            if(res.error) {
+              alert(res.error);
+            }
           }
         } catch (err) {
           window.location.href = window.location.pathname + window.location.hash;
@@ -279,9 +282,12 @@
             countEl.textContent = Number(countEl.textContent) + 1;
             localStorage.setItem(favKey, 'true');
             window.location.href = window.location.pathname + window.location.hash;
+            if(res.error) {
+              alert(res.error);
+            }
           }
         } catch (err) {
-          alert('Failed to favourite project.');
+          alert(res.error);
         }
       });
 
