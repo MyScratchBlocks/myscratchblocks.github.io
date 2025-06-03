@@ -229,7 +229,7 @@
         // Send view only if logged in
         const viewKey = `viewed_${id}`;
         const today = new Date().toISOString().slice(0, 10);
-        const lastViewed = 'deleted'
+        const lastViewed = localStorage.getItem(viewKey);
         if (lastViewed !== today) {
           try {
             await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
