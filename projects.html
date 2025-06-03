@@ -251,7 +251,7 @@
           return;
         }
         try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/like`, { method: 'POST' });
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love`, { method: 'POST' });
           if (res.ok) {
             let countEl = document.getElementById('meta-loves');
             countEl.textContent = Number(countEl.textContent) + 1;
@@ -273,7 +273,7 @@
           return;
         }
         try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favorite`, { method: 'POST' });
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
           if (res.ok) {
             let countEl = document.getElementById('meta-favorites');
             countEl.textContent = Number(countEl.textContent) + 1;
