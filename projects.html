@@ -249,7 +249,12 @@
         if (localStorage.getItem(likedKey)) {
           window.location.reload();
           return;
+        } else {
+          removeItem(likedKey)
+          window.location.reload();
+          return;
         }
+
         try {
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love`, { method: 'POST' });
           if (res.ok) {
@@ -274,7 +279,12 @@
         if (localStorage.getItem(favKey)) {
           window.location.href = window.location.pathname + window.location.hash;
           return;
+        } else {
+          removeItem(favKey)
+          window.location.reload();
+          return;
         }
+        
         try {
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
           if (res.ok) {
