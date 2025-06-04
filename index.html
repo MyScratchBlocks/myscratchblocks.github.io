@@ -411,7 +411,7 @@
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
         const projects = data.projects;
-	const projects = projects.slice(-3);
+	const projects = projects.slice(0, 3);
 
         if (!Array.isArray(projects) || projects.length === 0) {
           projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
