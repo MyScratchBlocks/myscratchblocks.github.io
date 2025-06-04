@@ -326,7 +326,7 @@
           comments.forEach(c => {
             const div = document.createElement('div');
             div.className = 'border rounded p-3 bg-gray-50';
-            div.innerHTML = `<p class="font-semibold text-indigo-700">${c.user}</p><p>${c.text}</p>`;
+            div.innerHTML = `<p class="font-semibold text-indigo-700">@${c.user} said:</p><p>${c.text}</p>`;
             commentsList.appendChild(div);
           });
         } catch {
