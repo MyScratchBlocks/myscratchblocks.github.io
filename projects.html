@@ -162,6 +162,7 @@
     const id = window.location.hash.slice(1);
     const iframe = document.getElementById('id-frame');
     const remix = document.getElementById('remix-btn');
+    document.getElementById('login-modal').style.display = 'none';
     remix.addEventListener('click', async () => {
       if(!localStorage.getItem('username')) {
         showModal();
