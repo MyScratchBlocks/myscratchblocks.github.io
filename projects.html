@@ -45,6 +45,7 @@
   </style>
 </head>
 <body class="antialiased">
+  <!-- Header -->
   <header class="bg-white shadow-sm py-4">
     <div class="container mx-auto px-4 flex justify-between items-center">
       <a href="#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
@@ -67,6 +68,7 @@
     </div>
   </header>
 
+  <!-- Project Viewer -->
   <section id="featured-projects" class="py-16 bg-gray-100">
     <div class="container mx-auto px-4">
       <iframe id="id-frame" src="#" class="mb-6"></iframe>
@@ -78,7 +80,6 @@
           <h2 class="text-2xl font-bold text-indigo-700 mb-2" id="meta-title"></h2>
           <p class="text-gray-700 mb-4" id="meta-description"></p>
           <p class="text-gray-600 mb-4" id="meta-instructions"></p>
-
           <div class="mb-4">
             <p class="text-sm text-gray-500"><strong>Main Coder:</strong> <span id="meta-author"></span></p>
             <p class="text-sm text-gray-500"><strong>Created:</strong> <span id="meta-date"></span></p>
@@ -107,7 +108,7 @@
             </div>
           </div>
 
-          <div id="action-buttons" class="flex gap-4">
+          <div class="flex gap-4">
             <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-arrow-up mr-2"></i> Upvote
             </button>
@@ -116,7 +117,6 @@
             </button>
           </div>
 
-          <!-- Added See Inside button -->
           <div class="mt-4">
             <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
               <i class="fa-solid fa-code mr-2"></i> See Inside
@@ -129,50 +129,42 @@
       </div>
     </div>
   </section>
-  
-  <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
-  <h3 class="text-xl font-semibold mb-4 text-indigo-700"><i class="fa-solid fa-comments mr-2"></i> Comments</h3>
-  
-  <div id="comments-list" class="space-y-6">
-    <p id="comments-loading" class="text-gray-500">Loading comments...</p>
-    <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
-  </div>
-  
-  <form id="comment-form" class="mt-8">
-    <textarea id="comment-input" rows="3" placeholder="Add a comment..." required
-      class="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-    <button type="submit"
-      class="mt-2 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-      id="comment-submit"><i class="fa-solid fa-plus mr-2"></i> Post Comment</button>
-  </form>
-</section>
 
-  <!-- Login Required Modal -->
-  <div id="login-modal" class="modal flex">
+  <!-- Comments -->
+  <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+    <h3 class="text-xl font-semibold mb-4 text-indigo-700"><i class="fa-solid fa-comments mr-2"></i> Comments</h3>
+    <div id="comments-list" class="space-y-6">
+      <p id="comments-loading" class="text-gray-500">Loading comments...</p>
+      <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
+    </div>
+    <form id="comment-form" class="mt-8">
+      <textarea id="comment-input" rows="3" placeholder="Add a comment..." required
+        class="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+      <button type="submit"
+        class="mt-2 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+        id="comment-submit"><i class="fa-solid fa-plus mr-2"></i> Post Comment</button>
+    </form>
+  </section>
+
+  <!-- Modal -->
+  <div id="login-modal" class="modal">
     <div class="modal-content">
       <h2 class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
       <p class="mb-4">You need to be logged in to use this feature.</p>
       <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
-      <a onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Close</a>
+      <button onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mt-2">Close</button>
     </div>
   </div>
 
   <script>
-    closeLoginModal();
     const id = window.location.hash.slice(1);
     const iframe = document.getElementById('id-frame');
     const remix = document.getElementById('remix-btn');
-    document.getElementById('login-modal').style.display = 'none';
-    remix.addEventListener('click', async () => {
-      if(!localStorage.getItem('username')) {
-        showModal();
-      } else {
-        window.location.href = `editor?remix=${window.location.hash.substring(1)}`;
-      }
-    });
     iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
-    const loginModal = document.getElementById('login-modal');
-    loginModal.style.display = 'none';
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').style.display = 'none';
+    }
 
     function showModal() {
       const loginModal = document.getElementById('login-modal');
@@ -187,12 +179,12 @@
 
       try {
         const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
-        if (!res.ok) throw new Error(`Status: ${res.status}`);
+        if (!res.ok) throw new Error();
         const meta = await res.json();
-        
+
         if(meta.author?.username === localStorage.getItem('username')) {
           document.getElementById('see-inside-btn').textContent = 'Edit Project';
-         } 
+        }
 
         document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
         document.title = meta.title || 'Untitled Project';
@@ -208,26 +200,20 @@
 
         loading.classList.add('hidden');
         content.classList.remove('hidden');
-      } catch (err) {
+      } catch {
         loading.classList.add('hidden');
         error.classList.remove('hidden');
       }
     }
 
-    function closeLoginModal() {
-      const loginModal = document.getElementById('login-modal');
-      loginModal.style.display = 'none';
-    }
-
     window.onload = async () => {
+      closeLoginModal(); // Ensure modal is hidden on load
       fetchMeta();
 
       const username = localStorage.getItem('username');
       if (username) {
-        const acc = document.getElementById('account');
-        if (acc) acc.textContent = username;
+        document.getElementById('account').textContent = username;
 
-        // Send view only if logged in
         const viewKey = `viewed_${id}`;
         const today = new Date().toISOString().slice(0, 10);
         const lastViewed = localStorage.getItem(viewKey);
@@ -235,94 +221,54 @@
           try {
             await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
             localStorage.setItem(viewKey, today);
-            window.location.reload();
-          } catch {
-            // Ignore errors silently
-          }
+          } catch {}
         }
       }
 
-      // Like button logic
       document.getElementById('like-btn').addEventListener('click', async () => {
         if (!localStorage.getItem('username')) return showModal();
-
         const likedKey = `liked_${id}`;
-        if (localStorage.getItem(likedKey)) {
-          window.location.reload();
-          return;
-        }
+        if (localStorage.getItem(likedKey)) return;
 
         try {
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love`, { method: 'POST' });
           if (res.ok) {
-            let countEl = document.getElementById('meta-loves');
-            countEl.textContent = Number(countEl.textContent) + 1;
             localStorage.setItem(likedKey, 'true');
-            window.location.reload();
-            if(res.error) {
-              alert(res.error);
-            }
-          { else {
-            removeItem(likedKey)
-            window.location.reload
+            document.getElementById('meta-loves').textContent++;
           }
-       }
-        } catch (err) {
-          window.location.href = window.location.pathname + window.location.hash;
-        }
+        } catch {}
       });
 
-      // Favorite button logic
       document.getElementById('fav-btn').addEventListener('click', async () => {
         if (!localStorage.getItem('username')) return showModal();
-
         const favKey = `favorited_${id}`;
-        if (localStorage.getItem(favKey)) {
-          window.location.href = window.location.pathname + window.location.hash;
-          return;
-        }
-        
+        if (localStorage.getItem(favKey)) return;
+
         try {
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
           if (res.ok) {
-            let countEl = document.getElementById('meta-favorites');
-            countEl.textContent = Number(countEl.textContent) + 1;
             localStorage.setItem(favKey, 'true');
-            window.location.href = window.location.pathname + window.location.hash;
-            if(res.error) {
-              alert(res.error);
-            }
-          { else {
-            removeItem(favKey)
-            window.location.reload
+            document.getElementById('meta-favorites').textContent++;
           }
-        }
-        } catch (err) {
-          alert(res.error);
-        }
+        } catch {}
       });
 
       document.getElementById('see-inside-btn').addEventListener('click', () => {
-        window.location.href = `editor#${window.location.hash.substring(1)}`;
+        window.location.href = `editor#${id}`;
       });
-      
-      // Comments logic
-      const commentsList = document.getElementById('comments-list');
-      const commentsLoading = document.getElementById('comments-loading');
-      const commentsError = document.getElementById('comments-error');
-      const commentForm = document.getElementById('comment-form');
-      const commentInput = document.getElementById('comment-input');
-      const commentSubmit = document.getElementById('comment-submit');
 
+      remix.addEventListener('click', () => {
+        if (!localStorage.getItem('username')) return showModal();
+        window.location.href = `editor?remix=${id}`;
+      });
+
+      // Comments
       async function fetchComments() {
         try {
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
-          if (!res.ok) throw new Error('Failed to fetch comments');
           const comments = await res.json();
-
-          commentsLoading.style.display = 'none';
-          commentsError.classList.add('hidden');
-
+          const commentsList = document.getElementById('comments-list');
+          document.getElementById('comments-loading').style.display = 'none';
           commentsList.innerHTML = '';
           comments.forEach(c => {
             const div = document.createElement('div');
@@ -331,35 +277,28 @@
             commentsList.appendChild(div);
           });
         } catch {
-          commentsLoading.style.display = 'none';
-          commentsError.classList.remove('hidden');
+          document.getElementById('comments-loading').style.display = 'none';
+          document.getElementById('comments-error').classList.remove('hidden');
         }
       }
 
       fetchComments();
 
-      commentForm.addEventListener('submit', async e => {
+      document.getElementById('comment-form').addEventListener('submit', async e => {
         e.preventDefault();
+        const text = document.getElementById('comment-input').value.trim();
         if (!localStorage.getItem('username')) return showModal();
+        if (!text) return;
 
-        const commentText = commentInput.value.trim();
-        if (!commentText) return;
-
-        commentSubmit.disabled = true;
         try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+          await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: commentText, username: localStorage.getItem('username') })
+            body: JSON.stringify({ text, username: localStorage.getItem('username') })
           });
-          if (!res.ok) throw new Error(res.error);
-
-          commentInput.value = '';
+          document.getElementById('comment-input').value = '';
           fetchComments();
-        } catch {
-          alert(res.error);
-        }
-        commentSubmit.disabled = false;
+        } catch {}
       });
     };
   </script>
