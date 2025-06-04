@@ -249,10 +249,6 @@
         if (localStorage.getItem(likedKey)) {
           window.location.reload();
           return;
-        } else {
-          removeItem(likedKey)
-          window.location.reload();
-          return;
         }
 
         try {
@@ -265,7 +261,11 @@
             if(res.error) {
               alert(res.error);
             }
+            { else {
+            removeItem(likedKey)
+            window.location.reload
           }
+       }
         } catch (err) {
           window.location.href = window.location.pathname + window.location.hash;
         }
@@ -279,10 +279,6 @@
         if (localStorage.getItem(favKey)) {
           window.location.href = window.location.pathname + window.location.hash;
           return;
-        } else {
-          removeItem(favKey)
-          window.location.reload();
-          return;
         }
         
         try {
@@ -295,6 +291,10 @@
             if(res.error) {
               alert(res.error);
             }
+          { else {
+            removeItem(favKey)
+            window.location.reload
+          }
           }
         } catch (err) {
           alert(res.error);
