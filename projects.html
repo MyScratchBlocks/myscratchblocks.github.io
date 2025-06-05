@@ -294,7 +294,7 @@
           await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, username: localStorage.getItem('username') })
+            body: JSON.stringify({ text, user: { username: localStorage.getItem('username') } })
           });
           document.getElementById('comment-input').value = '';
           fetchComments();
