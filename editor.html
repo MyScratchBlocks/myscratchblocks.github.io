@@ -118,9 +118,13 @@
       await init();
     }, 5000);
 
-    if(!document.getElementById('scratchFrame').src === `https://myscratchblocks.github.io/scratch-gui/editor#${window.location.hash.substring(1)}`) {
+    const iframe = document.getElementById('scratchFrame');
+    const expectedSrc = `https://myscratchblocks.github.io/scratch-gui/editor#${window.location.hash.substring(1)}`;
+
+    if (iframe.src !== expectedSrc) {
       window.location.href = `projects#${window.location.hash.substring(1)}`;
     }
+
   </script>
 </body>
 </html>
