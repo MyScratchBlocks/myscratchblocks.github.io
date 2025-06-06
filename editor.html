@@ -119,9 +119,8 @@
     }, 5000);
 
     const iframe = document.getElementById('scratchFrame');
-    const expectedSrc = `https://myscratchblocks.github.io/scratch-gui/editor#${window.location.hash.substring(1)}`
-
-    if (iframe.src !== expectedSrc) {
+    const iframeSrc = iframe.getAttribute('src');
+    if (iframeSrc !== expectedSrc) {
       window.location.href = `projects#${window.location.hash.substring(1)}`;
     }
 
