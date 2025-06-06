@@ -152,168 +152,157 @@
       <h2 class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
       <p class="mb-4">You need to be logged in to use this feature.</p>
       <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
-      <button onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded ml-4">Cancel</button>
+      <button onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mt-2">Close</button>
     </div>
   </div>
 
   <script>
-    // Show modal for login prompt
-    function showModal() {
-      document.getElementById('login-modal').style.display = 'flex';
-    }
+    const id = window.location.hash.slice(1);
+    const iframe = document.getElementById('id-frame');
+    const remix = document.getElementById('remix-btn');
+    iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
+
     function closeLoginModal() {
       document.getElementById('login-modal').style.display = 'none';
     }
 
+    function showModal() {
+      const loginModal = document.getElementById('login-modal');
+      loginModal.style.display = 'flex';
+      setTimeout(() => loginModal.style.display = 'none', 3000);
+    }
+
+    async function fetchMeta() {
+      const loading = document.getElementById('meta-loading');
+      const error = document.getElementById('meta-error');
+      const content = document.getElementById('meta-content');
+
+      try {
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+        if (!res.ok) throw new Error();
+        const meta = await res.json();
+
+        if(meta.author?.username === localStorage.getItem('username')) {
+          document.getElementById('see-inside-btn').textContent = 'Edit Project';
+        }
+
+        document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
+        document.title = meta.title || 'Untitled Project';
+        document.getElementById('meta-description').textContent = meta.description || 'No description.';
+        document.getElementById('meta-instructions').textContent = meta.instructions || '';
+        document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
+        document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
+
+        document.getElementById('meta-views').textContent = meta.stats?.views ?? 1;
+        document.getElementById('meta-loves').textContent = meta.stats?.loves ?? 0;
+        document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
+        document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
+
+        loading.classList.add('hidden');
+        content.classList.remove('hidden');
+      } catch {
+        loading.classList.add('hidden');
+        error.classList.remove('hidden');
+      }
+    }
+
     window.onload = async () => {
-      const id = location.pathname.split('/')[2];
-      if (!id) return;
+      closeLoginModal(); // Ensure modal is hidden on load
+      fetchMeta();
 
-      // Load project iframe source
-      document.getElementById('id-frame').src = `https://editor-compiler.onrender.com/project/${id}`;
+      const username = localStorage.getItem('username');
+      if (username) {
+        document.getElementById('account').textContent = username;
 
-      // Fetch project metadata
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}`);
-        if (!res.ok) throw new Error('Failed to fetch project');
-        const project = await res.json();
-
-        // Show metadata
-        document.getElementById('meta-title').textContent = project.title;
-        document.getElementById('meta-description').textContent = project.description || '';
-        document.getElementById('meta-instructions').textContent = project.instructions || '';
-        document.getElementById('meta-author').textContent = project.author || 'Unknown';
-        document.getElementById('meta-date').textContent = project.dateCreated || 'Unknown';
-
-        document.getElementById('meta-views').textContent = project.views;
-        document.getElementById('meta-loves').textContent = project.loves;
-        document.getElementById('meta-favorites').textContent = project.favorites;
-        document.getElementById('meta-remixes').textContent = project.remixes || 0;
-
-        document.getElementById('meta-loading').classList.add('hidden');
-        document.getElementById('meta-content').classList.remove('hidden');
-
-        // Increment views on every page load (no frontend limit)
-        await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
-
-      } catch (err) {
-        document.getElementById('meta-loading').classList.add('hidden');
-        document.getElementById('meta-error').classList.remove('hidden');
-        console.error(err);
-      }
-
-      // Load comments
-      loadComments(id);
-    };
-
-    async function loadComments(projectId) {
-      const commentsList = document.getElementById('comments-list');
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectId}/comments`);
-        if (!res.ok) throw new Error('Failed to fetch comments');
-        const comments = await res.json();
-
-        document.getElementById('comments-loading').classList.add('hidden');
-        if (comments.length === 0) {
-          commentsList.innerHTML = '<p class="text-gray-500">No comments yet. Be the first!</p>';
-          return;
+        const viewKey = `viewed_${id}`;
+        const today = new Date().toISOString().slice(0, 10);
+        const lastViewed = localStorage.getItem(viewKey);
+        if (lastViewed !== today) {
+          try {
+            await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
+            localStorage.setItem(viewKey, today);
+          } catch(err) {
+            alert('Failed To View Project', err);
+          }
         }
-
-        commentsList.innerHTML = comments.map(c => `
-          <div class="border border-gray-300 rounded p-3">
-            <p class="text-gray-700"><strong>${escapeHTML(c.author)}</strong> <span class="text-gray-500 text-xs">${new Date(c.date).toLocaleString()}</span></p>
-            <p class="mt-1">${escapeHTML(c.text)}</p>
-          </div>
-        `).join('');
-
-      } catch (err) {
-        document.getElementById('comments-loading').classList.add('hidden');
-        document.getElementById('comments-error').classList.remove('hidden');
-        console.error(err);
       }
-    }
 
-    // Escape HTML helper to prevent XSS
-    function escapeHTML(str) {
-      if (!str) return '';
-      return str.replace(/[&<>"']/g, function(m) {
-        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+      document.getElementById('like-btn').addEventListener('click', async () => {
+        if (!localStorage.getItem('username')) return showModal();
+        const likedKey = `liked_${id}`;
+        if (localStorage.getItem(likedKey)) return;
+
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love`, { method: 'POST' });
+          if (res.ok) {
+            localStorage.setItem(likedKey, 'true');
+            document.getElementById('meta-loves').textContent++;
+          }
+        } catch {}
       });
-    }
 
-    // Like (Upvote) button
-    document.getElementById('like-btn').addEventListener('click', async () => {
-      if (!localStorage.getItem('username')) {
-        showModal();
-        return;
-      }
-      const id = location.pathname.split('/')[2];
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love`, { method: 'POST' });
-        if (res.ok) {
-          const metaLoves = document.getElementById('meta-loves');
-          metaLoves.textContent = parseInt(metaLoves.textContent) + 1;
+      document.getElementById('fav-btn').addEventListener('click', async () => {
+        if (!localStorage.getItem('username')) return showModal();
+        const favKey = `favorited_${id}`;
+        if (localStorage.getItem(favKey)) return;
+
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
+          if (res.ok) {
+            localStorage.setItem(favKey, 'true');
+            document.getElementById('meta-favorites').textContent++;
+          }
+        } catch {}
+      });
+
+      document.getElementById('see-inside-btn').addEventListener('click', () => {
+        window.location.href = `editor#${id}`;
+      });
+
+      remix.addEventListener('click', () => {
+        if (!localStorage.getItem('username')) return showModal();
+        window.location.href = `editor?remix=${id}`;
+      });
+
+      // Comments
+      async function fetchComments() {
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+          const comments = await res.json();
+          const commentsList = document.getElementById('comments-list');
+          document.getElementById('comments-loading').style.display = 'none';
+          commentsList.innerHTML = '';
+          comments.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'border rounded p-3 bg-gray-50';
+            div.innerHTML = `<p class="font-semibold text-indigo-700">@${c.user} said:</p><p>${c.text}</p>`;
+            commentsList.appendChild(div);
+          });
+        } catch {
+          document.getElementById('comments-loading').style.display = 'none';
+          document.getElementById('comments-error').classList.remove('hidden');
         }
-      } catch (err) {
-        console.error(err);
       }
-    });
 
-    // Favorite button
-    document.getElementById('fav-btn').addEventListener('click', async () => {
-      if (!localStorage.getItem('username')) {
-        showModal();
-        return;
-      }
-      const id = location.pathname.split('/')[2];
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
-        if (res.ok) {
-          const metaFavorites = document.getElementById('meta-favorites');
-          metaFavorites.textContent = parseInt(metaFavorites.textContent) + 1;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    });
+      fetchComments();
 
-    // Comment form submission
-    document.getElementById('comment-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!localStorage.getItem('username')) {
-        showModal();
-        return;
-      }
-      const id = location.pathname.split('/')[2];
-      const input = document.getElementById('comment-input');
-      const text = input.value.trim();
-      if (!text) return;
+      document.getElementById('comment-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const text = document.getElementById('comment-input').value.trim();
+        if (!localStorage.getItem('username')) return showModal();
+        if (!text) return;
 
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }),
-        });
-        if (res.ok) {
-          input.value = '';
-          loadComments(id);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
-    // See Inside and Remix buttons (assuming they redirect or open new page)
-    document.getElementById('see-inside-btn').addEventListener('click', () => {
-      const id = location.pathname.split('/')[2];
-      location.href = `/editor#${id}`;
-    });
-
-    document.getElementById('remix-btn').addEventListener('click', () => {
-      const id = location.pathname.split('/')[2];
-      location.href = `/editor?remix=${id}`;
-    });
+        try {
+          await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, user: { username: localStorage.getItem('username') } })
+          });
+          document.getElementById('comment-input').value = '';
+          fetchComments();
+        } catch {}
+      });
+    };
   </script>
 </body>
 </html>
