@@ -221,7 +221,9 @@
           try {
             await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
             localStorage.setItem(viewKey, today);
-          } catch {}
+          } catch(err) {
+            alert('Failed To View Project', err);
+          }
         }
       }
 
