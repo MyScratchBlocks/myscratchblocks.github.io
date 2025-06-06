@@ -216,7 +216,7 @@ window.onload = async () => {
 
     // Always send a view increment (no limiting)
     try {
-      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/views`, { method: 'POST' });
+      const res = await fetch(`https://editor-compiler.onrender.com/api/${id}/views`, { method: 'POST' });
       const json = await res.json();
       if(json.error) {
         alert(json.error);
