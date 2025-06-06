@@ -118,7 +118,7 @@
       await init();
     }, 5000);
 
-    if(document.getElementById('scratchFrame').src === 'https://myscratchblocks.github.io/scratch-gui/#') {
+    if(document.getElementById('scratchFrame').src.includes('https://myscratchblocks.github.io/scratch-gui/editor')) {
       window.location.href = `projects#${window.location.hash.substring(1)}`;
     }
   </script>
