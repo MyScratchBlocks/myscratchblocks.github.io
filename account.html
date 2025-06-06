@@ -155,11 +155,9 @@
 
           document.getElementById('mainText').innerHTML = `
             <p><strong>Total Projects:</strong> ${uploadedprojects}</p>
-            <p><strong>Total Views:strong> ${views}</p>
-            <p><strong>Total Likes:strong> ${likes}</p>
-            <p><strong>Total Favourites:strong> ${favs}</p>
-            <p><strong>Raw Data:</strong></p>
-            <pre class="bg-gray-100 p-2 rounded text-sm">${JSON.stringify(json, null, 2)}</pre>
+            <p><strong>Total Views:<strong> ${views}</p>
+            <p><strong>Total Likes:<strong> ${likes}</p>
+            <p><strong>Total Favourites:<strong> ${favs}</p>
           `;
         } catch (err) {
           document.getElementById('mainText').innerHTML = `<p class="text-red-500">Unable to fetch user stats.</p>`;
