@@ -31,8 +31,25 @@
       const username = localStorage.getItem('username');
       const sb3Base64 = localStorage.getItem('sb3');
 
+      const params = new URLSearchParams(window.location.search);
+      const remix = params.get('remix');
+      if(remix && username) {
+        const res = await fetch(`https://editor-compiler.onrender.com/remix/${remix}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ remixId: remix, username: localStorage.getItem('username') })
+        });
+
+        const json = await res.json();
+        if(json.id) {
+          window.location.href = `projects#${json.id}`;
+        }
+      }
+        
       // If no hash and both username and sb3 exist, try to share the project
-      if (!window.location.hash.substring(1) && username) {
+      if (!window.location.hash.substring(1) && username && !remix) {
         try {
           const response = await fetch('https://editor-compiler.onrender.com/', {
             method: 'POST',
