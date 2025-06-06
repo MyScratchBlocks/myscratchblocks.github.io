@@ -218,7 +218,9 @@ window.onload = async () => {
     try {
       const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/view`, { method: 'POST' });
       const json = await res.json();
-      alert(json.error);
+      if(json.error) {
+        alert(json.error);
+      }
     } catch(err) {
       alert('Failed To View Project', err);
     }
