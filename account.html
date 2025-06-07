@@ -143,7 +143,7 @@
       if (isLoggedIn && username) {
         document.getElementById('authSection')?.classList.add('hidden');
         document.getElementById('loggedInContent')?.classList.remove('hidden');
-        document.getElementById('welcomeMessage').textContent = `Welcome to your account, ${username}!`;
+        document.getElementById('welcomeMessage').textContent = `Welcome to your account dashboard, ${username}!`;
 
         try {
           const res = await fetch(`https://editor-compiler.onrender.com/api/users/${username}`);
@@ -154,13 +154,13 @@
           const favs = json.totalFavorites ?? "N/A";
 
           document.getElementById('mainText').innerHTML = `
-            <p><strong>Total Projects:</strong> ${uploadedprojects}</p>
+            <p><strong>Number Of Projects I Uploaded:</strong> ${uploadedprojects}</p>
             <p><strong>Total Views:<strong> ${views}</p>
-            <p><strong>Total Likes:<strong> ${likes}</p>
+            <p><strong>Total Upvotes:<strong> ${likes}</p>
             <p><strong>Total Favourites:<strong> ${favs}</p>
           `;
         } catch (err) {
-          document.getElementById('mainText').innerHTML = `<p class="text-red-500">Unable to fetch user stats.</p>`;
+          document.getElementById('mainText').innerHTML = `<p class="text-red-500">Unable to fetch user stats. If you need to see your stats, please reload or/and try again later.</p>`;
         }
       } else {
         await checkAuth();
