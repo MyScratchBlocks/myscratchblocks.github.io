@@ -7,10 +7,29 @@
   <title>MyScratchBlocks - Project Viewer</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    * {box-sizing: border-box}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Set a style for all buttons */
+/* Base resets and global styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+  color: #334155;
+}
+
+iframe {
+  border: 8px solid #0c99d5;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(12, 153, 213, 0.5);
+  width: 100%;
+  height: 600px;
+  background: #e0f7fa;
+}
+
+/* Button styles */
 button {
   background-color: #04AA6D;
   color: white;
@@ -23,61 +42,53 @@ button {
 }
 
 button:hover {
-  opacity:1;
+  opacity: 1;
 }
 
-/* Float cancel and delete buttons and add an equal width */
 .cancelbtn, .deletebtn {
   float: left;
   width: 50%;
 }
 
-/* Add a color to the cancel button */
 .cancelbtn {
   background-color: #ccc;
   color: black;
 }
 
-/* Add a color to the delete button */
 .deletebtn {
   background-color: #f44336;
 }
 
-/* Add padding and center-align text to the container */
+/* Container */
 .container {
   padding: 16px;
   text-align: center;
 }
 
-/* The Modal (background) */
+/* Modal background */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: #474e5d;
-  padding-top: 50px;
+  display: none;
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  justify-content: center;
 }
 
-/* Modal Content/Box */
+/* Modal content box */
 .modal-content {
-  background-color: #fefefe;
-  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  max-width: 90%;
+  width: 400px;
+  margin: 5% auto 15% auto;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
 }
 
-/* Style the horizontal ruler */
-hr {
-  border: 1px solid #f1f1f1;
-  margin-bottom: 25px;
-}
-
-/* The Modal Close Button (x) */
+/* Modal close button */
 .close {
   position: absolute;
   right: 35px;
@@ -93,53 +104,32 @@ hr {
   cursor: pointer;
 }
 
-/* Clear floats */
+/* Horizontal line */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Clearfix for floats */
 .clearfix::after {
   content: "";
   clear: both;
   display: table;
 }
 
-/* Change styles for cancel button and delete button on extra small screens */
+/* Responsive for extra small screens */
 @media screen and (max-width: 300px) {
   .cancelbtn, .deletebtn {
     width: 100%;
   }
 }
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f8fafc;
-      color: #334155;
-    }
-    iframe {
-      border: 8px solid #0c99d5;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(12, 153, 213, 0.5);
-      width: 100%;
-      height: 600px;
-      background: #e0f7fa;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 50;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.6);
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 2rem;
-      border-radius: 0.5rem;
-      text-align: center;
-      max-width: 90%;
-      width: 400px;
-    }
-    .disabled-btn {
-      opacity: 0.5;
-      pointer-events: none;
-    }
+
+/* Disabled button style */
+.disabled-btn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
   </style>
 </head>
 <body class="antialiased">
