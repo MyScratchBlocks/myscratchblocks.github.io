@@ -95,8 +95,7 @@
     if(userProfileName) {
       document.getElementById('iframe').src = `https://editor-compiler.onrender.com/users/${userProfileName}`;
     } else {
-      document.getElementById('iframe').srcdoc = 'User Not Found'; // or some default page
-      window.location.replace("https://myscratchblocks.github.io/404"); // Redirects to 404 page
+      document.getElementById('iframe').src = `https://myscratchblocks.github.io/404`; // or some default page
     }
   </script>
 </body>
