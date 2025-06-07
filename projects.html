@@ -3,141 +3,153 @@
 <head>
   <script src="https://kit.fontawesome.com/1373677f05.js" crossorigin="anonymous"></script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MyScratchBlocks - Project Viewer</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Base resets and global styles */
-* {
-  box-sizing: border-box;
-}
+    /* Reset and global styles */
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f8fafc;
-  color: #334155;
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+      margin: 0;
+      padding: 0;
+    }
 
-iframe {
-  border: 8px solid #0c99d5;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(12, 153, 213, 0.5);
-  width: 100%;
-  height: 600px;
-  background: #e0f7fa;
-}
+    iframe {
+      border: 8px solid #0c99d5;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(12, 153, 213, 0.5);
+      width: 100%;
+      height: 600px;
+      background: #e0f7fa;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
 
-/* Button styles */
-button {
-  background-color: #04AA6D;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  opacity: 0.9;
-}
+    /* Buttons */
+    button {
+      background-color: #04AA6D;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      opacity: 0.9;
+      font-size: 16px;
+      border-radius: 6px;
+      transition: opacity 0.3s ease;
+      user-select: none;
+    }
 
-button:hover {
-  opacity: 1;
-}
+    button:hover {
+      opacity: 1;
+    }
 
-.cancelbtn, .deletebtn {
-  float: left;
-  width: 50%;
-}
+    /* Cancel and delete buttons in modal */
+    .cancelbtn, .deletebtn {
+      float: left;
+      width: 48%;
+      margin: 1%;
+      padding: 12px 0;
+      font-weight: 600;
+      border-radius: 6px;
+      user-select: none;
+    }
 
-.cancelbtn {
-  background-color: #ccc;
-  color: black;
-}
+    .cancelbtn {
+      background-color: #ccc;
+      color: black;
+    }
 
-.deletebtn {
-  background-color: #f44336;
-}
+    .deletebtn {
+      background-color: #f44336;
+    }
 
-/* Container */
-.container {
-  padding: 16px;
-  text-align: center;
-}
+    /* Container for modal content */
+    .container {
+      padding: 16px;
+      text-align: center;
+    }
 
-/* Modal background */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 50;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  align-items: center;
-  justify-content: center;
-}
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      align-items: center;
+      justify-content: center;
+      display: flex;
+    }
 
-/* Modal content box */
-.modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  text-align: center;
-  max-width: 90%;
-  width: 400px;
-  margin: 5% auto 15% auto;
-  border: 1px solid #888;
-}
+    .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      max-width: 90%;
+      width: 400px;
+      margin: auto;
+      border: 1px solid #888;
+      position: relative;
+    }
 
-/* Modal close button */
-.close {
-  position: absolute;
-  right: 35px;
-  top: 15px;
-  font-size: 40px;
-  font-weight: bold;
-  color: #f1f1f1;
-}
+    /* Modal close button */
+    .close {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 32px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+      user-select: none;
+    }
 
-.close:hover,
-.close:focus {
-  color: #f44336;
-  cursor: pointer;
-}
+    .close:hover,
+    .close:focus {
+      color: #f44336;
+    }
 
-/* Horizontal line */
-hr {
-  border: 1px solid #f1f1f1;
-  margin-bottom: 25px;
-}
+    /* Clearfix for floats */
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
 
-/* Clearfix for floats */
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-}
+    /* Responsive adjustments */
+    @media screen and (max-width: 300px) {
+      .cancelbtn, .deletebtn {
+        width: 100%;
+        margin: 0 0 10px 0;
+        float: none;
+      }
+    }
 
-/* Responsive for extra small screens */
-@media screen and (max-width: 300px) {
-  .cancelbtn, .deletebtn {
-    width: 100%;
-  }
-}
-
-/* Disabled button style */
-.disabled-btn {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
+    /* Disabled button style */
+    .disabled-btn {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body class="antialiased">
+
   <!-- Header -->
   <header class="bg-white shadow-sm py-4">
     <div class="container mx-auto px-4 flex justify-between items-center">
       <a href="#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
-        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/>
         </svg>
         <span>MyScratchBlocks</span>
@@ -156,10 +168,10 @@ hr {
     </div>
   </header>
 
-  <!-- Project Viewer -->
+  <!-- Project Viewer Section -->
   <section id="featured-projects" class="py-16 bg-gray-100">
     <div class="container mx-auto px-4">
-      <iframe id="id-frame" src="#" class="mb-6"></iframe>
+      <iframe id="id-frame" src="#" title="Project Viewer"></iframe>
 
       <div id="project-meta" class="bg-white p-6 rounded-lg shadow-md">
         <div id="meta-loading" class="text-sm text-gray-500">Loading project metadata...</div>
@@ -169,73 +181,80 @@ hr {
           <p class="text-gray-700 mb-4" id="meta-description"></p>
           <p class="text-gray-600 mb-4" id="meta-instructions"></p>
           <div class="mb-4">
-            <p class="text-sm text-gray-500"><i class="fa-solid fa-user" style="color: #63E6BE;"></i><strong>Main Coder:</strong> <span id="meta-author"></span></p>
-            <p class="text-sm text-gray-500"><i class="fa-solid fa-calendar" style="color: #63E6BE;"></i><strong>Created:</strong> <span id="meta-date"></span></p>
+            <p class="text-sm text-gray-500"><i class="fa-solid fa-user" style="color: #63E6BE;" aria-hidden="true"></i><strong>Main Coder:</strong> <span id="meta-author"></span></p>
+            <p class="text-sm text-gray-500"><i class="fa-solid fa-calendar" style="color: #63E6BE;" aria-hidden="true"></i><strong> Created:</strong> <span id="meta-date"></span></p>
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-4">
             <div>
-              <i class="fa-solid fa-eye" style="color: #63E6BE;"></i>
+              <i class="fa-solid fa-eye" style="color: #63E6BE;" aria-hidden="true"></i>
               <p class="text-lg font-semibold text-indigo-600" id="meta-views">0</p>
               <p class="text-sm text-gray-500">Views</p>
             </div>
             <div>
-              <i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i>
+              <i class="fa-solid fa-arrow-up" style="color: #63E6BE;" aria-hidden="true"></i>
               <p class="text-lg font-semibold text-blue-600" id="meta-loves">0</p>
               <p class="text-sm text-gray-500">Upvotes</p>
             </div>
             <div>
-              <i class="fa-solid fa-star" style="color: #63E6BE;"></i>
+              <i class="fa-solid fa-star" style="color: #63E6BE;" aria-hidden="true"></i>
               <p class="text-lg font-semibold text-yellow-500" id="meta-favorites">0</p>
               <p class="text-sm text-gray-500">Favorites</p>
             </div>
             <div>
-              <i class="fa-solid fa-circle" style="color: #63E6BE;"></i>
+              <i class="fa-solid fa-circle" style="color: #63E6BE;" aria-hidden="true"></i>
               <p class="text-lg font-semibold text-green-600" id="meta-remixes">0</p>
               <p class="text-sm text-gray-500">Remixes</p>
             </div>
           </div>
 
-          <div class="flex gap-4">
-            <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg">
+          <div class="flex gap-4 mb-4">
+            <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-arrow-up mr-2"></i> Upvote
             </button>
-            <button id="fav-btn" class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg">
+            <button id="fav-btn" class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-star mr-2"></i> Favourite
             </button>
           </div>
 
-          <div class="mt-4">
-            <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
+          <div class="flex gap-4">
+            <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-code mr-2"></i> See Inside
             </button>
-            <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg">
+            <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-code mr-2"></i> Remix
             </button>
           </div>
         </div>
       </div>
-      <button onclick="document.getElementById('id01').style.display='block'">Report Project For Investigation</button>
-<div id="id01" class="modal">
-  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-  <form class="modal-content" action="/action_page.php">
-    <div class="container">
-      <h1>Report This Project</h1>
-      <p>Are you sure that you want to report this project for investigation by an admin at MyScratchBlocks? Please don't false report, since it wastes our time.</p>
 
-      <div class="clearfix">
-        <button type="button" class="cancelbtn">Cancel</button>
-        <button type="button" class="deletebtn">Report</button>
+      <button onclick="document.getElementById('id01').style.display='flex'" class="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg w-full max-w-xs mx-auto block">
+        Report Project For Investigation
+      </button>
+
+      <!-- Report Modal -->
+      <div id="id01" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal" aria-label="Close Modal">&times;</span>
+        <form id="report-form" class="modal-content" onsubmit="return false;">
+          <div class="container">
+            <h1 id="modal-title">Report This Project</h1>
+            <p>Are you sure that you want to report this project for investigation by an admin at MyScratchBlocks? Please don't false report, since it wastes our time.</p>
+
+            <div class="clearfix" style="margin-top: 24px;">
+              <button type="button" class="cancelbtn" id="cancel-report-btn">Cancel</button>
+              <button type="submit" class="deletebtn" id="submit-report-btn">Report</button>
+            </div>
+          </div>
+        </form>
       </div>
-    </div>
-  </form>
-</div>
     </div>
   </section>
 
-  <!-- Comments -->
+  <!-- Comments Section -->
   <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
-    <h3 class="text-xl font-semibold mb-4 text-indigo-700"><i class="fa-solid fa-comments mr-2"></i> Comments</h3>
+    <h3 class="text-xl font-semibold mb-4 text-indigo-700">
+      <i class="fa-solid fa-comments mr-2" aria-hidden="true"></i> Comments
+    </h3>
     <div id="comments-list" class="space-y-6">
       <p id="comments-loading" class="text-gray-500">Loading comments...</p>
       <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
@@ -249,10 +268,10 @@ hr {
     </form>
   </section>
 
-  <!-- Modal -->
-  <div id="login-modal" class="modal">
+  <!-- Login Required Modal -->
+  <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
     <div class="modal-content">
-      <h2 class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
+      <h2 id="login-modal-title" class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
       <p class="mb-4">You need to be logged in to use this feature.</p>
       <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
       <button onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mt-2">Close</button>
