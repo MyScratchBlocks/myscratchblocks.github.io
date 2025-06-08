@@ -1,242 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Project Viewer</title>
+  <script src="https://kit.fontawesome.com/1373677f05.js" crossorigin="anonymous"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyScratchBlocks - Project Viewer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* Reset and global styles */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: sans-serif;
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
-    }
-
-    header {
-      background: #4a90e2;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 1rem;
     }
 
     iframe {
+      border: 8px solid #0c99d5;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(12, 153, 213, 0.5);
       width: 100%;
-      height: 400px;
-      border: none;
-      margin-bottom: 1rem;
+      height: 600px;
+      background: #e0f7fa;
+      display: block;
+      margin-bottom: 1.5rem;
     }
 
-    .btn {
-      padding: 0.5rem 1rem;
-      margin: 0.25rem;
-      background: #4a90e2;
+    /* Buttons */
+    button {
+      background-color: #04AA6D;
       color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
+      width: 100%;
+      opacity: 0.9;
+      font-size: 16px;
+      border-radius: 6px;
+      transition: opacity 0.3s ease;
+      user-select: none;
     }
 
-    .btn.secondary {
-      background: #ccc;
+    button:hover {
+      opacity: 1;
+    }
+
+    /* Cancel and delete buttons in modal */
+    .cancelbtn, .deletebtn {
+      float: left;
+      width: 48%;
+      margin: 1%;
+      padding: 12px 0;
+      font-weight: 600;
+      border-radius: 6px;
+      user-select: none;
+    }
+
+    .cancelbtn {
+      background-color: #ccc;
       color: black;
     }
 
-    .meta {
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+    .deletebtn {
+      background-color: #f44336;
     }
 
+    /* Container for modal content */
+    .container {
+      padding: 16px;
+      text-align: center;
+    }
+
+    /* Modal styles */
     .modal {
       display: none;
       position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
+      z-index: 50;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
       align-items: center;
+      justify-content: center;
+      display: flex;
     }
 
     .modal-content {
-      background: white;
+      background-color: white;
       padding: 2rem;
-      border-radius: 8px;
-      max-width: 400px;
-      width: 90%;
+      border-radius: 0.5rem;
+      text-align: center;
+      max-width: 90%;
+      width: 400px;
+      margin: auto;
+      border: 1px solid #888;
+      position: relative;
     }
 
-    .modal-content input, .modal-content textarea {
-      width: 100%;
-      margin-bottom: 1rem;
-      padding: 0.5rem;
-    }
-
-    .error {
-      color: red;
+    /* Modal close button */
+    .close {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 32px;
       font-weight: bold;
+      color: #888;
+      cursor: pointer;
+      user-select: none;
     }
 
-    .loading {
-      font-style: italic;
-      color: #888;
+    .close:hover,
+    .close:focus {
+      color: #f44336;
+    }
+
+    /* Clearfix for floats */
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 300px) {
+      .cancelbtn, .deletebtn {
+        width: 100%;
+        margin: 0 0 10px 0;
+        float: none;
+      }
+    }
+
+    /* Disabled button style */
+    .disabled-btn {
+      opacity: 0.5;
+      pointer-events: none;
     }
   </style>
 </head>
-<body>
+<body class="antialiased">
 
-<header>
-  <h1 id="meta-title">Loading Project...</h1>
-</header>
+  <!-- Header -->
+  <header class="bg-white shadow-sm py-4">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <a href="#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/>
+        </svg>
+        <span>MyScratchBlocks</span>
+      </a>
+      <nav class="hidden md:flex space-x-6">
+        <a href="/" class="text-gray-600 hover:text-indigo-600 font-medium">Home</a>
+        <a href="/#features" class="text-gray-600 hover:text-indigo-600 font-medium">Features</a>
+        <a href="/#block-ideas" class="text-gray-600 hover:text-indigo-600 font-medium">Block Ideas</a>
+        <a href="/#project-ideas" class="text-gray-600 hover:text-indigo-600 font-medium">Project Ideas</a>
+        <a href="/#featured-projects" class="text-gray-600 hover:text-indigo-600 font-medium">Featured Projects</a>
+        <a href="/#access" class="text-gray-600 hover:text-indigo-600 font-medium">Access</a>
+        <a href="/#community" class="text-gray-600 hover:text-indigo-600 font-medium">Community</a>
+        <a href="/#about" class="text-gray-600 hover:text-indigo-600 font-medium">About</a>
+        <a id="account" href="/account" class="text-gray-600 hover:text-indigo-600 font-medium">Account</a>
+      </nav>
+    </div>
+  </header>
 
-<div class="container">
+  <!-- Project Viewer Section -->
+  <section id="featured-projects" class="py-16 bg-gray-100">
+    <div class="container mx-auto px-4">
+      <iframe id="id-frame" src="#" title="Project Viewer"></iframe>
 
-  <iframe id="id-frame"></iframe>
+      <div id="project-meta" class="bg-white p-6 rounded-lg shadow-md">
+        <div id="meta-loading" class="text-sm text-gray-500">Loading project metadata...</div>
+        <div id="meta-error" class="hidden text-sm text-red-600">Failed to load metadata.</div>
+        <div id="meta-content" class="hidden">
+          <center><h2 class="text-2xl font-bold text-indigo-700 mb-2" id="meta-title"></h2></center>
+          <p class="text-gray-700 mb-4" id="meta-description"></p>
+          <p class="text-gray-600 mb-4" id="meta-instructions"></p>
+          <div class="mb-4">
+            <p class="text-sm text-gray-500"><i class="fa-solid fa-user" style="color: #63E6BE;" aria-hidden="true"></i><strong>Main Coder:</strong> <span id="meta-author"></span></p>
+            <p class="text-sm text-gray-500"><i class="fa-solid fa-calendar" style="color: #63E6BE;" aria-hidden="true"></i><strong> Created:</strong> <span id="meta-date"></span></p>
+          </div>
 
-  <div class="meta">
-    <p><strong>Author:</strong> <span id="meta-author">Loading...</span></p>
-    <p><strong>Created:</strong> <span id="meta-date">Loading...</span></p>
-    <p><strong>Instructions:</strong> <span id="meta-instructions">Loading...</span></p>
-    <p><strong>Description:</strong> <span id="meta-description">Loading...</span></p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-4">
+            <div>
+              <i class="fa-solid fa-eye" style="color: #63E6BE;" aria-hidden="true"></i>
+              <p class="text-lg font-semibold text-indigo-600" id="meta-views">0</p>
+              <p class="text-sm text-gray-500">Views</p>
+            </div>
+            <div>
+              <i class="fa-solid fa-arrow-up" style="color: #63E6BE;" aria-hidden="true"></i>
+              <p class="text-lg font-semibold text-blue-600" id="meta-loves">0</p>
+              <p class="text-sm text-gray-500">Upvotes</p>
+            </div>
+            <div>
+              <i class="fa-solid fa-star" style="color: #63E6BE;" aria-hidden="true"></i>
+              <p class="text-lg font-semibold text-yellow-500" id="meta-favorites">0</p>
+              <p class="text-sm text-gray-500">Favorites</p>
+            </div>
+            <div>
+              <i class="fa-solid fa-circle" style="color: #63E6BE;" aria-hidden="true"></i>
+              <p class="text-lg font-semibold text-green-600" id="meta-remixes">0</p>
+              <p class="text-sm text-gray-500">Remixes</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 mb-4">
+            <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
+              <i class="fa-solid fa-arrow-up mr-2"></i> Upvote
+            </button>
+            <button id="fav-btn" class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg flex-1">
+              <i class="fa-solid fa-star mr-2"></i> Favourite
+            </button>
+          </div>
+
+          <div class="flex gap-4">
+            <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
+              <i class="fa-solid fa-code mr-2"></i> See Inside
+            </button>
+            <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
+              <i class="fa-solid fa-code mr-2"></i> Remix
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="document.getElementById('id01').style.display='flex'" class="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg w-full max-w-xs mx-auto block">
+        Report Project For Investigation
+      </button>
+
+      <!-- Report Modal -->
+      <div id="id01" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal" aria-label="Close Modal">&times;</span>
+        <form id="report-form" class="modal-content" onsubmit="return false;">
+          <div class="container">
+            <h1 id="modal-title">Report This Project</h1>
+            <p>Are you sure that you want to report this project for investigation by an admin at MyScratchBlocks? Please don't false report, since it wastes our time.</p>
+
+            <div class="clearfix" style="margin-top: 24px;">
+              <button type="button" onclick="document.getElementById('id01').style.display = 'none'" class="cancelbtn" id="cancel-report-btn">Cancel</button>
+              <button type="submit" onclick="postReport()" class="deletebtn" id="submit-report-btn">Report</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comments Section -->
+  <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+    <h3 class="text-xl font-semibold mb-4 text-indigo-700">
+      <i class="fa-solid fa-comments mr-2" aria-hidden="true"></i> Comments
+    </h3>
+    <div id="comments-list" class="space-y-6">
+      <p id="comments-loading" class="text-gray-500">Loading comments...</p>
+      <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
+    </div>
+    <form id="comment-form" class="mt-8">
+      <textarea id="comment-input" rows="3" placeholder="Add a comment..." required
+        class="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+      <button type="submit"
+        class="mt-2 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+        id="comment-submit"><i class="fa-solid fa-plus mr-2"></i> Post Comment</button>
+    </form>
+  </section>
+
+  <!-- Login Required Modal -->
+  <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+    <div class="modal-content">
+      <h2 id="login-modal-title" class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
+      <p class="mb-4">You need to be logged in to use this feature.</p>
+      <a href="/account" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Go to Login</a>
+      <button onclick="closeLoginModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mt-2">Close</button>
+    </div>
   </div>
 
-  <button class="btn" id="see-inside-btn">See Inside</button>
-  <button class="btn" id="remix-btn">Remix</button>
-  <button class="btn secondary" id="report-btn">Report</button>
+  <script>
 
-  <div id="meta-loading" class="loading">Loading metadata...</div>
-  <div id="meta-error" class="error" style="display:none;">Failed to load project metadata.</div>
+    // Get the modal
+var modal = document.getElementById('id01');
+const id = window.location.hash.slice(1);
+const iframe = document.getElementById('id-frame');
+const remix = document.getElementById('remix-btn');
+    
+iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
 
-</div>
+function closeLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
+}
 
-<!-- Login Modal -->
-<div class="modal" id="login-modal">
-  <div class="modal-content">
-    <h3>Please log in</h3>
-    <p>You need to be logged in to perform this action.</p>
-  </div>
-</div>
+function showModal() {
+  const loginModal = document.getElementById('login-modal');
+  loginModal.style.display = 'flex';
+  setTimeout(() => loginModal.style.display = 'none', 3000);
+}
 
-<!-- Report Modal -->
-<div class="modal" id="report-modal">
-  <div class="modal-content">
-    <h3>Report Project</h3>
-    <textarea id="report-reason" rows="4" placeholder="Reason for reporting..."></textarea>
-    <button class="btn" id="submit-report-btn">Submit</button>
-    <button class="btn secondary" id="cancel-report-btn">Cancel</button>
-  </div>
-</div>
+async function fetchMeta() {
+  const loading = document.getElementById('meta-loading');
+  const error = document.getElementById('meta-error');
+  const content = document.getElementById('meta-content');
 
-<script>
-  const id = window.location.hash.slice(1);
-  const iframe = document.getElementById('id-frame');
-  const remixBtn = document.getElementById('remix-btn');
-  const seeInsideBtn = document.getElementById('see-inside-btn');
+  try {
+    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+    if (!res.ok) throw new Error();
+    const meta = await res.json();
 
-  // Set iframe
-  iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
-
-  // Show login modal
-  function showLoginModal() {
-    const modal = document.getElementById('login-modal');
-    modal.style.display = 'flex';
-    setTimeout(() => modal.style.display = 'none', 3000);
-  }
-
-  // Fetch project metadata
-  async function fetchMeta() {
-    const loading = document.getElementById('meta-loading');
-    const error = document.getElementById('meta-error');
-
-    try {
-      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
-      if (!res.ok) throw new Error('Failed');
-      const meta = await res.json();
-
-      document.getElementById('meta-title').textContent = meta.title || 'Untitled';
-      document.title = meta.title || 'Untitled Project';
-      document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
-      document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
-      document.getElementById('meta-instructions').textContent = meta.instructions || '';
-      document.getElementById('meta-description').textContent = meta.description || '';
-
-      if (meta.author?.username === localStorage.getItem('username')) {
-        seeInsideBtn.textContent = 'Edit Project';
-      }
-
-    } catch {
-      error.style.display = 'block';
-    } finally {
-      loading.style.display = 'none';
+    if(meta.author?.username === localStorage.getItem('username')) {
+      document.getElementById('see-inside-btn').textContent = 'Edit Project';
     }
-  }
 
+    document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
+    document.title = meta.title || 'Untitled Project';
+    document.getElementById('meta-description').textContent = meta.description || 'No description.';
+    document.getElementById('meta-instructions').textContent = meta.instructions || '';
+    document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
+    document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
+
+    document.getElementById('meta-views').textContent = meta.stats?.views ?? 1;
+    document.getElementById('meta-loves').textContent = meta.stats?.loves ?? 0;
+    document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
+    document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
+
+    loading.classList.add('hidden');
+    content.classList.remove('hidden');
+  } catch {
+    loading.classList.add('hidden');
+    error.classList.remove('hidden');
+  }
+}
+
+window.onload = async () => {
+  closeLoginModal(); // Ensure modal is hidden on load
   fetchMeta();
 
-  // Report Modal Logic
-  const reportBtn = document.getElementById('report-btn');
-  const reportModal = document.getElementById('report-modal');
-  const cancelReportBtn = document.getElementById('cancel-report-btn');
-  const submitReportBtn = document.getElementById('submit-report-btn');
+  const username = localStorage.getItem('username');
+  if (username) {
+    document.getElementById('account').textContent = username;
 
-  reportBtn.addEventListener('click', () => {
-    const username = localStorage.getItem('username');
-    if (!username) {
-      showLoginModal();
-      return;
+    // Always send a view increment (no limiting)
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/${id}/views`, { method: 'POST' });
+      const json = await res.json();
+    } catch(err) {
+      alert('Failed To View Project', err);
     }
-    document.getElementById('report-reason').value = '';
-    reportModal.style.display = 'flex';
-  });
+  }
 
-  cancelReportBtn.addEventListener('click', () => {
-    reportModal.style.display = 'none';
-  });
-
-  submitReportBtn.addEventListener('click', async () => {
-    const reason = document.getElementById('report-reason').value.trim();
-    const username = localStorage.getItem('username');
-    if (!reason || !username) return;
+  document.getElementById('like-btn').addEventListener('click', async () => {
+    if (!localStorage.getItem('username')) return showModal();
 
     try {
-      await fetch(`https://editor-compiler.onrender.com/${id}/report`, {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love`, { method: 'POST' });
+      if (res.ok) {
+        document.getElementById('meta-loves').textContent++;
+      }
+    } catch {}
+  });
+
+  document.getElementById('fav-btn').addEventListener('click', async () => {
+    if (!localStorage.getItem('username')) return showModal();
+
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
+      if (res.ok) {
+        document.getElementById('meta-favorites').textContent++;
+      }
+    } catch {}
+  });
+
+  document.getElementById('see-inside-btn').addEventListener('click', () => {
+    window.location.href = `editor#${id}`;
+  });
+
+  remix.addEventListener('click', () => {
+    if (!localStorage.getItem('username')) return showModal();
+    window.location.href = `editor?remix=${id}`;
+  });
+
+  // Comments
+  async function fetchComments() {
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+      const comments = await res.json();
+      const commentsList = document.getElementById('comments-list');
+      document.getElementById('comments-loading').style.display = 'none';
+      commentsList.innerHTML = '';
+      comments.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'border rounded p-3 bg-gray-50';
+        div.innerHTML = `<p class="font-semibold text-indigo-700">@${c.user} said:</p><p>${c.text}</p>`;
+        commentsList.appendChild(div);
+      });
+    } catch {
+      document.getElementById('comments-loading').style.display = 'none';
+      document.getElementById('comments-error').classList.remove('hidden');
+    }
+  }
+
+  fetchComments();
+
+  document.getElementById('comment-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const text = document.getElementById('comment-input').value.trim();
+    if (!localStorage.getItem('username')) return showModal();
+    if (!text) return;
+
+    try {
+      await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, reason })
+        body: JSON.stringify({ text, user: { username: localStorage.getItem('username') } })
       });
-      reportModal.style.display = 'none';
-    } catch {
-      alert('Failed to submit report.');
-    }
+      document.getElementById('comment-input').value = '';
+      fetchComments();
+    } catch {}
   });
+};
 
-  // Button redirects
-  remixBtn.addEventListener('click', () => {
-    const username = localStorage.getItem('username');
-    if (!username) {
-      showLoginModal();
-      return;
+document.getElementById('report-form').addEventListener('submit', async () => {
+  if (!localStorage.getItem('username')) return showModal();
+
+  try {
+    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/report`, {
+      method: 'POST'
+    });
+
+    if (res.ok) {
+      document.getElementById('id01').style.display = 'none';
+    } else {
+      alert("Failed to report project.");
     }
-    window.location.href = `/editor#remix=${id}`;
-  });
+  } catch {
+    alert("An error occurred while reporting.");
+  }
+});
 
-  seeInsideBtn.addEventListener('click', () => {
-    const username = localStorage.getItem('username');
-    if (!username) {
-      showLoginModal();
-      return;
-    }
-    window.location.href = `/editor#${id}`;
-  });
-</script>
-
+  </script>
 </body>
 </html>
