@@ -426,20 +426,20 @@ document.getElementById('report-form').addEventListener('submit', async () => {
 // github_pat_11A4RWIDA07egSkV zu0TbP_J5wAE3an2P76 y0iYiMSKSLiM4XyOMgzxa BZZhATED16OR6HHCFYA5KkCyrE
   try {
     // Octokit.js
-// https://github.com/octokit/core.js#readme
-const octokit = new Octokit({
-  auth: 'github_pat_11A4RWIDA07egSkV' + 'zu0TbP_J5wAE3an2P76y0iYiMSKSLiM4XyOMgzxaBZZhATED16OR6HHCFYA5KkCyrE'
+   // https://github.com/octokit/core.js#readme
+   const octokit = new Octokit({
+    auth: 'github_pat_11A4RWIDA07egSkV' + 'zu0TbP_J5wAE3an2P76y0iYiMSKSLiM4XyOMgzxaBZZhATED16OR6HHCFYA5KkCyrE'
 })
 
-await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
-  owner: 'MyScratchBlocks',
-  repo: 'myscratchblocks.github.io',
-  issue_number: '8',
-  body: 'A report has just been made! Reported Project: https://myscratchblocks.github.io/projects#${id} Reported By: ${username}',
-  headers: {
-    'X-GitHub-Api-Version': '2022-11-28'
-  }
-})
+    await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
+      owner: 'MyScratchBlocks',
+      repo: 'myscratchblocks.github.io',
+      issue_number: '8',
+      body: 'A report has just been made! Reported Project: https://myscratchblocks.github.io/projects#${id} Reported By: ${username}',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    })
     });
 
     if (res.ok) {
