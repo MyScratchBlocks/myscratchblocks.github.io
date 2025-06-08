@@ -34,7 +34,7 @@
 <body class="antialiased">
     <header class="bg-white shadow-sm py-4">
         <div class="container mx-auto px-4 flex justify-between items-center">
-            <a href="#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
+            <a href="/" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/>
                 </svg>
@@ -42,15 +42,10 @@
             </a>
 
             <nav class="hidden md:flex space-x-6">
-                <a href="#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
-                <a href="#features" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Features</a>
-                <a href="#block-ideas" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Block Ideas</a>
-                <a href="#project-ideas" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Project Ideas</a>
-                <a href="community-projects" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Featured Projects</a>
-                <a href="#access" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Access</a>
-                <a href="#community" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Community</a>
-                <a href="#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">About</a>
-                <a id="account" href="account" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Account</a>
+                <a href="/" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
+                <a href="community-projects" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Community Projects</a>
+                <a href="AI-Assistant.html" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">AI Assistant</a>
+                <a href="account" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Account</a>
             </nav>
 
             <button id="mobile-menu-button" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none">
@@ -62,140 +57,49 @@
 
         <div id="mobile-menu" class="hidden md:hidden bg-white py-2 shadow-md">
             <nav class="flex flex-col items-center space-y-2">
-                <a href="#home" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Home</a>
-                <a href="#features" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Features</a>
-                <a href="#block-ideas" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Block Ideas</a>
-                <a href="#project-ideas" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Project Ideas</a>
-                <a href="community-projects" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Featured Projects</a>
-                <a href="#access" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Access</a>
-                <a href="#community" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Community</a>
-                <a href="#about" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">About</a>
-                <a id="account" href="account" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Account</a>
+                <a href="/" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Home</a>
+                <a href="community-projects" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Community Projects</a>
+                <a href="AI-Assistant.html" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">AI Assistant</a>
+                <a href="account" class="block text-gray-600 hover:text-indigo-600 font-medium py-1">Account</a>
             </nav>
         </div>
     </header>
 
-    <section id="home" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20 px-4 text-center rounded-b-lg shadow-lg">
+    <section id="homepage-intro" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20 px-4 text-center rounded-b-lg shadow-lg">
         <div class="container mx-auto max-w-4xl">
             <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
-                Unleash Your Creativity with <br class="hidden sm:inline"> MyScratchBlocks
+                Explore Amazing Projects on MyScratchBlocks!
             </h1>
             <p class="text-lg sm:text-xl mb-8 opacity-90">
-                An innovative modification for Scratch and TurboWarp, bringing powerful new blocks and features to your projects.
+                Dive into a world of creativity with innovative projects built using MyScratchBlocks.
             </p>
-            <a href="#access" class="bg-white text-indigo-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 inline-block">
-                Get Started Now
+            <a href="/editor" class="bg-white text-indigo-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 inline-block">
+                Start Your Own Project
             </a>
-        </div>
-    </section>
-
-    <section id="features" class="py-16 px-4 bg-white">
-        <div class="container mx-auto max-w-6xl">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-gray-800">Key Features</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                    <div class="text-indigo-500 mb-4">
-                        <svg class="w-10 h-10 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2L1 21h22L12 2zm0 3.9L18.7 19H5.3L12 5.9zM11 10h2v5h-2v-5zm0 6h2v2h-2v-2z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Advanced Block Set</h3>
-                    <p class="text-gray-600 text-center">
-                        Access a comprehensive suite of new blocks for complex logic, data manipulation, and creative effects.
-                    </p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                    <div class="text-indigo-500 mb-4">
-                        <svg class="w-10 h-10 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Enhanced Performance</h3>
-                    <p class="text-gray-600 text-center">
-                        Optimized for speed and efficiency, ensuring smoother project execution, just like in TurboWarp.
-                    </p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                    <div class="text-indigo-500 mb-4">
-                        <svg class="w-10 h-10 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Community Driven</h3>
-                    <p class="text-gray-600 text-center">
-                        Actively developed with feedback from a vibrant community of Scratch and TurboWarp users.
-                    </p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                    <div class="text-indigo-500 mb-4">
-                        <svg class="w-10 h-10 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Easy Integration</h3>
-                    <p class="text-gray-600 text-center">
-                        It is Open-Source and Free (and it's like that forever)
-                    </p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                    <div class="text-indigo-500 mb-4">
-                        <svg class="w-10 h-10 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Extensive Documentation</h3>
-                    <p class="text-gray-600 text-center">
-                        Detailed guides and examples to help you get started and master all new functionalities.
-                    </p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                    <div class="text-indigo-500 mb-4">
-                        <svg class="w-10 h-10 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Cross-Platform Support</h3>
-                    <p class="text-gray-600 text-center">
-                        Available for various operating systems, ensuring broad accessibility for all users.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section id="project-ideas" class="py-16 px-4 bg-white">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">✨ Project Idea Brainstormer ✨</h2>
-            <p class="text-lg text-gray-600 mb-6">
-                Stuck on what to create next? Give us a theme or a few keywords, and our AI will brainstorm exciting project ideas for you!
-            </p>
-            <div class="bg-gray-50 p-6 rounded-lg shadow-md">
-                <textarea id="project-idea-input" class="w-full p-4 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 mb-4 h-32 resize-y" placeholder="e.g., 'Space exploration game', 'Interactive story about a dragon', 'Educational app for math'"></textarea>
-                <button id="generate-project-idea" class="bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
-                    Brainstorm Project Idea
-                    <span id="project-idea-spinner" class="loading-spinner hidden"></span>
-                </button>
-                <div id="project-idea-output" class="mt-6 p-4 bg-green-50 border border-green-200 text-green-800 rounded-md text-left whitespace-pre-wrap">
-                    Your brainstormed project ideas will appear here.
-                </div>
-            </div>
         </div>
     </section>
 
     <section id="featured-projects" class="py-16 px-4 bg-gray-100">
         <div class="container mx-auto max-w-6xl text-center">
             <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">🌟 Featured Projects 🌟</h2>
-            <center><small class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">The projects below have been featured by an admin of MyScratchBlocks.</small></center>
+            <p class="text-lg text-gray-600 mb-8">Discover top projects hand-picked by the MyScratchBlocks community admins.</p>
             <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <p id="projects-loading" class="text-center text-gray-600 col-span-full">Loading featured projects... <span class="loading-spinner"></span></p>
                 <p id="projects-error" class="text-center text-red-500 col-span-full hidden">Failed to load projects. Please try again later.</p>
             </div>
+            <div class="mt-12">
+                <a href="community-projects" class="bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 inline-block">
+                    View All Community Projects
+                </a>
+            </div>
         </div>
     </section>
-    <section id="access" class="py-16 px-4 bg-gray-100">
+
+    <section id="create-and-community" class="py-16 px-4 bg-white">
         <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">Access MyScratchBlocks</h2>
+            <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">Ready to Create or Connect?</h2>
             <p class="text-lg text-gray-600 mb-10">
-                MyScratchBlocks is a web-based Scratch modification. You can access it via the button below.
+                MyScratchBlocks is your platform to build incredible things and join a vibrant community.
             </p>
             <div class="flex flex-wrap justify-center gap-6">
                 <a href="/editor" class="bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-4 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
@@ -204,56 +108,15 @@
                     </svg>
                     <span>Create A Project</span>
                 </a>
-                <a href="community-projects" class="bg-indigo-600 text-white hover:bg-indigo-700 font-bold py-4 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/>
-                    </svg>
-                    <span>Featured Projects</span>
-                </a>
-            </div>
-            <p class="text-sm text-gray-500 mt-8">
-                Not working? Try <u><a href="/force-editor.html">this MyScratchBlocks editor instead</a>.</u>
-            </p>
-        </div>
-    </section>
-
-    <section id="community" class="py-16 px-4 bg-white">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-gray-800">Join Our Community</h2>
-            <p class="text-lg text-gray-600 mb-10">
-                Connect with other MyScratchBlocks users, get support, share your projects, and contribute to the development.
-            </p>
-            <div class="flex flex-wrap justify-center gap-6">
-                <a href="community-projects" class="bg-gray-800 text-white hover:bg-gray-700 font-bold py-4 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.5 2.5c-2.02-.9-4.17-1.4-6.37-1.4-2.2 0-4.35.5-6.37 1.4C5.04 3.4 3.75 4.8 2.75 6.5c-.9 1.7-.9 3.6-.2 5.3.7 1.7 2 3 3.5 3.9.7.4 1.5.7 2.3.9.8.2 1.6.3 2.4.3.8 0 1.6-.1 2.4-.3.8-.2 1.6-.5 2.3-.9 1.5-.9 2.8-2.2 3.5-3.9.7-1.7.7-3.6-.2-5.3-.9-1.7-2.2-3.1-3.7-4zM12 15c-1.1 0-2.1-.2-3.1-.6-.9-.4-1.7-.9-2.4-1.6-.7-.7-1.3-1.5-1.6-2.4-.3-.9-.4-1.8-.2-2.7.2-.9.7-1.7 1.3-2.4.6-.7 1.4-1.2 2.2-1.5.8-.3 1.7-.4 2.6-.2.9.2 1.7.7 2.4 1.3.7.6 1.2 1.4 1.5 2.2.3.8.4 1.7.2 2.6-.2.9-.7 1.7-1.3 2.4-.6.7-1.4 1.2-2.2 1.5-.8.3-1.7.4-2.6.2z"/>
-                    </svg>
-                    <span>Open Projects Community</span>
-                </a>
                 <a href="https://github.com/MyScratchBlocks" class="bg-gray-800 text-white hover:bg-gray-700 font-bold py-4 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.6.111.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.838 1.238 1.838 1.238 1.07 1.835 2.809 1.305 3.49.998.108-.775.419-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.381 1.236-3.22-.124-.3-.536-1.52.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.003.404 2.293-1.552 3.3-1.23 3.3-1.23.653 1.656.241 2.876.118 3.176.77.839 1.233 1.909 1.233 3.22 0 4.61-2.809 5.625-5.478 5.922.43.369.812 1.101.812 2.222 0 1.606-.015 2.895-.015 3.286 0 .318.219.695.827.576C20.562 21.807 24 17.307 24 12 24 5.373 18.627 0 12 0z"/>
                     </svg>
                     <span>Visit GitHub</span>
                 </a>
-                <a href="#" class="bg-gray-800 text-white hover:bg-gray-700 font-bold py-4 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
-                    </svg>
-                    <span>Go to Forum</span>
-                </a>
             </div>
-        </div>
-    </section>
-
-    <section id="about" class="py-16 px-4 bg-gray-50">
-        <div class="container mx-auto max-w-4xl">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8 text-gray-800">About MyScratchBlocks</h2>
-            <p class="text-lg text-gray-600 leading-relaxed mb-6">
-                MyScratchBlocks is an open-source project dedicated to extending the capabilities of Scratch and TurboWarp. Our goal is to provide a powerful yet intuitive set of new programming blocks that empower creators to build even more sophisticated and engaging interactive experiences. We believe in fostering a collaborative environment where users can contribute ideas, report bugs, and help shape the future of the modification.
-            </p>
-            <p class="text-lg text-gray-600 leading-relaxed">
-                Developed by a passionate team of developers and educators, MyScratchBlocks aims to bridge the gap between visual programming and advanced computational concepts, making complex ideas accessible to a wider audience. Join us on this exciting journey to push the boundaries of what's possible with Scratch!
+            <p class="text-sm text-gray-500 mt-8">
+                Having trouble with the editor? Try <u><a href="/force-editor.html">this alternative MyScratchBlocks editor</a>.</u>
             </p>
         </div>
     </section>
@@ -270,208 +133,98 @@
     </footer>
 
     <script>
-
-    // warning in case of people pasting random code here
-			console.log(
-				"%cSCAM ALERT! %cDo NOT paste things into here that other people sent you!",
-				"color:red;font-family:sans-serif;font-size:2rem;font-weight:900",
-				"color:white;font-family:sans-serif;font-size:1.75rem;font-weight:900;-webkit-text-stroke: .5px black"
-			);
-			console.log("If you don't know what this window does, EXIT NOW! People can use this to hack you.");
+        // warning in case of people pasting random code here
+        console.log(
+            "%cSCAM ALERT! %cDo NOT paste things into here that other people sent you!",
+            "color:red;font-family:sans-serif;font-size:2rem;font-weight:900",
+            "color:white;font-family:sans-serif;font-size:1.75rem;font-weight:900;-webkit-text-stroke: .5px black"
+        );
+        console.log("If you don't know what this window does, EXIT NOW! People can use this to hack you.");
+        
         document.addEventListener('DOMContentLoaded', function () {
-    // Mobile Menu Toggle
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
 
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-        });
-    }
-
-    // Gemini API Integration – Block Idea Generator
-    const blockIdeaInput = document.getElementById('block-idea-input');
-    const generateBlockIdeaButton = document.getElementById('generate-block-idea');
-    const blockIdeaOutput = document.getElementById('block-idea-output');
-    const blockIdeaSpinner = document.getElementById('block-idea-spinner');
-
-    if (generateBlockIdeaButton) {
-        generateBlockIdeaButton.addEventListener('click', async () => {
-            const prompt = blockIdeaInput.value.trim();
-            if (!prompt) {
-                blockIdeaOutput.textContent = "Please enter a concept to generate block ideas.";
-                return;
-            }
-
-            blockIdeaOutput.textContent = "Generating ideas...";
-            blockIdeaSpinner.classList.remove('hidden');
-            generateBlockIdeaButton.disabled = true;
-
-            try {
-                const chatHistory = [{
-                    role: "user",
-                    parts: [{
-                        text: `Suggest 3-5 new Scratch/TurboWarp blocks for a modification called MyScratchBlocks based on the following concept: "${prompt}". For each block, provide its name, a brief description of its functionality, and a simple example of how it could be used. Format your response clearly with headings for each block.`
-                    }]
-                }];
-
-                const payload = { contents: chatHistory };
-                const apiKey = "AIzaSyBVZwRE3rId" + "UZqgVeSy5RcmUn-adMhwimI"; // Key injected at runtime
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
                 });
 
-                const result = await response.json();
-
-                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                blockIdeaOutput.textContent = text || "Failed to generate block ideas. Please try again.";
-            } catch (error) {
-                blockIdeaOutput.textContent = "An error occurred while generating ideas. Please check your network connection.";
-                console.error("Gemini API error (block ideas):", error);
-            } finally {
-                blockIdeaSpinner.classList.add('hidden');
-                generateBlockIdeaButton.disabled = false;
-            }
-        });
-    }
-
-    // Gemini API Integration – Project Idea Brainstormer
-    const projectIdeaInput = document.getElementById('project-idea-input');
-    const generateProjectIdeaButton = document.getElementById('generate-project-idea');
-    const projectIdeaOutput = document.getElementById('project-idea-output');
-    const projectIdeaSpinner = document.getElementById('project-idea-spinner');
-
-    if (generateProjectIdeaButton) {
-        generateProjectIdeaButton.addEventListener('click', async () => {
-            const prompt = projectIdeaInput.value.trim();
-            if (!prompt) {
-                projectIdeaOutput.textContent = "Please enter a theme or keywords to brainstorm project ideas.";
-                return;
-            }
-
-            projectIdeaOutput.textContent = "Brainstorming ideas...";
-            projectIdeaSpinner.classList.remove('hidden');
-            generateProjectIdeaButton.disabled = true;
-
-            try {
-                const chatHistory = [{
-                    role: "user",
-                    parts: [{
-                        text: `Brainstorm 3-5 creative and engaging Scratch / Turbowarp / MyScratchBlocks project ideas based on the theme/keywords: "${prompt}".`
-                    }]
-                }];
-
-                const payload = { contents: chatHistory };
-                const apiKey = "AIzaSyBVZwRE3rId" + "UZqgVeSy5RcmUn-adMhwimI"; // Key injected at runtime
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                mobileMenu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
                 });
-
-                const result = await response.json();
-                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                projectIdeaOutput.textContent = text || "Failed to brainstorm project ideas. Please try again.";
-            } catch (error) {
-                projectIdeaOutput.textContent = "An error occurred while brainstorming ideas. Please check your network connection.";
-                console.error("Gemini API error (project ideas):", error);
-            } finally {
-                projectIdeaSpinner.classList.add('hidden');
-                generateProjectIdeaButton.disabled = false;
             }
+
+            // Fetch and display featured projects
+            async function fetchFeaturedProjects() {
+                const projectsContainer = document.getElementById('projects-container');
+                const projectsLoading = document.getElementById('projects-loading');
+                const projectsError = document.getElementById('projects-error');
+
+                projectsLoading.classList.remove('hidden');
+                projectsError.classList.add('hidden');
+                projectsContainer.innerHTML = '';
+
+                // Using the corsproxy.io to bypass CORS issues for the given API
+                const PROJECTS_API_URL = 'https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects';
+
+                try {
+                    const response = await fetch(PROJECTS_API_URL);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const data = await response.json();
+                    const projects = data.projects.slice(0, 3); // Displaying only the first 3 featured projects
+
+                    if (!Array.isArray(projects) || projects.length === 0) {
+                        projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
+                        return;
+                    }
+
+                    for (const project of projects) {
+                        const projectCard = document.createElement('div');
+                        projectCard.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
+
+                        let id = project.link.split("#")[1];
+                        let author = 'Unknown';
+
+                        if (id) {
+                            try {
+                                const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+                                if (res.ok) {
+                                    const JSONDATA2 = await res.json();
+				    const jsonData = JSONDATA2.slice(0, 5);
+                                    author = jsonData.author?.username ?? 'Unknown';
+                                }
+                            } catch (err) {
+                                console.warn('Failed to fetch author meta for project', id, err);
+                            }
+                        }
+
+                        projectCard.innerHTML = `
+                            <img src="${project.image}" alt="${project.name} thumbnail" class="w-full h-40 object-cover rounded-md mb-4" />
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">${project.name}</h3>
+                            <p class="text-gray-600 text-sm mb-4">Author: ${author}</p>
+                            <a href="${project.link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
+                                View Project
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </a>
+                        `;
+                        projectsContainer.appendChild(projectCard);
+                    }
+                } catch (error) {
+                    console.error('Error fetching featured projects:', error);
+                    projectsError.classList.remove('hidden');
+                    projectsError.textContent = `Failed to load projects. Please try again later. (Error: ${error.message})`;
+                } finally {
+                    projectsLoading.classList.add('hidden');
+                }
+            }
+            fetchFeaturedProjects();
         });
-    }
-
-    // Fetch and display featured projects
-    async function fetchFeaturedProjects() {
-      const projectsContainer = document.getElementById('projects-container');
-      const projectsLoading = document.getElementById('projects-loading');
-      const projectsError = document.getElementById('projects-error');
-
-      projectsLoading.classList.remove('hidden');
-      projectsError.classList.add('hidden');
-      projectsContainer.innerHTML = '';
-
-      const PROJECTS_API_URL = 'https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects';
-
-      try {
-        const response = await fetch(PROJECTS_API_URL);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const data = await response.json();
-        const projects2 = data.projects;
-	const projects = projects2.slice(0, 3);
-
-        if (!Array.isArray(projects) || projects.length === 0) {
-          projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
-          return;
-        }
-
-        // Use for...of to handle async-await properly
-        for (const project of projects) {
-          const projectCard = document.createElement('div');
-          projectCard.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
-
-          // Safely extract id from the link
-          let id = project.link.split("#")[1];
-          let author = 'Unknown';
-
-          if (id) {
-            try {
-              const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
-              if (res.ok) {
-                const jsonData = await res.json();
-                author = jsonData.author?.username ?? 'Unknown';
-              }
-            } catch (err) {
-              console.warn('Failed to fetch author meta for project', id, err);
-            }
-          }
-
-          projectCard.innerHTML = `
-            <img src="${project.image}" alt="${project.name} thumbnail" class="w-full h-40 object-cover rounded-md mb-4" />
-            <h3 class="text-xl font-semibold text-gray-700 mb-2">${project.name}</h3>
-            <p class="text-gray-600 text-sm mb-4">Author: ${author}</p>
-            <a href="${project.link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
-              View Project
-              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-              </svg>
-            </a>
-          `;
-          projectsContainer.appendChild(projectCard);
-        }
-      } catch (error) {
-        console.error('Error fetching featured projects:', error);
-        projectsError.classList.remove('hidden');
-        projectsError.textContent = `Failed to load projects. Please try again later. (Error: ${error.message})`;
-      } finally {
-        projectsLoading.classList.add('hidden');
-      }
-    }
-    fetchFeaturedProjects();
-
-    // Show account name if available
-    const username = localStorage.getItem('username');
-    if (username) {
-        const accountElement = document.getElementById('account');
-        if (accountElement) {
-            
-        }
-    }
-});
-
     </script>
 </body>
 </html>
