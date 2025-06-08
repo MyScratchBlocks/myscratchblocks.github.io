@@ -195,7 +195,7 @@
                                 if (res.ok) {
                                     const JSONDATA2 = await res.json();
 				    const jsonData = JSONDATA2.slice(0, 5);
-                                    author = jsonData.author?.username ?? 'Unknown';
+                                    const author = jsonData.author?.username ?? 'Unknown';
                                 }
                             } catch (err) {
                                 console.warn('Failed to fetch author meta for project', id, err);
