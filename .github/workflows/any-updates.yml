@@ -1,0 +1,24 @@
+name: Any Updates?
+  
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: '30 14 * * *'
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      models: read
+      contents: read
+
+    steps:
+      - name: Any Updates?
+        if: github.event.issue.issue && contains(github.event.comment.body, 'ChatGPT /summarize-op')
+        run: |
+          gh issue comment 7 --body 'Any Updates? Let's work on MyScratchBlocks!'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          RESPONSE: ${{ steps.inference.outputs.response }}
