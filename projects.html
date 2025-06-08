@@ -279,9 +279,13 @@
   </div>
 
   <script>
+
+    // Get the modal
+var modal = document.getElementById('id01');
 const id = window.location.hash.slice(1);
 const iframe = document.getElementById('id-frame');
 const remix = document.getElementById('remix-btn');
+    
 iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
 
 function closeLoginModal() {
@@ -415,9 +419,6 @@ window.onload = async () => {
     } catch {}
   });
 };
-
-    // Get the modal
-var modal = document.getElementById('id01');
 
 // When the user clicks anywhere outside of the modal, close it
 
