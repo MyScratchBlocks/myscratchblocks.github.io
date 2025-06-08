@@ -175,7 +175,7 @@
                     const response = await fetch(PROJECTS_API_URL);
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
-                    const projects = data.projects.slice(0, 3); // Displaying only the first 3 featured projects
+                    const projects = data.projects.slice(0, 5); // Displaying only the first 3 featured projects
 
                     if (!Array.isArray(projects) || projects.length === 0) {
                         projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
@@ -187,15 +187,13 @@
                         projectCard.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
 
                         let id = project.link.split("#")[1];
-                        let author = 'Unknown';
+                        let author = project.author;
 
                         if (id) {
                             try {
                                 const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
                                 if (res.ok) {
-                                    const JSONDATA2 = await res.json();
-				    const jsonData = JSONDATA2.slice(0, 5);
-                                    const author = jsonData.author?.username ?? 'Unknown';
+                                    const jsonData = await res.json();
                                 }
                             } catch (err) {
                                 console.warn('Failed to fetch author meta for project', id, err);
