@@ -95,7 +95,7 @@
     if(userProfileName) {
       document.getElementById('iframe').src = `https://editor-compiler.onrender.com/users/${userProfileName}`;
     } else {
-      document.getElementById('iframe').src = `https://myscratchblocks.github.io/404`; // or some default page
+      window.location.href = `https://myscratchblocks.github.io/404`; // or some default page
     }
   </script>
 </body>
