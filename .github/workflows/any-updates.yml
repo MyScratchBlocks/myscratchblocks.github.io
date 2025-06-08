@@ -17,3 +17,5 @@ jobs:
       - name: Any Updates?
         run: |
           gh issue comment 7 --body 'Any Updates? Let's work on MyScratchBlocks!'
+
+      - name: End Github Issue Comment
