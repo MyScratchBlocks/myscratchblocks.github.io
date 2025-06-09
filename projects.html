@@ -464,11 +464,13 @@
           }
         });
 
+        const status = response.status
+
         if (response.status === 201) { // 201 Created is the success status for creating a comment
           document.getElementById('id01').style.display = 'none';
           alert('Project reported successfully!');
         } else {
-          alert("Failed to report project. Please try again or report manually at our reports feed. Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8");
+          alert("Failed to report project. Please try again or report manually at our reports feed. Response Status: ${status} Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8");
         }
       } catch (error) {
         console.error('Octokit Error:', error);
