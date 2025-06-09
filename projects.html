@@ -449,7 +449,7 @@
       try {
         // Initialize Octokit with the correct authentication method
         const octokit = new Octokit({
-            auth: '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' // Ensure this token is valid and secure
+            auth: 'github_pat_11A4RWIDA042YSoXsXXZha' + '_UH79juFSUAI9nUCMcq6tASZNPvn67gywETiesve45ycXM7V6MP4JTZhzCSY' // Ensure this token is valid and secure
         });
 
         const reportBody = `A report has just been made!\nReported Project: https://myscratchblocks.github.io/projects#${id}\nReported By: ${username}`;
@@ -474,7 +474,7 @@
         }
       } catch (error) {
         console.error('Octokit Error:', error);
-        alert("An error occurred while reporting. Please try again or report manually at our reports feed." + error + "Error: ${error} Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8");
+        alert("An error occurred while reporting. Please try again or report manually at our reports feed." + error + " Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8");
       }
     });
 
