@@ -482,6 +482,60 @@
         alert("An error occurred while reporting. Please try again or report manually at our reports feed." + error + " Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8" + status + "");
       }
     });
+if (meta.author?.username === localStorage.getItem('username')) {
+  // Replace title with editable input
+  const titleInput = document.createElement('input');
+  titleInput.type = 'text';
+  titleInput.className = 'text-2xl font-bold text-indigo-700 mb-2 w-full text-center';
+  titleInput.value = meta.title || 'Untitled Project';
+  titleInput.id = 'editable-title';
+
+  // Replace description with editable textarea
+  const descriptionInput = document.createElement('textarea');
+  descriptionInput.className = 'w-full p-2 border border-gray-300 rounded mt-2';
+  descriptionInput.value = meta.description || 'No description.';
+  descriptionInput.id = 'editable-description';
+
+  // Save button
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save Changes';
+  saveBtn.className = 'mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700';
+  saveBtn.onclick = async () => {
+    const updatedTitle = document.getElementById('editable-title').value.trim();
+    const updatedDescription = document.getElementById('editable-description').value.trim();
+
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: localStorage.getItem('username'),
+          title: updatedTitle,
+          description: updatedDescription
+        })
+      });
+
+      if (res.ok) {
+        alert('Project updated successfully!');
+      } else {
+        alert('Failed to update project.');
+      }
+    } catch (err) {
+      console.error('Update failed:', err);
+      alert('Network error updating project.');
+    }
+  };
+
+  const titleWrapper = document.getElementById('meta-title');
+  titleWrapper.replaceWith(titleInput);
+
+  const descWrapper = document.getElementById('meta-description');
+  descWrapper.replaceWith(descriptionInput);
+
+  descWrapper.parentNode.insertBefore(saveBtn, descWrapper.nextSibling);
+}
 
   </script>
 </body>
