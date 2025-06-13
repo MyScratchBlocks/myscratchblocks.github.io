@@ -314,12 +314,11 @@
         if(meta.author?.username === localStorage.getItem('username')) {
           document.getElementById('see-inside-btn').textContent = 'Edit Project';
         }
-
         document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
         document.title = meta.title || 'Untitled Project';
         document.getElementById('meta-description').textContent = meta.description || 'No description.';
         document.getElementById('meta-instructions').textContent = meta.instructions || '';
-        document.getElementById('meta-author').textContent = meta.author?.username || 'Unknown';
+        document.getElementById('meta-author').textContent = meta.author?.username || 'No One';
         document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
 
         document.getElementById('meta-views').textContent = meta.stats?.views ?? 1;
@@ -327,6 +326,10 @@
         document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
         document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
 
+        if(meta.author?.username === localStorage.getItem('username')) {
+          document.getElementById('meta-author').textContent = 'This is you! As the Main Coder, you can configure settings, edit the project, and more'
+        }
+        
         loading.classList.add('hidden');
         content.classList.remove('hidden');
       } catch {
@@ -347,7 +350,7 @@
           const res = await fetch(`https://editor-compiler.onrender.com/api/${id}/views`, { method: 'POST' });
           const json = await res.json();
         } catch(err) {
-          console.error('Failed To View Project', err); // Changed from alert to console.error
+          console.error('Failed To Record View', err); // Changed from alert to console.error
         }
       }
 
@@ -360,7 +363,8 @@
             document.getElementById('meta-loves').textContent = parseInt(document.getElementById('meta-loves').textContent) + 1;
           }
         } catch (error) {
-            console.error('Error loving project:', error);
+            console.error('Error upvoting project:', error);
+            alert("Failed to upvote project, please try again!")
         }
       });
 
@@ -374,6 +378,7 @@
           }
         } catch (error) {
             console.error('Error favoriting project:', error);
+            alert("Failed to fav project, please try again!")
         }
       });
 
