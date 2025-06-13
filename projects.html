@@ -482,12 +482,19 @@
         alert("An error occurred while reporting. Please try again or report manually at our reports feed." + error + " Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8" + status + "");
       }
     });
-if (meta.author?.username === localStorage.getItem('username')) {
+
+async function loadmeta() {
+  const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${window.location.hash.substring(1)}/meta`);
+  const meta = res.json();
+  return meta
+}
+    
+if (loadmeta().author?.username === localStorage.getItem('username')) {
   // Replace title with editable input
   const titleInput = document.createElement('input');
   titleInput.type = 'text';
   titleInput.className = 'text-2xl font-bold text-indigo-700 mb-2 w-full text-center';
-  titleInput.value = meta.title || 'Untitled Project';
+  titleInput.value = loadmeta().title || 'Untitled Project';
   titleInput.id = 'editable-title';
 
   // Replace description with editable textarea
