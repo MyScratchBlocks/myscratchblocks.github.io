@@ -118,6 +118,7 @@ The Admin Panel only allows you to configure your own projects, and projects tha
 <div class="tab">
   <button class="tablinks" onclick="tab(event, 'details')">Project Details</button>
   <button class="tablinks" onclick="tab(event, 'comments')">Commenting</button>
+  <button class="tablinks" onclick="tab(event, 'ownership')">Ownership & Admins</button>
   <button class="tablinks" onclick="tab(event, 'danger')">Danger Zone</button>
 </div>
 
@@ -127,13 +128,18 @@ The Admin Panel only allows you to configure your own projects, and projects tha
 </div>
 
 <div id="comments" class="tabcontent">
-  <h3>Commenting</h3>
+  <h3><b>Commenting</b></h3>
   <p>Enable and disable commenting, as well as some other misc commenting configurations.</p>
 </div>
 
 <div id="danger" class="tabcontent">
-  <h3>Danger Zone</h3>
+  <h3><b>Danger Zone</b></h3>
   <p>Be careful and absouletly sure when performing actions below here. It contains things like project deletion, so don't get tricked into performing these actions.</p>
+</div>
+
+<div id="ownership" class="tabcontent">
+  <h3><b>Manage Project Ownership & Admins</b></h3>
+  <p>Here you can change the Main Coder (aka the Owner) of this project, and also add additional members to work on this project.</p>
 </div>
   </section>
 
