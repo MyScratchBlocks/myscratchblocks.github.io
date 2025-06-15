@@ -339,7 +339,7 @@
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'username': localStorage.getItem('username')
+            'Authorization': localStorage.getItem('username')
           }
         });
               
@@ -395,7 +395,7 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'username': currentUsername // Send username for authorization
+                                'Authorization': currentUsername // Send username for authorization
                             }
                         });
 
