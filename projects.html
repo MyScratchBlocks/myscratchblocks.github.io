@@ -335,7 +335,7 @@
       const shareProjectBtn = document.getElementById('share-project-btn'); // Get the share button
 
       try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`, {
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${localStorage.getItem('username')}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
