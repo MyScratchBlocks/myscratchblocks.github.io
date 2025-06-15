@@ -201,7 +201,7 @@
               <p class="text-sm text-gray-500">Favorites</p>
             </div>
             <div>
-              <i class="fa-solid fa-circle" style="color: #63E6BE;" aria-hidden="true"></i>
+              <i class="fa-solid fa-clone" style="color: #63E6BE;" aria-hidden="true"></i>
               <p class="text-lg font-semibold text-green-600" id="meta-remixes">0</p>
               <p class="text-sm text-gray-500">Remixes</p>
             </div>
@@ -221,7 +221,7 @@
               <i class="fa-solid fa-code mr-2"></i> See Inside
             </button>
             <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
-              <i class="fa-solid fa-code mr-2"></i> Remix
+              <i class="fa-solid fa-clone mr-2"></i> Remix
             </button>
           </div>
         </div>
@@ -312,7 +312,7 @@
         const meta = await res.json();
 
         if(meta.author?.username === localStorage.getItem('username')) {
-          document.getElementById('see-inside-btn').textContent = 'Edit Project';
+          document.getElementById('see-inside-btn').textContent = '<i class="fa-solid fa-paper-edit"></i> Edit Project';
         }
         document.getElementById('meta-title').textContent = meta.title || 'Untitled Project';
         document.title = meta.title || 'Untitled Project';
