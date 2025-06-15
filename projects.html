@@ -390,9 +390,12 @@
 
             if (!shareProjectBtn.hasAttribute('data-listener-attached')) {
                 shareProjectBtn.addEventListener('click', async () => {
+  let text;
+if (confirm("Do you really want to share this project? This can't be undone!") == true) {
+
                     try {
                         const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
-                            method: 'PUT',
+                            method: 'PUT',  
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Authorization': currentUsername // Send username for authorization
@@ -408,9 +411,11 @@
                     } catch (shareError) {
                         console.error('Error sharing project:', shareError);
                         alert('An error occurred while sharing. Please check your connection and try again.');
-                    }
+                
                 });
                 shareProjectBtn.setAttribute('data-listener-attached', 'true');
+  }
+              }
             }
           } else {
             shareProjectBtn.classList.add('hidden-by-js');
