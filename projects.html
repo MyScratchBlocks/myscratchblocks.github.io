@@ -368,7 +368,7 @@
         document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
 
         if (isProjectOwner) {
-          metaAuthorElement.innerHTML = 'This is you! As the **Main Coder**, you can configure settings, edit the project, and more.';
+          metaAuthorElement.innerHTML = 'This is you! As the Main Coder, you can configure settings, edit the project, and more.';
           seeInsideBtn.innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Edit Project'; // Changed icon
 
           // Show editable elements, hide display elements
@@ -392,7 +392,7 @@
                 shareProjectBtn.addEventListener('click', async () => {
                     try {
                         const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
-                            method: 'POST',
+                            method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Authorization': currentUsername // Send username for authorization
