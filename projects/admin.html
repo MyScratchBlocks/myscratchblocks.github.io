@@ -154,6 +154,11 @@ The Admin Panel only allows you to configure your own projects, and projects tha
 <div id="unshare" class="tabcontent">
   <h3><b>Change Project Visibilty</b></h3>
   <p>Here you can share and unshare this project. Note that unsharing / resharing the project will remove all views, upvotes and favorites. Remixes won't be affected.</p>
+  <form id="sharing" action="/change-sharing-setting.html">
+  <input type="checkbox" id="share-project" name="share-project" value="share-project" checked>
+  <label for="share-project">Share this project to the world</label><br>
+  <input type="submit" value="Save">
+</form>
 </div>
 
   <div id="promote" class="tabcontent">
