@@ -72,82 +72,81 @@
   </section>
 
   <script>
-    async function fetchUserProjects() {
-  const projectsContainer = document.getElementById('projects-container');
-  const projectsLoading = document.getElementById('projects-loading');
-  const projectsError = document.getElementById('projects-error');
-  const username = localStorage.getItem('username');
+    async function fetchFeaturedProjects() {
+      const projectsContainer = document.getElementById('projects-container');
+      const projectsLoading = document.getElementById('projects-loading');
+      const projectsError = document.getElementById('projects-error');
 
-  projectsLoading.classList.remove('hidden');
-  projectsError.classList.add('hidden');
-  projectsContainer.innerHTML = '';
+      projectsLoading.classList.remove('hidden');
+      projectsError.classList.add('hidden');
+      projectsContainer.innerHTML = '';
 
-  let projects = [];
-  let id = 1;
-  let keepGoing = true;
+      const PROJECTS_API_URL = 'https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects';
 
-  while (keepGoing) {
-    try {
-      const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${username}`);
-      if (res.status === 403) {
-        // Forbidden, skip to next project
-        id++;
-        continue;
+      try {
+        const response = await fetch(PROJECTS_API_URL);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        const projects = data.projects;
+
+        if (!Array.isArray(projects) || projects.length === 0) {
+          projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
+          return;
+        }
+
+        // Use for...of to handle async-await properly
+        for (const project of projects) {
+          const projectCard = document.createElement('div');
+          projectCard.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
+
+          // Safely extract id from the link
+          let id = project.link.split("#")[1];
+          let author = project.author;
+
+          if (id) {
+            try {
+              const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+              if (res.ok) {
+                const jsonData = await res.json();
+              }
+            } catch (err) {
+              console.warn('Failed to fetch author meta for project', id, err);
+            }
+          }
+
+          projectCard.innerHTML = `
+            <img src="${project.image}" alt="${project.name} thumbnail" class="w-full h-40 object-cover rounded-md mb-4" />
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">${project.name}</h3>
+            <p class="text-gray-600 text-sm mb-4">Author: ${author}</p>
+            <a href="${project.link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
+              View Project
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          `;
+          projectsContainer.appendChild(projectCard);
+        }
+      } catch (error) {
+        console.error('Error fetching featured projects:', error);
+        projectsError.classList.remove('hidden');
+        projectsError.textContent = `Failed to load projects. Please try again later. (Error: ${error.message})`;
+      } finally {
+        projectsLoading.classList.add('hidden');
       }
-      const json = res.json();
-      const tm = json.id;
-      if (tm) {
-        // Other errors, also skip to next
-        id++;
-        continue;
-      }
-
-      const projectMeta = await res.json();
-      projects.push({ id, meta: projectMeta });
-
-      // Stop after first successful load
-      keepGoing = false;
-
-    } catch (error) {
-      // Network or other error, skip to next project id
-      id++;
-      continue;
     }
-  }
 
-  if (projects.length === 0) {
-    projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No projects found for your user.</p>';
-  } else {
-    projects.forEach(project => {
-      const card = document.createElement('div');
-      card.className = 'bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 mb-4';
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchFeaturedProjects();
 
-      // Customize this based on your actual project meta structure
-      card.innerHTML = `
-        <h3 class="text-xl font-semibold text-gray-700 mb-2">Project ID: ${project.id}</h3>
-        <pre class="text-sm text-gray-600">${JSON.stringify(project.meta, null, 2)}</pre>
-      `;
-      projectsContainer.appendChild(card);
+      const username = localStorage.getItem('username');
+      if (username) {
+        const accountElement = document.getElementById('account');
+        if (accountElement) {
+          accountElement.textContent = username;
+        }
+      }
     });
-  }
-
-  projectsLoading.classList.add('hidden');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  fetchFeaturedProjects();
-
-  const username = localStorage.getItem('username');
-  if (username) {
-    const accountElement = document.getElementById('account');
-    if (accountElement) {
-      accountElement.textContent = username;
-    }
-
-    fetchUserProjects(); // load user projects on page load if logged in
-  }
-});
-
   </script>
 </body>
 </html>
