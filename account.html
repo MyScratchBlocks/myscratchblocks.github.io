@@ -75,7 +75,7 @@
       const client_secret = '8a69da6ed75c546cdc75c6d6571f6ac94782f9be'; // WARNING: Unsafe to expose in frontend!
 
       // Step 1: Exchange code for access token
-      const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
+      const tokenRes = await fetch(`https://github.com/login/oauth/access_token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +97,7 @@
       }
 
       // Step 2: Fetch GitHub user info
-      const userRes = await fetch(`https://corsproxy.io/?url=https://api.github.com/user`, {
+      const userRes = await fetch(`https://api.github.com/user`, {
         headers: {
           Authorization: `token ${access_token}`,
           Accept: 'application/json'
