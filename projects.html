@@ -330,12 +330,20 @@
       const saveChangesBtn = document.getElementById('save-changes-btn'); // Get the save button
 
       try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'username': localStorage.getItem('username')
+          }
+        });
+              
         if (!res.ok) {
           throw new Error('Failed to fetch metadata');
         }
         const meta = await res.json();
-
+        if(meta.visibility === 'unshared') {
+          
         const currentUsername = localStorage.getItem('username');
         const isProjectOwner = meta.author?.username === currentUsername;
 
