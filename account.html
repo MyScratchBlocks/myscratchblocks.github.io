@@ -61,6 +61,67 @@
   </main>
 
   <script>
+    window.onload = async function() {
+      const code = new URLSearchParams(window.location.search).get('code');
+if (code) {
+  try {
+    const client_id = 'YOUR_CLIENT_ID';
+    const client_secret = 'YOUR_CLIENT_SECRET'; // WARNING: Unsafe to expose in frontend!
+    
+    // Step 1: Exchange code for access token
+    const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        client_id,
+        client_secret,
+        code
+      })
+    });
+
+    const tokenData = await tokenRes.json();
+    const access_token = tokenData.access_token;
+
+    if (!access_token) {
+      console.error('GitHub token exchange failed', tokenData);
+      return;
+    }
+
+    // Step 2: Fetch GitHub user info
+    const userRes = await fetch(`https://corsproxy.io/?url=https://api.github.com/user`, {
+      headers: {
+        Authorization: `token ${access_token}`,
+        Accept: 'application/json'
+      }
+    });
+
+    const userData = await userRes.json();
+    const username = userData.login;
+
+    if (username) {
+      const encodedUsername = btoa(username);
+      localStorage.setItem('usernameEnc', encodedUsername);
+      localStorage.setItem('username', username);
+      localStorage.setItem('loggedIn', 'true');
+      window.location.href = 'account.html';
+    }
+  } catch (err) {
+    console.error('GitHub login failed:', err);
+  }
+}
+    }
+
+    function github() {
+  const clientId = 'YOUR_CLIENT_ID'; // Replace with your GitHub OAuth App Client ID
+  const redirectUri = window.location.origin + window.location.pathname;
+  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user`;
+
+  window.location.href = githubAuthUrl;
+}
+
     function encodeUsername(username) {
       return btoa(username);
     }
