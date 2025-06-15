@@ -30,7 +30,9 @@
         <a href="/" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
         <a href="/#features" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Features</a>
         <a href="/#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">About</a>
-        <a id="account" href="account.html" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200"><span id="navUsername">Account</span></a>
+        <a id="account" href="account.html" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">
+          <span id="navUsername">Account</span>
+        </a>
       </nav>
     </div>
   </header>
@@ -38,8 +40,12 @@
   <main class="container mx-auto px-4 py-12">
     <section id="authSection" class="bg-white shadow-md rounded-lg p-6 max-w-lg mx-auto text-center">
       <h2 class="text-2xl font-semibold mb-4">Login</h2>
-      <button onclick="registerScratchAuth()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">Sign In With ScratchID</button>
-      <button onclick="github()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">Sign In With Github</button>
+      <button onclick="registerScratchAuth()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
+        Sign In With ScratchID
+      </button>
+      <button onclick="github()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
+        Sign In With Github
+      </button>
       <p id="scratchMessage" class="text-sm text-green-600 mt-4"></p>
     </section>
 
@@ -63,64 +69,64 @@
   <script>
     window.onload = async function() {
       const code = new URLSearchParams(window.location.search).get('code');
-if (code) {
-  try {
-    const client_id = 'YOUR_CLIENT_ID';
-    const client_secret = 'YOUR_CLIENT_SECRET'; // WARNING: Unsafe to expose in frontend!
-    
-    // Step 1: Exchange code for access token
-    const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        client_id,
-        client_secret,
-        code
-      })
-    });
+      if (code) {
+        try {
+          const client_id = 'Ov23li9jBqFzwBzihMNg';
+          const client_secret = '8a69da6ed75c546cdc75c6d6571f6ac94782f9be'; // WARNING: Unsafe to expose in frontend!
 
-    const tokenData = await tokenRes.json();
-    const access_token = tokenData.access_token;
+          // Step 1: Exchange code for access token
+          const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              client_id,
+              client_secret,
+              code
+            })
+          });
 
-    if (!access_token) {
-      console.error('GitHub token exchange failed', tokenData);
-      return;
-    }
+          const tokenData = await tokenRes.json();
+          const access_token = tokenData.access_token;
 
-    // Step 2: Fetch GitHub user info
-    const userRes = await fetch(`https://corsproxy.io/?url=https://api.github.com/user`, {
-      headers: {
-        Authorization: `token ${access_token}`,
-        Accept: 'application/json'
+          if (!access_token) {
+            console.error('GitHub token exchange failed', tokenData);
+            return;
+          }
+
+          // Step 2: Fetch GitHub user info
+          const userRes = await fetch(`https://corsproxy.io/?url=https://api.github.com/user`, {
+            headers: {
+              Authorization: `token ${access_token}`,
+              Accept: 'application/json'
+            }
+          });
+
+          const userData = await userRes.json();
+          const username = userData.login;
+
+          if (username) {
+            const encodedUsername = btoa(username);
+            localStorage.setItem('usernameEnc', encodedUsername);
+            localStorage.setItem('username', username);
+            localStorage.setItem('loggedIn', 'true');
+            window.location.href = 'account.html';
+          }
+        } catch (err) {
+          console.error('GitHub login failed:', err);
+        }
       }
-    });
-
-    const userData = await userRes.json();
-    const username = userData.login;
-
-    if (username) {
-      const encodedUsername = btoa(username);
-      localStorage.setItem('usernameEnc', encodedUsername);
-      localStorage.setItem('username', username);
-      localStorage.setItem('loggedIn', 'true');
-      window.location.href = 'account.html';
-    }
-  } catch (err) {
-    console.error('GitHub login failed:', err);
-  }
-}
     }
 
     function github() {
-  const clientId = 'YOUR_CLIENT_ID'; // Replace with your GitHub OAuth App Client ID
-  const redirectUri = window.location.origin + window.location.pathname;
-  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user`;
+      const clientId = 'Ov23li9jBqFzwBzihMNg'; // Replace with your GitHub OAuth App Client ID
+      const redirectUri = window.location.origin + window.location.pathname;
+      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user`;
 
-  window.location.href = githubAuthUrl;
-}
+      window.location.href = githubAuthUrl;
+    }
 
     function encodeUsername(username) {
       return btoa(username);
