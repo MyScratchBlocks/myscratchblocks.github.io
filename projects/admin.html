@@ -149,7 +149,9 @@ The Admin Panel only allows you to configure your own projects, and projects tha
 <form id="delete" action="/delete-a-project.html">
   <input type="checkbox" id="delete-project" name="delete-project" value="delete-project" required>
   <label for="delete-project">I want to delete this project and all it's data</label><br>
-  <input type="submit" value="Confirm">
+  <label for="reason">Why do you want to delete this project?<br>Just write a short (min 20 letters and max 100 letters) reasoning on why you want to delete this project, this won't be logged, but it's just to confirm.</label><br>
+  <input type="text" id="reason" name="reason" min="20" max="100" required><br>
+  <input type="submit" value="Delete Project">
 </form>
 </div>
 
