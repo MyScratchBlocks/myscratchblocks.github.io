@@ -94,7 +94,9 @@
         id++;
         continue;
       }
-      if (!res.ok) {
+      const json = res.json();
+      const tm = json.id;
+      if (tm) {
         // Other errors, also skip to next
         id++;
         continue;
