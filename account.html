@@ -68,57 +68,58 @@
 
   <script>
     window.onload = async function() {
-      const code = new URLSearchParams(window.location.search).get('code');
-      if (code) {
-        try {
-          const client_id = 'Ov23li9jBqFzwBzihMNg';
-          const client_secret = '8a69da6ed75c546cdc75c6d6571f6ac94782f9be'; // WARNING: Unsafe to expose in frontend!
+  const code = new URLSearchParams(window.location.search).get('code');
+  if (code) {
+    try {
+      const client_id = 'Ov23li9jBqFzwBzihMNg';
+      const client_secret = '8a69da6ed75c546cdc75c6d6571f6ac94782f9be'; // WARNING: Unsafe to expose in frontend!
 
-          // Step 1: Exchange code for access token
-          const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-              client_id,
-              client_secret,
-              code
-            })
-          });
+      // Step 1: Exchange code for access token
+      const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          client_id,
+          client_secret,
+          code
+        })
+      });
 
-          const tokenData = await tokenRes.json();
-          const access_token = tokenData.access_token;
+      const tokenData = await tokenRes.json();
+      const access_token = tokenData.access_token;
 
-          if (!access_token) {
-            console.error('GitHub token exchange failed', tokenData);
-            return;
-          }
-
-          // Step 2: Fetch GitHub user info
-          const userRes = await fetch(`https://corsproxy.io/?url=https://api.github.com/user`, {
-            headers: {
-              Authorization: `token ${access_token}`,
-              Accept: 'application/json'
-            }
-          });
-
-          const userData = await userRes.json();
-          const username = userData.login;
-
-          if (username) {
-            const encodedUsername = btoa(username);
-            localStorage.setItem('usernameEnc', encodedUsername);
-            localStorage.setItem('username', username);
-            localStorage.setItem('loggedIn', 'true');
-            window.location.href = 'account.html';
-          }
-        } catch (err) {
-          console.error('GitHub login failed:', err);
-        }
+      if (!access_token) {
+        console.error('GitHub token exchange failed', tokenData);
+        return;
       }
+
+      // Step 2: Fetch GitHub user info
+      const userRes = await fetch(`https://corsproxy.io/?url=https://api.github.com/user`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+          Accept: 'application/json'
+        }
+      });
+
+      const userData = await userRes.json();
+      const username = userData.login;
+
+      if (username) {
+        const encodedUsername = btoa(username);
+        localStorage.setItem('usernameEnc', encodedUsername);
+        localStorage.setItem('username', username);
+        localStorage.setItem('loggedIn', 'true');
+        window.location.href = 'account.html';
+      }
+    } catch (err) {
+      console.error('GitHub login failed:', err);
     }
+  }
+}
+
 
     function github() {
       const clientId = 'Ov23li9jBqFzwBzihMNg'; // Replace with your GitHub OAuth App Client ID
