@@ -146,6 +146,11 @@ The Admin Panel only allows you to configure your own projects, and projects tha
 </br>
 <b>Delete This Project</b>
 <p>Deleting a project will remove all it's data from our server, and will also delete this project's project page. This cannot be recovered unless you have a copy on your computer or use the Backups feature in MyScratchBlocks.</p>
+<form id="delete" action="/delete-a-project.html">
+  <input type="checkbox" id="delete-project" name="delete-project" value="delete-project" required>
+  <label for="delete-project">I want to delete this project and all it's data</label><br>
+  <input type="submit" value="Confirm">
+</form>
 </div>
 
 <div id="ownership" class="tabcontent">
