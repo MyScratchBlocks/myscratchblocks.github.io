@@ -101,14 +101,13 @@
 
           // Safely extract id from the link
           let id = project.link.split("#")[1];
-          let author = 'Unknown';
+          let author = project.author;
 
           if (id) {
             try {
               const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
               if (res.ok) {
                 const jsonData = await res.json();
-                author = jsonData.author?.username ?? 'Unknown';
               }
             } catch (err) {
               console.warn('Failed to fetch author meta for project', id, err);
