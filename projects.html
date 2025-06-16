@@ -418,6 +418,24 @@
                 shareProjectBtn.setAttribute('data-listener-attached', 'true');
             }
           } else {
+            // Allows the Owner and moderators to edit description regardless of ownership
+            if (currentUsername == "MyScratchedAccount") {
+             //  block of code to be executed if the condition is true
+              } else {
+                    // Show editable elements, hide display elements
+          metaTitleElement.classList.add('hidden-by-js');
+          editableTitleInput.classList.remove('hidden-by-js');
+          editableTitleInput.classList.add('visible-by-js');
+
+          
+          metaDescriptionElement.classList.add('hidden-by-js');
+          editableDescriptionTextarea.classList.remove('hidden-by-js');
+          editableDescriptionTextarea.classList.add('visible-by-js');
+
+          saveChangesBtn.classList.remove('hidden-by-js');
+          saveChangesBtn.classList.add('visible-by-js');
+  //  block of code to be executed if the condition is false
+              }
             shareProjectBtn.classList.add('hidden-by-js');
             shareProjectBtn.classList.remove('visible-by-js');
           }
