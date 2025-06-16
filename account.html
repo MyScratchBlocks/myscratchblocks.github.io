@@ -71,8 +71,8 @@
   const code = new URLSearchParams(window.location.search).get('code');
   if (code) {
     try {
-      const client_id = 'Ov23li9jBqFzwBzihMNg';
-      const client_secret = '8a69da6ed75c546cdc75c6d6571f6ac94782f9be'; // WARNING: Unsafe to expose in frontend!
+      const client_id = 'Ov23liOrOfV9AEroertM'; // Updated with an application owned by myscratchblocks instead of a indivsual user
+      const client_secret = 'a44044061c29b317f0f1d8a30d6fceb165a9c6f3'; // WARNING: Unsafe to expose in frontend!
 
       // Step 1: Exchange code for access token
       const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
