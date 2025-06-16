@@ -488,7 +488,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text, user: { username: localStorage.getItem('username') } })
           });
-          if (res.ok) {
+          if (res.status === 201) {
             document.getElementById('comment-input').value = '';
             fetchComments();
           } else {
