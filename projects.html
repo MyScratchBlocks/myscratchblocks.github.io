@@ -379,6 +379,9 @@
           metaTitleElement.classList.add('hidden-by-js');
           editableTitleInput.classList.remove('hidden-by-js');
           editableTitleInput.classList.add('visible-by-js');
+
+          change-main-coder-btn.classList.add('hidden-by-js'); // Hide share button if not owner
+          change-main-coder-btn.classList.remove('hidden-by-js'); // Hide share button if not owner
           
           metaDescriptionElement.classList.add('hidden-by-js');
           editableDescriptionTextarea.classList.remove('hidden-by-js');
@@ -473,8 +476,6 @@
           saveChangesBtn.classList.remove('visible-by-js');
           shareProjectBtn.classList.add('hidden-by-js'); // Hide share button if not owner
           shareProjectBtn.classList.remove('visible-by-js');
-          change-main-coder-btn.classList.add('hidden-by-js'); // Hide share button if not owner
-          change-main-coder-btn.classList.remove('hidden-by-js'); // Hide share button if not owner
         }
 
         loading.classList.add('hidden');
