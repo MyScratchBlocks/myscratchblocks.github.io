@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://kit.fontawesome.com/1373677f05.js" crossorigin="anonymous"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MyScratchBlocks - Project Viewer Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -620,7 +620,9 @@
             auth: 'github_pat_11A4RWIDA042YSoXsXXZha' + '_UH79juFSUAI9nUCMcq6tASZNPvn67gywETiesve45ycXM7V6MP4JTZhzCSY' // Ensure this token is valid and secure
         });
 
-        const reportBody = `A report has just been made!\nReported Project: https://myscratchblocks.github.io/projects#${id}\nReported By: ${username}`;
+        const reportBody = `A report has just been made!
+Reported Project: https://myscratchblocks.github.io/projects#${id}
+Reported By: ${username}`;
 
         const response = await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
           owner: 'MyScratchBlocks',
@@ -632,7 +634,7 @@
           }
         });
 
-        const status = response.status
+        const status = response.status;
 
         if (response.status === 201) { // 201 Created is the success status for creating a comment
           document.getElementById('id01').style.display = 'none';
