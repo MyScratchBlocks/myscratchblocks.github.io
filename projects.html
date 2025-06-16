@@ -600,13 +600,13 @@
       
       try {
         // Initialize Octokit with the correct authentication method
-        const octokit = new octokit({
+        const Octokit = new Octokit({
             auth: 'github_pat_11A4RWIDA042YSoXsXXZha' + '_UH79juFSUAI9nUCMcq6tASZNPvn67gywETiesve45ycXM7V6MP4JTZhzCSY' // Ensure this token is valid and secure
         });
 
         const reportBody = `A report has just been made!\nReported Project: https://myscratchblocks.github.io/projects#${id}\nReported By: ${username}`;
 
-        const response = await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
+        const response = await Octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
           owner: 'MyScratchBlocks',
           repo: 'myscratchblocks.github.io',
           issue_number: 8, // Make sure this issue number is correct for your "reports feed"
