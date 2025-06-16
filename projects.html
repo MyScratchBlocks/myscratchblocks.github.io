@@ -312,6 +312,14 @@
         
     iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
 
+    // Add a catch here to handle potential errors when setting the iframe src
+    if (!iframe.src) {
+        console.error("Error: Could not set iframe src.  Check the project ID in the URL.");
+        // Optionally, display an error message to the user.  For example:
+        // document.getElementById('id-frame').outerHTML = "<p style='color: red;'>Error: Could not load project. Invalid project ID.</p>";
+        // Or, you could show a more user-friendly error message in a dedicated element.
+    }
+
     function closeLoginModal() {
       document.getElementById('login-modal').style.display = 'none';
     }
