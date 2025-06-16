@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MyScratchBlocks - Project Viewer Page</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@octokit/core@5.0.0/dist/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@octokit/auth-token@4.0.0/dist/index.min.js"></script>
+  <script type="module">
+  import { Octokit } from "https://esm.sh/@octokit/rest";
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -618,7 +619,7 @@
       
       try {
         // Initialize Octokit with the correct authentication method
-        const octokit = new octokit({
+        const octokit = new Octokit({
             auth: 'github_pat_11A4RWIDA042YSoXsXXZha' + '_UH79juFSUAI9nUCMcq6tASZNPvn67gywETiesve45ycXM7V6MP4JTZhzCSY' // Ensure this token is valid and secure
         });
 
