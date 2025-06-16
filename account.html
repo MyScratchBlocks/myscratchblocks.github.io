@@ -126,7 +126,7 @@
     function github() {
       const clientId = 'Ov23li9jBqFzwBzihMNg'; // Replace with your GitHub OAuth App Client ID
       const redirectUri = 'https://myscratchblocks.github.io/account'
-      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user`;
+      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user`;
 
       window.location.href = githubAuthUrl;
     }
