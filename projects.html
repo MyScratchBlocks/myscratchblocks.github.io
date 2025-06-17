@@ -196,6 +196,9 @@
             <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-clone mr-2"></i> Remix
             </button>
+          <button onclick="copyToClipboard()" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
+              <i class="fa-solid fa-link mr-2"></i> Copy Link
+            </button>
           </div>
         </div>
       </div>
@@ -519,6 +522,23 @@
         alert(`An error occurred while reporting. Please try again or report manually at our reports feed. Error: ${error} Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8`);
       }
     });
+
+    // Copy Link script - just like Scratch
+    <script>
+function copyToClipboard() {
+  // Get the current page's URL
+  const url = window.location.href;
+
+  // Use the Clipboard API to copy the URL
+  navigator.clipboard.writeText(url).then(function() {
+    // Success feedback (optional)
+    alert('URL copied to clipboard!');
+  }, function(err) {
+    // Error feedback (optional)
+    alert('Failed to copy URL: ', err);
+  });
+}
+</script>
   </script>
 </body>
 </html>
