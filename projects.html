@@ -198,6 +198,7 @@
             </button>
             </button>
           </div>
+          <br>
           <div class="flex gap-4">
           <button onclick="copyToClipboard()" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-link mr-2"></i> Copy Link
@@ -517,7 +518,7 @@
         // Instead of Octokit, use a web API call or instruct users to report manually
         // For security, do not expose GitHub PAT on client-side!
         // Instead, prompt the user to report manually:
-        window.location.href = `https://docs.google.com/forms/d/e/1FAIpQLSeheaB8icZsPXBeVokOHZWHIGQJGUvHBMHhhbawc4Cl-ySpsw/viewform?usp=pp_url&entry.1729687504=${localStorage.getItem('username')}&entry.1460092213=Reported+Project:+https://myscratchblocks.github.io/projects#${id}\n+Reported+By: ${username}`;
+        window.location.href = `tomail:myscratchblocks.team@gmail.com`;
         document.getElementById('id01').style.display = 'none';
       } catch (error) {
         console.error('Reporting error:', error);
