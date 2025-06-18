@@ -238,7 +238,9 @@
         await checkAuth();
       }
     }
-    // Update Medium Ban Risk
+
+    const username = localStorage.getitem("username");
+    
     if (username == "bannie6") {
     document.getElementById("banRisk").innerHTML = "Medium Risk";
     document.getElementById('banRisk').style.color = 'orange';
