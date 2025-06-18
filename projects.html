@@ -302,10 +302,10 @@
         const isProjectUnshared = meta.visibility === 'unshared';
 
         // Set values for both display and editable elements initially
-        metaTitleElement.textContent = meta.title || 'Untitled Project';
+        metaTitleElement.innerHTML = meta.title || 'Untitled Project';
         editableTitleInput.value = meta.title || 'Untitled Project';
         document.title = meta.title || 'Untitled Project';
-        metaDescriptionElement.textContent = meta.description || 'No description.';
+        metaDescriptionElement.innerHTML = meta.description || 'No description.';
         editableDescriptionTextarea.value = meta.description || 'No description.';
         document.getElementById('meta-instructions').textContent = meta.instructions || '';
         document.getElementById('meta-date').textContent = new Date(meta.history?.created).toLocaleDateString();
@@ -523,7 +523,6 @@
         // Instead, use Blogger Post Via Email:
         window.location.href = `mailto:benjmain801.mysbReport@blogger.com`;
         document.getElementById('id01').style.display = 'none';
-        alert(`If the email sending popup does not show, please send to benjmain801.mysbReport@blogger.com`);
       } catch (error) {
         console.error('Reporting error:', error);
         alert(`An error occurred while reporting. Please try again or report manually at our reports feed. Error: ${error} Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8`);
