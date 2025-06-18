@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blogger Post Reader (RSS)</title>
+    <title>MyScratchBlocks Report Feed</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -34,15 +34,15 @@
 
     <!-- Header Section -->
     <header class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6 mb-8 text-center">
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-2">Reports feed</h1>
-        <p class="text-lg text-gray-600">Fetching the latest articles fresh from the reports feed via RSS!</p>
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-2">MyScratchBlocks Reports Feed</h1>
+        <p class="text-lg text-gray-600">These are all the user's reports, all found below, for free!</p>
     </header>
 
     <!-- Main Content Area for Posts -->
     <main class="w-full max-w-4xl flex-grow bg-white rounded-xl shadow-lg p-6">
         <div id="posts-container" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
             <!-- Loading indicator -->
-            <p id="loading-message" class="text-center text-gray-500 text-lg col-span-full">Loading posts...</p>
+            <p id="loading-message" class="text-center text-gray-500 text-lg col-span-full">Loading reports, please wait...</p>
             <!-- Posts will be injected here by JavaScript -->
         </div>
 
@@ -55,8 +55,8 @@
 
     <!-- Footer Section -->
     <footer class="w-full max-w-4xl text-center text-gray-600 mt-8">
-        <p>&copy; <span id="current-year"></span> Your Website. All rights reserved.</p>
-        <p class="text-sm mt-1">Powered by RSS</p>
+        <p>&copy; Copyright <span id="current-year"></span>. The Reports Feed should only be used to fight abuse and not for anything else. Please use the built-in reporting function to add things to this feed.</p>
+        <p class="text-sm mt-1">Powered by the RSS feed provided by Blogger</p>
     </footer>
 
     <script>
@@ -65,7 +65,8 @@
             document.getElementById('current-year').textContent = new Date().getFullYear();
 
             // IMPORTANT: Replace with your actual Blogger RSS Feed URL
-            // You can usually find this at: https://myscratchblocks-report.blogspot.com/feeds/posts/default
+            // You can usually find this at: https://YOURBLOGNAME.blogspot.com/feeds/posts/default
+            // Example: 'https://example.blogspot.com/feeds/posts/default'
             const BLOGGER_RSS_FEED_URL = 'https://myscratchblocks-report.blogspot.com/feeds/posts/default'; // Replace with your Blogger RSS Feed URL
 
             const postsContainer = document.getElementById('posts-container');
@@ -90,8 +91,8 @@
                 loadingMessage.classList.remove('hidden');
                 messageBox.classList.add('hidden'); // Hide any previous messages
 
-                if (BLOGGER_RSS_FEED_URL === 'YOUR_BLOGGER_RSS_FEED_URL') {
-                    displayMessage("Please replace 'YOUR_BLOGGER_RSS_FEED_URL' in the script with your actual Blogger RSS Feed URL.", 'error');
+                if (BLOGGER_RSS_FEED_URL === 'YOUR_BLOGGER_RSS_FEED_URL' || !BLOGGER_RSS_FEED_URL.startsWith('http')) {
+                    displayMessage("Please replace 'YOUR_BLOGGER_RSS_FEED_URL' in the script with a valid, full RSS Feed URL (e.g., https://myscratchblocks-report.blogspot.com/feeds/posts/default).", 'error');
                     loadingMessage.classList.add('hidden');
                     return;
                 }
@@ -102,7 +103,7 @@
 
                     if (!response.ok) {
                         const errorData = await response.json();
-                        throw new Error(`RSS Proxy Error: ${response.status} - ${errorData.message || 'Unknown error'}`);
+                        throw new Error(`RSS Proxy Error: ${response.status} - ${errorData.message || 'Unknown error, please alert support ASAP or reload page'}`);
                     }
 
                     const data = await response.json();
@@ -113,7 +114,7 @@
                         postsContainer.innerHTML = ''; // Clear loading message
                         data.items.forEach(item => {
                             // RSS feeds often have 'description' or 'content' fields
-                            const snippet = item.description ? item.description.replace(/<[^>]*>/g, '').substring(0, 200) + '...' : 'No description available.'; // Remove HTML tags and truncate
+                            const snippet = item.description ? item.description.replace(/<[^>]*>/g, '').substring(0, 1000) + '... And there is More to read, please press the read more button below.' : 'No report text found.'; // Remove HTML tags and truncate
                             const postElement = document.createElement('div');
                             postElement.className = 'bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
                             postElement.innerHTML = `
@@ -129,12 +130,12 @@
                             postsContainer.appendChild(postElement);
                         });
                     } else {
-                        postsContainer.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full">No posts found or RSS feed empty.</p>';
+                        postsContainer.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full">No reports found or RSS feed empty. Try Again Later!</p>';
                     }
                 } catch (error) {
                     loadingMessage.classList.add('hidden');
-                    console.error('Error fetching reports feed posts via RSS:', error);
-                    displayMessage(`Failed to load posts from RSS: ${error.message}.`, 'error');
+                    console.error('Error fetching Blogger posts via RSS:', error);
+                    displayMessage(`Failed to load posts from RSS: ${error.message}. Please check your RSS Feed URL and ensure it's a valid and accessible URL.`, 'error');
                 }
             }
 
