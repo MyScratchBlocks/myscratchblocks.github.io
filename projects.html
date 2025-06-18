@@ -517,9 +517,10 @@
       try {
         // Instead of Octokit, use a web API call or instruct users to report manually
         // For security, do not expose GitHub PAT on client-side!
-        // Instead, prompt the user to report manually:
-        window.location.href = `mailto:myscratchblocks.team@gmail.com`;
+        // Instead, use Blogger Post Via Email:
+        window.location.href = `mailto:benjmain801.mysbReport@blogger.com`;
         document.getElementById('id01').style.display = 'none';
+        alert(`If the email sending popup does not show, please send to benjmain801.mysbReport@blogger.com`);
       } catch (error) {
         console.error('Reporting error:', error);
         alert(`An error occurred while reporting. Please try again or report manually at our reports feed. Error: ${error} Report Feed: https://github.com/MyScratchBlocks/myscratchblocks.github.io/issues/8`);
