@@ -53,6 +53,7 @@
       <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
         <h2 id="welcomeMessage" class="text-2xl font-bold mb-4"></h2>
         <div id="mainText" class="text-left"></div>
+        <b>Risk Of Getting Banned:</b> <p id="banRisk">Low risk</p>
         <button onclick="logout()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Logout</button>
         <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">My Projects</button>
       </div>
@@ -237,6 +238,23 @@
         await checkAuth();
       }
     }
+    // Update Medium Ban Risk
+    if (username == "ENTER MEDIUM BAN RISK USER HERE") {
+    document.getElementById("banRisk").innerHTML = "Medium Risk";
+    document.getElementById('banRisk').style.color = 'orange';
+}
+
+    // Update High Ban Risk
+    if (username == "ENTER HIGH BAN RISK USER HERE") {
+    document.getElementById("banRisk").innerHTML = "High Risk - Stop breaking the rules to avoid getting banned!";
+    document.getElementById('banRisk').style.color = 'red';
+}
+
+  // Update High Ban Risk
+    if (username == "ENTER SUPER HIGH BAN RISK USER HERE") {
+    document.getElementById("banRisk").innerHTML = "Super High Risk - Account Limited - Certain features are disabled, stop breaking the rules!";
+    document.getElementById('banRisk').style.color = 'SlateBlue';
+}
   </script>
 </body>
 
