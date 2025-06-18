@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogger Post Reader (RSS)</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and overall look */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f4f7f6; /* Light grey background */
+            color: #333; /* Darker text for readability */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a0a0a0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+
+    <!-- Header Section -->
+    <header class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6 mb-8 text-center">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-2">Reports feed</h1>
+        <p class="text-lg text-gray-600">Fetching the latest articles fresh from the reports feed via RSS!</p>
+    </header>
+
+    <!-- Main Content Area for Posts -->
+    <main class="w-full max-w-4xl flex-grow bg-white rounded-xl shadow-lg p-6">
+        <div id="posts-container" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+            <!-- Loading indicator -->
+            <p id="loading-message" class="text-center text-gray-500 text-lg col-span-full">Loading posts...</p>
+            <!-- Posts will be injected here by JavaScript -->
+        </div>
+
+        <!-- Error/Message Display -->
+        <div id="message-box" class="hidden mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline" id="message-text"></span>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="w-full max-w-4xl text-center text-gray-600 mt-8">
+        <p>&copy; <span id="current-year"></span> Your Website. All rights reserved.</p>
+        <p class="text-sm mt-1">Powered by RSS</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set the current year in the footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            // IMPORTANT: Replace with your actual Blogger RSS Feed URL
+            // You can usually find this at: https://myscratchblocks-report.blogspot.com/feeds/posts/default
+            const BLOGGER_RSS_FEED_URL = 'YOUR_BLOGGER_RSS_FEED_URL'; // Replace with your Blogger RSS Feed URL
+
+            const postsContainer = document.getElementById('posts-container');
+            const loadingMessage = document.getElementById('loading-message');
+            const messageBox = document.getElementById('message-box');
+            const messageText = document.getElementById('message-text');
+
+            // Function to display messages (errors or info)
+            function displayMessage(message, type = 'error') {
+                messageText.textContent = message;
+                messageBox.classList.remove('hidden');
+                if (type === 'error') {
+                    messageBox.classList.remove('bg-green-100', 'border-green-400', 'text-green-700');
+                    messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+                } else {
+                    messageBox.classList.remove('bg-red-100', 'border-red-400', 'text-green-700');
+                    messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+                }
+            }
+
+            async function fetchBloggerPostsFromRSS() {
+                loadingMessage.classList.remove('hidden');
+                messageBox.classList.add('hidden'); // Hide any previous messages
+
+                if (BLOGGER_RSS_FEED_URL === 'YOUR_BLOGGER_RSS_FEED_URL') {
+                    displayMessage("Please replace 'YOUR_BLOGGER_RSS_FEED_URL' in the script with your actual Blogger RSS Feed URL.", 'error');
+                    loadingMessage.classList.add('hidden');
+                    return;
+                }
+
+                try {
+                    // Using rss2json.com to bypass CORS and convert RSS to JSON
+                    const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(BLOGGER_RSS_FEED_URL)}`);
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`RSS Proxy Error: ${response.status} - ${errorData.message || 'Unknown error'}`);
+                    }
+
+                    const data = await response.json();
+                    loadingMessage.classList.add('hidden'); // Hide loading message
+
+                    // Check if the status is 'ok' from rss2json and if items exist
+                    if (data.status === 'ok' && data.items && data.items.length > 0) {
+                        postsContainer.innerHTML = ''; // Clear loading message
+                        data.items.forEach(item => {
+                            // RSS feeds often have 'description' or 'content' fields
+                            const snippet = item.description ? item.description.replace(/<[^>]*>/g, '').substring(0, 200) + '...' : 'No description available.'; // Remove HTML tags and truncate
+                            const postElement = document.createElement('div');
+                            postElement.className = 'bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1';
+                            postElement.innerHTML = `
+                                <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+                                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="hover:underline text-indigo-600">${item.title}</a>
+                                </h2>
+                                <p class="text-gray-700 text-base leading-relaxed mb-4">${snippet}</p>
+                                <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-indigo-500 text-white font-medium rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    Read More
+                                    <svg class="ml-2 -mr-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                </a>
+                            `;
+                            postsContainer.appendChild(postElement);
+                        });
+                    } else {
+                        postsContainer.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full">No posts found or RSS feed empty.</p>';
+                    }
+                } catch (error) {
+                    loadingMessage.classList.add('hidden');
+                    console.error('Error fetching reports feed posts via RSS:', error);
+                    displayMessage(`Failed to load posts from RSS: ${error.message}.`, 'error');
+                }
+            }
+
+            fetchBloggerPostsFromRSS();
+        });
+    </script>
+</body>
+</html>
