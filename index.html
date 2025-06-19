@@ -219,7 +219,7 @@ Swal.fire({
 
                         if (id) {
                             try {
-                                const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+                                const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${localStorage.getItem('username') || 'test'}`);
                                 if (res.ok) {
                                     const jsonData = await res.json();
                                 }
