@@ -104,6 +104,31 @@
       opacity: 0.5;
       pointer-events: none;
     }
+    /* The alert message box */
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
+
     .hidden-by-js { display: none; }
     .visible-by-js { display: block; }
   </style>
@@ -175,6 +200,10 @@
               <p class="text-sm text-gray-500">Remixes</p>
             </div>
           </div>
+          <div class="alert" id="share-project-btn">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+  This project is not shared — so only you can see it. Click share to let everyone see it!
+</div>
           <button id="share-project-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
               <i class="fa-solid fa-share-nodes mr-2"></i> Share Project
           </button>
