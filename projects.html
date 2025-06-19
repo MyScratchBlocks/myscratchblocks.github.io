@@ -329,6 +329,11 @@
         const currentUsername = localStorage.getItem('username');
         const isProjectOwner = meta.author?.username === currentUsername;
         const isProjectUnshared = meta.visibility === 'unshared';
+        if(isProjectUnshared) {
+          document.getElementById('share-btn2').style.display = 'none';
+         } else {
+          document.getElementById('share-btn2').style.display = 'none';
+         } 
 
         // Set values for both display and editable elements initially
         metaTitleElement.innerHTML = meta.title || 'Untitled Project';
