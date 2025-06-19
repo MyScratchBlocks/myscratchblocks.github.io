@@ -200,10 +200,9 @@
               <p class="text-sm text-gray-500">Remixes</p>
             </div>
           </div>
-          <div class="alert" id="share-project-btn2">
-  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-  This project is not shared — so only you can see it. Click share to let everyone see it!
-</div>
+          <div class="alert hidden" id="share-project-btn2"> <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            This project is not shared &mdash; so only you can see it. Click share to let everyone see it!
+          </div>
           <button id="share-project-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
               <i class="fa-solid fa-share-nodes mr-2"></i> Share Project
           </button>
@@ -228,15 +227,14 @@
             <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-clone mr-2"></i> Remix
             </button>
-            </button>
           </div>
           <br>
           <div class="flex gap-4">
-          <button onclick="copyToClipboard()" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
+            <button onclick="copyToClipboard()" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-link mr-2"></i> Copy Link
             </button>
+          </div>
         </div>
-      </div>
       <button onclick="document.getElementById('id01').style.display='flex'" class="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg w-full max-w-xs mx-auto block">
         <i class="fa-solid fa-circle-exclamation"></i> Report Project For Investigation
       </button>
@@ -299,8 +297,7 @@
       document.getElementById('login-modal').style.display = 'none';
     }
     function showLoginModal() {
-      const loginModal = document.getElementById('login-modal');
-      loginModal.style.display = 'flex';
+      document.getElementById('login-modal').style.display = 'flex';
     }
 
     async function fetchMeta() {
@@ -315,30 +312,54 @@
       const seeInsideBtn = document.getElementById('see-inside-btn');
       const saveChangesBtn = document.getElementById('save-changes-btn');
       const shareProjectBtn = document.getElementById('share-project-btn');
+      const shareProjectAlert = document.getElementById('share-project-btn2'); // Corrected ID reference
+
+      console.log('--- Starting fetchMeta() ---');
+      console.log('Project ID from URL hash:', id);
+      const currentUsername = localStorage.getItem('username');
+      console.log('Current localStorage Username:', currentUsername);
+
+      if (!id) {
+          console.error('ERROR: No project ID found in URL hash. Cannot fetch metadata.');
+          loading.classList.add('hidden');
+          error.classList.remove('hidden');
+          error.textContent = "Error: Project ID missing in URL. Please check the URL format (e.g., /viewer#YOUR_PROJECT_ID).";
+          return; // Stop execution if no ID
+      }
 
       try {
-        const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${localStorage.getItem('username')}`, {
+        const apiUrl = `https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername}`;
+        console.log('Attempting to fetch from:', apiUrl);
+
+        const res = await fetch(apiUrl, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('username')
+            'Authorization': currentUsername // Ensure your backend expects this header
           }
         });
-        if (!res.ok) throw new Error('Failed to fetch metadata');
+
+        console.log('API Response Status:', res.status, res.statusText);
+
+        if (!res.ok) {
+          const errorResponseText = await res.text();
+          console.error('API Fetch failed. Response Body:', errorResponseText);
+          throw new Error(`Failed to fetch metadata: ${res.status} ${res.statusText}`);
+        }
+
         const meta = await res.json();
-        const currentUsername = localStorage.getItem('username');
+        console.log('Successfully fetched metadata:', meta);
+
         const isProjectOwner = meta.author?.username === currentUsername;
         const isProjectUnshared = meta.visibility === 'unshared';
-        if(isProjectUnshared) {
-          document.getElementById('share-btn2').style.display = 'none';
-         } else {
-          document.getElementById('share-btn2').style.display = 'block';
-         } 
+        console.log('Is project owner:', isProjectOwner);
+        console.log('Is project unshared:', isProjectUnshared);
+
 
         // Set values for both display and editable elements initially
         metaTitleElement.innerHTML = meta.title || 'Untitled Project';
         editableTitleInput.value = meta.title || 'Untitled Project';
-        document.title = meta.title || 'Untitled Project';
+        document.title = meta.title || 'Untitled Project'; // Update page title
         metaDescriptionElement.innerHTML = meta.description || 'No description.';
         editableDescriptionTextarea.value = meta.description || 'No description.';
         document.getElementById('meta-instructions').textContent = meta.instructions || '';
@@ -348,30 +369,29 @@
         document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
         document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
 
-        if (isProjectOwner || currentUsername == "MyScratchedAccount") {
+        if (isProjectOwner || currentUsername === "MyScratchedAccount") { // Consider if 'MyScratchedAccount' should have full owner access
           metaAuthorElement.innerHTML = isProjectOwner
             ? 'This is you! As the Main Coder, you can configure settings, edit the project, and more.'
             : (meta.author?.username || 'No One');
           seeInsideBtn.innerHTML = isProjectOwner
             ? '<i class="fa-solid fa-pen-to-square mr-2"></i> Edit Project'
-            : '<i class="fa-solid fa-code mr-2"></i> See Inside';
+            : '<i class="fa-solid fa-code mr-2"></i> See Inside'; // Still "See Inside" if admin but not owner
 
           // Show editable elements, hide display elements
           metaTitleElement.classList.add('hidden-by-js');
           editableTitleInput.classList.remove('hidden-by-js');
-          editableTitleInput.classList.add('visible-by-js');
           metaDescriptionElement.classList.add('hidden-by-js');
           editableDescriptionTextarea.classList.remove('hidden-by-js');
-          editableDescriptionTextarea.classList.add('visible-by-js');
           saveChangesBtn.classList.remove('hidden-by-js');
-          saveChangesBtn.classList.add('visible-by-js');
 
-          // Show share button if project is unshared
+          // Show share button if project is unshared AND current user is owner
           if (isProjectUnshared && isProjectOwner) {
             shareProjectBtn.classList.remove('hidden-by-js');
-            shareProjectBtn.classList.add('visible-by-js');
+            shareProjectAlert.classList.remove('hidden'); // Show the alert
+            shareProjectAlert.style.display = 'block'; // Ensure it's visible
             if (!shareProjectBtn.hasAttribute('data-listener-attached')) {
               shareProjectBtn.addEventListener('click', async () => {
+                if (!confirm("Are you sure you want to share this project? It will be visible to everyone.")) return;
                 try {
                   const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
                     method: 'PUT',
@@ -382,9 +402,10 @@
                   });
                   if (shareRes.ok) {
                     alert('Project shared successfully!');
-                    fetchMeta();
+                    fetchMeta(); // Re-fetch meta to update UI
                   } else {
-                    alert('Failed to share project. Please try again.');
+                    const shareErrorText = await shareRes.text();
+                    alert(`Failed to share project. Please try again. Error: ${shareErrorText}`);
                   }
                 } catch (shareError) {
                   console.error('Error sharing project:', shareError);
@@ -395,25 +416,36 @@
             }
           } else {
             shareProjectBtn.classList.add('hidden-by-js');
-            shareProjectBtn.classList.remove('visible-by-js');
+            shareProjectAlert.classList.add('hidden'); // Hide the alert if not unshared or not owner
+            shareProjectAlert.style.display = 'none'; // Ensure it's hidden
           }
+
           // Attach event listener for save button if not already attached
           if (!saveChangesBtn.hasAttribute('data-listener-attached')) {
             saveChangesBtn.addEventListener('click', async () => {
               const updatedTitle = editableTitleInput.value.trim();
               const updatedDescription = editableDescriptionTextarea.value.trim();
+              if (!updatedTitle) {
+                alert("Project title cannot be empty.");
+                return;
+              }
               try {
                 const saveRes = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`, {
                   method: 'PUT',
-                  headers: { 'Content-Type': 'application/json' },
+                  headers: { 'Content-Type': 'application/json', 'Authorization': currentUsername }, // Include authorization
                   body: JSON.stringify({
-                    username: currentUsername,
                     title: updatedTitle,
                     description: updatedDescription
                   })
                 });
-                if (saveRes.ok) fetchMeta();
-                else alert('Failed to save changes. Please try again.');
+                if (saveRes.ok) {
+                    alert('Changes saved successfully!');
+                    fetchMeta(); // Re-fetch meta to update UI
+                }
+                else {
+                    const saveErrorText = await saveRes.text();
+                    alert(`Failed to save changes. Please try again. Error: ${saveErrorText}`);
+                }
               } catch (saveError) {
                 console.error('Error saving project details:', saveError);
                 alert('An error occurred while saving. Please check your connection and try again.');
@@ -427,27 +459,25 @@
 
           // Hide editable elements, show display elements
           metaTitleElement.classList.remove('hidden-by-js');
-          metaTitleElement.classList.add('visible-by-js');
           editableTitleInput.classList.add('hidden-by-js');
-          editableTitleInput.classList.remove('visible-by-js');
           metaDescriptionElement.classList.remove('hidden-by-js');
-          metaDescriptionElement.classList.add('visible-by-js');
           editableDescriptionTextarea.classList.add('hidden-by-js');
-          editableDescriptionTextarea.classList.remove('visible-by-js');
           saveChangesBtn.classList.add('hidden-by-js');
-          saveChangesBtn.classList.remove('visible-by-js');
           shareProjectBtn.classList.add('hidden-by-js');
-          shareProjectBtn.classList.remove('visible-by-js');
-          shareProjectBtn2.classList.add('hidden-by-js');
-          shareProjectBtn2.classList.remove('visible-by-js');
+          shareProjectAlert.classList.add('hidden'); // Always hide alert if not owner
+          shareProjectAlert.style.display = 'none';
         }
         loading.classList.add('hidden');
         content.classList.remove('hidden');
+        error.classList.add('hidden'); // Ensure error is hidden on success
       } catch (err) {
-        console.error('Failed to load metadata:', err);
+        console.error('ERROR in fetchMeta catch block:', err);
         loading.classList.add('hidden');
+        content.classList.add('hidden'); // Ensure content is hidden on error
         error.classList.remove('hidden');
+        error.textContent = `Failed to load metadata. The project may not exist, or there is a temporary error on our end. Details: ${err.message}`;
       }
+      console.log('--- fetchMeta() finished ---');
     }
 
     window.onload = async () => {
@@ -456,7 +486,10 @@
       if (username) {
         document.getElementById('account').textContent = username;
         try {
-          await fetch(`https://editor-compiler.onrender.com/api/${id}/views`, { method: 'POST' });
+          // Only record view if a valid project ID is present
+          if (id) {
+            await fetch(`https://editor-compiler.onrender.com/api/${id}/views`, { method: 'POST' });
+          }
         } catch(err) {
           console.error('Failed To Record View', err);
         }
@@ -467,10 +500,13 @@
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love`, { method: 'POST' });
           if (res.ok) {
             document.getElementById('meta-loves').textContent = parseInt(document.getElementById('meta-loves').textContent) + 1;
+          } else {
+             const errorText = await res.text();
+             alert(`Failed to upvote project, please try again! Error: ${errorText}`);
           }
         } catch (error) {
           console.error('Error upvoting project:', error);
-          alert("Failed to upvote project, please try again!")
+          alert("An error occurred while upvoting project, please try again!")
         }
       });
 
@@ -480,10 +516,13 @@
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite`, { method: 'POST' });
           if (res.ok) {
             document.getElementById('meta-favorites').textContent = parseInt(document.getElementById('meta-favorites').textContent) + 1;
+          } else {
+             const errorText = await res.text();
+             alert(`Failed to favorite project, please try again! Error: ${errorText}`);
           }
         } catch (error) {
           console.error('Error favoriting project:', error);
-          alert("Failed to fav project, please try again!")
+          alert("An error occurred while favoriting project, please try again!")
         }
       });
 
@@ -502,7 +541,7 @@
           const comments = await res.json();
           const commentsList = document.getElementById('comments-list');
           document.getElementById('comments-loading').style.display = 'none';
-          commentsList.innerHTML = '';
+          commentsList.innerHTML = ''; // Clear previous comments
           if (comments.length === 0) {
             commentsList.innerHTML = '<p class="text-gray-500">No comments yet. Be the first to comment! (but do not spam)</p>';
           } else {
@@ -517,6 +556,7 @@
           console.error('Failed to load comments:', error);
           document.getElementById('comments-loading').style.display = 'none';
           document.getElementById('comments-error').classList.remove('hidden');
+          document.getElementById('comments-error').textContent = `Failed to load comments. Error: ${error.message}`;
         }
       }
 
@@ -525,19 +565,26 @@
       document.getElementById('comment-form').addEventListener('submit', async e => {
         e.preventDefault();
         const text = document.getElementById('comment-input').value.trim();
-        if (!localStorage.getItem('username')) return showLoginModal();
-        if (!text) return;
+        if (!localStorage.getItem('username')) {
+            showLoginModal();
+            return;
+        }
+        if (!text) {
+            alert("Comment cannot be empty!");
+            return;
+        }
         try {
           const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': localStorage.getItem('username') }, // Include authorization
             body: JSON.stringify({ text, user: { username: localStorage.getItem('username') } })
           });
           if (res.status === 201) {
             document.getElementById('comment-input').value = '';
             fetchComments();
           } else {
-            alert('Failed to post comment. Please try again.');
+            const errorText = await res.text();
+            alert(`Failed to post comment. Please try again. Error: ${errorText}`);
           }
         } catch (error) {
           console.error('Error posting comment:', error);
@@ -554,10 +601,7 @@
         return;
       }
       try {
-        // Instead of Octokit, use a web API call or instruct users to report manually
-        // For security, do not expose GitHub PAT on client-side!
-        // Instead, use Blogger Post Via Email:
-        window.location.href = `mailto:benjmain801.mysbReport@blogger.com`;
+        window.location.href = `mailto:benjmain801.mysbReport@blogger.com?subject=Report Project ${id}`; // Added subject
         document.getElementById('id01').style.display = 'none';
       } catch (error) {
         console.error('Reporting error:', error);
@@ -566,19 +610,15 @@
     });
 
     // Copy Link script - just like Scratch
-function copyToClipboard() {
-  // Get the current page's URL
-  const url = window.location.href;
-
-  // Use the Clipboard API to copy the URL
-  navigator.clipboard.writeText(url).then(function() {
-    // Success feedback (optional)
-    alert('URL copied to clipboard!');
-  }, function(err) {
-    // Error feedback (optional)
-    alert('Failed to copy URL: ', err);
-  });
-}
+    function copyToClipboard() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(function() {
+        alert('URL copied to clipboard!');
+      }, function(err) {
+        console.error('Failed to copy URL: ', err);
+        alert('Failed to copy URL. Please copy it manually from your browser\'s address bar.');
+      });
+    }
   </script>
 </body>
-</html>
+  </html>
