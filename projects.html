@@ -131,6 +131,71 @@
 
     .hidden-by-js { display: none; }
     .visible-by-js { display: block; }
+
+    /* Custom styles for comments */
+    .comment-item {
+      background-color: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .comment-author {
+      font-weight: 600;
+      color: #4338ca; /* Indigo-700 */
+      margin-bottom: 0.25rem;
+    }
+
+    .comment-timestamp {
+      font-size: 0.75rem; /* text-xs */
+      color: #64748b; /* Slate-500 */
+      margin-bottom: 0.5rem;
+    }
+
+    .comment-text {
+      color: #334155; /* Slate-700 */
+      margin-bottom: 0.75rem;
+    }
+
+    .reply-form {
+      display: none; /* Hidden by default */
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .reply-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.375rem; /* rounded-md */
+      border: 1px solid #cbd5e1; /* border-gray-300 */
+      resize: vertical;
+      min-height: 40px;
+      margin-bottom: 0.5rem;
+    }
+
+    .reply-button {
+      background-color: #4f46e5; /* Indigo-600 */
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem; /* text-sm */
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .reply-button:hover {
+      background-color: #4338ca; /* Indigo-700 */
+    }
+
+    .replies-container {
+      margin-left: 1.5rem; /* Indent replies */
+      margin-top: 1rem;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e7ff; /* Indigo-100 */
+    }
   </style>
 </head>
 <body class="antialiased">
@@ -258,11 +323,13 @@
     <h3 class="text-xl font-semibold mb-4 text-indigo-700">
       <i class="fa-solid fa-comments mr-2" aria-hidden="true"></i> Comments
     </h3>
-    Some rules apply when commenting, for example, following the Community Guidelines and not advertising your projects.
+    <p class="text-sm text-gray-600 mb-6">Some rules apply when commenting, for example, following the Community Guidelines and not advertising your projects.</p>
+    
     <div id="comments-list" class="space-y-6">
       <p id="comments-loading" class="text-gray-500">Loading comments...</p>
       <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
     </div>
+
     <form id="comment-form" class="mt-8">
       <textarea id="comment-input" rows="3" placeholder="Add a comment..." required
         class="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
@@ -328,7 +395,7 @@
       }
 
       try {
-        const apiUrl = `https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername || 'MyScratchBlocks-1312'}`;
+        const apiUrl = `https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername || 'MyScratchBlocks-1312'}`;
         console.log('Attempting to fetch from:', apiUrl);
 
         const res = await fetch(apiUrl, {
@@ -417,7 +484,7 @@
           } else {
             shareProjectBtn.classList.add('hidden-by-js');
             shareProjectAlert.classList.add('hidden'); // Hide the alert if not unshared or not owner
-            shareProjectAlert.style.display = 'none'; // Ensure it's hidden
+            shareProjectAlert.style.display = 'none';
           }
 
           // Attach event listener for save button if not already attached
@@ -444,7 +511,7 @@
                 }
                 else {
                     const saveErrorText = await saveRes.text();
-                    alert(`Failed to save changes. Please try again. Error: ${saveErrorText}`);
+                    alert(`Failed to save changes. Please try again! Error: ${saveErrorText}`);
                 }
               } catch (saveError) {
                 console.error('Error saving project details:', saveError);
@@ -479,6 +546,141 @@
       }
       console.log('--- fetchMeta() finished ---');
     }
+
+    // Function to format timestamp
+    function formatTimestamp(isoString) {
+      const date = new Date(isoString);
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Function to render comments and their replies recursively
+    function renderComments(comments, container, isReply = false) {
+      container.innerHTML = ''; // Clear previous comments/replies
+      if (comments.length === 0) {
+        container.innerHTML = `<p class="text-gray-500 ${isReply ? 'ml-4' : ''}">No ${isReply ? 'replies' : 'comments'} yet. Be the first to ${isReply ? 'reply' : 'comment'}! (but do not spam)</p>`;
+        return;
+      }
+
+      comments.forEach(comment => {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment-item';
+        // Check if it's a reply and prepend username if needed
+        const commentText = isReply && comment.replyToUser ? `@${comment.replyToUser} ${comment.text}` : comment.text;
+
+        commentDiv.innerHTML = `
+          <p class="comment-author">@${comment.user || 'Anonymous'}</p>
+          <p class="comment-timestamp">${formatTimestamp(comment.createdAt)}</p>
+          <p class="comment-text">${commentText}</p>
+          <button class="text-indigo-600 hover:underline text-sm reply-btn" data-comment-id="${comment.id}" data-comment-author="${comment.user || 'Anonymous'}">
+            <i class="fa-solid fa-reply mr-1"></i> Reply
+          </button>
+          <div class="reply-form" id="reply-form-${comment.id}">
+            <textarea class="reply-textarea" rows="2" placeholder="Write your reply..."></textarea>
+            <button class="reply-button post-reply-btn" data-comment-id="${comment.id}">Post Reply</button>
+            <button class="reply-button cancel-reply-btn bg-gray-500 hover:bg-gray-600 ml-2">Cancel</button>
+          </div>
+          <div class="replies-container" id="replies-for-${comment.id}"></div>
+        `;
+        container.appendChild(commentDiv);
+
+        // Render replies recursively
+        if (comment.replies && comment.replies.length > 0) {
+          const repliesContainer = document.getElementById(`replies-for-${comment.id}`);
+          renderComments(comment.replies, repliesContainer, true);
+        }
+      });
+
+      // Add event listeners for reply buttons after rendering
+      container.querySelectorAll('.reply-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const commentId = e.target.dataset.commentId;
+          const replyForm = document.getElementById(`reply-form-${commentId}`);
+          replyForm.style.display = replyForm.style.display === 'block' ? 'none' : 'block';
+          // Pre-fill reply text area with @username if it's not a top-level reply
+          const commentAuthor = e.target.dataset.commentAuthor;
+          if (replyForm.style.display === 'block' && isReply && commentAuthor) {
+              replyForm.querySelector('.reply-textarea').value = `@${commentAuthor} `;
+          } else if (replyForm.style.display === 'block' && commentAuthor) {
+              replyForm.querySelector('.reply-textarea').value = `@${commentAuthor} `;
+          }
+           // Ensure focus on textarea when opening reply form
+          if (replyForm.style.display === 'block') {
+            replyForm.querySelector('.reply-textarea').focus();
+          }
+        });
+      });
+
+      container.querySelectorAll('.cancel-reply-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          btn.closest('.reply-form').style.display = 'none';
+          btn.closest('.reply-form').querySelector('.reply-textarea').value = ''; // Clear textarea
+        });
+      });
+
+      container.querySelectorAll('.post-reply-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const commentId = e.target.dataset.commentId;
+          const replyForm = document.getElementById(`reply-form-${commentId}`);
+          const replyTextarea = replyForm.querySelector('.reply-textarea');
+          const replyText = replyTextarea.value.trim();
+
+          if (!localStorage.getItem('username')) {
+            showLoginModal();
+            return;
+          }
+          if (!replyText) {
+            alert("Reply cannot be empty!");
+            return;
+          }
+
+          try {
+            const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments/${commentId}/reply`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': localStorage.getItem('username') },
+              body: JSON.stringify({ 
+                text: replyText, 
+                user: { username: localStorage.getItem('username') },
+                replyToUser: replyText.startsWith('@') ? replyText.split(' ')[0].substring(1) : undefined // Extract username if text starts with @
+              })
+            });
+            if (res.status === 201) {
+              replyTextarea.value = ''; // Clear textarea
+              replyForm.style.display = 'none'; // Hide form
+              fetchComments(); // Re-fetch all comments to update UI
+            } else {
+              const errorText = await res.text();
+              alert(`Failed to post reply. Please try again. Error: ${errorText}`);
+            }
+          } catch (error) {
+            console.error('Error posting reply:', error);
+            alert('An error occurred while posting your reply. Please try again.');
+          }
+        });
+      });
+    }
+
+    async function fetchComments() {
+      try {
+        const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`);
+        const comments = await res.json();
+        const commentsList = document.getElementById('comments-list');
+        document.getElementById('comments-loading').style.display = 'none';
+        document.getElementById('comments-error').classList.add('hidden'); // Hide error on success
+        renderComments(comments, commentsList); // Use the new rendering function
+      } catch (error) {
+        console.error('Failed to load comments:', error);
+        document.getElementById('comments-loading').style.display = 'none';
+        document.getElementById('comments-error').classList.remove('hidden');
+        document.getElementById('comments-error').textContent = `Failed to load comments. Error: ${error.message}`;
+      }
+    }
+
 
     window.onload = async () => {
       fetchMeta();
@@ -534,33 +736,7 @@
         window.location.href = `editor?remix=${id}`;
       });
 
-      // Comments
-      async function fetchComments() {
-        try {
-          const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`);
-          const comments = await res.json();
-          const commentsList = document.getElementById('comments-list');
-          document.getElementById('comments-loading').style.display = 'none';
-          commentsList.innerHTML = ''; // Clear previous comments
-          if (comments.length === 0) {
-            commentsList.innerHTML = '<p class="text-gray-500">No comments yet. Be the first to comment! (but do not spam)</p>';
-          } else {
-            comments.forEach(c => {
-              const div = document.createElement('div');
-              div.className = 'border rounded p-3 bg-gray-50';
-              div.innerHTML = `<p class="font-semibold text-indigo-700">@${c.user} said:</p><p>${c.text}</p>`;
-              commentsList.appendChild(div);
-            });
-          }
-        } catch (error) {
-          console.error('Failed to load comments:', error);
-          document.getElementById('comments-loading').style.display = 'none';
-          document.getElementById('comments-error').classList.remove('hidden');
-          document.getElementById('comments-error').textContent = `Failed to load comments. Error: ${error.message}`;
-        }
-      }
-
-      fetchComments();
+      fetchComments(); // Initial fetch of comments
 
       document.getElementById('comment-form').addEventListener('submit', async e => {
         e.preventDefault();
