@@ -328,7 +328,7 @@
       }
 
       try {
-        const apiUrl = `https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername}`;
+        const apiUrl = `https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername || 'MyScratchBlocks-1312'}`;
         console.log('Attempting to fetch from:', apiUrl);
 
         const res = await fetch(apiUrl, {
