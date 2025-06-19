@@ -88,7 +88,7 @@
 
       async function fetchBloggerPostsFromRSS() {
         try {
-          const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(BLOGGER_RSS_FEED_URL)}`);
+          const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://myscratchblocks-report.blogspot.com/feeds/posts/default`);
           if (!response.ok) {
             throw new Error("Unable to fetch RSS feed.");
           }
