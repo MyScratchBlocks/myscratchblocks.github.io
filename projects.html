@@ -317,7 +317,7 @@
       const shareProjectBtn = document.getElementById('share-project-btn');
 
       try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${localStorage.getItem('username')}`, {
+        const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${localStorage.getItem('username')}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
