@@ -475,7 +475,7 @@
         loading.classList.add('hidden');
         content.classList.add('hidden'); // Ensure content is hidden on error
         error.classList.remove('hidden');
-        error.textContent = `Failed to load metadata. The project may not exist, or there is a temporary error on our end. Details: ${err.message}`;
+        error.textContent = `Failed to load metadata. The project may not exist, or there is a temporary error on our end. Details: ${err}`;
       }
       console.log('--- fetchMeta() finished ---');
     }
@@ -537,7 +537,7 @@
       // Comments
       async function fetchComments() {
         try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+          const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`);
           const comments = await res.json();
           const commentsList = document.getElementById('comments-list');
           document.getElementById('comments-loading').style.display = 'none';
@@ -574,7 +574,7 @@
             return;
         }
         try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+          const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': localStorage.getItem('username') }, // Include authorization
             body: JSON.stringify({ text, user: { username: localStorage.getItem('username') } })
