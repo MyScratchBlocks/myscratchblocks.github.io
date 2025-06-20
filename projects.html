@@ -574,7 +574,19 @@
       window.location.href = `editor?remix=${id}`;
     });
   };
-</script>
+  function copyToClipboard() {
+    const url = window.location.href;
 
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        console.log('URL copied to clipboard:', url);
+        alert('URL copied to clipboard!');
+      })
+      .catch((err) => {
+        console.error('Failed to copy URL:', err);
+        alert('Failed to copy URL. Try again.');
+      });
+  }
+</script>
 </body>
   </html>
