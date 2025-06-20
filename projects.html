@@ -238,7 +238,7 @@
           <textarea id="editable-description" class="hidden-by-js w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4" rows="3"></textarea>
           <github-md><p class="text-gray-600 mb-4" id="meta-instructions"></p></github-md>
         </br>
-          <small>Note to the Main Coder: Markdown can be used for styling</small>
+          <small id="noteMark">Note to the Main Coder: Markdown can be used for styling</small>
           <div class="mb-4">
             <p class="text-sm text-gray-500"><i class="fa-solid fa-user" style="color: #63E6BE;" aria-hidden="true"></i><strong>Main Coder:</strong> <span id="meta-author"></span></p>
             <p class="text-sm text-gray-500"><i class="fa-solid fa-calendar" style="color: #63E6BE;" aria-hidden="true"></i><strong> Created:</strong> <span id="meta-date"></span></p>
@@ -436,7 +436,10 @@
         document.getElementById('meta-favorites').textContent = meta.stats?.favorites ?? 0;
         document.getElementById('meta-remixes').textContent = meta.stats?.remixes ?? 0;
 
-        if (isProjectOwner || currentUsername === "MyScratchedAccount") { // Consider if 'MyScratchedAccount' should have full owner access
+        if (!isProjectOwner) { 
+          document.getElementById('noteMark').style.display = 'none'
+        }
+        if (isProjectOwner) {
           metaAuthorElement.innerHTML = isProjectOwner
             ? 'This is you! As the Main Coder, you can configure settings, edit the project, and more.'
             : (meta.author?.username || 'No One');
@@ -458,7 +461,7 @@
             shareProjectAlert.style.display = 'block'; // Ensure it's visible
             if (!shareProjectBtn.hasAttribute('data-listener-attached')) {
               shareProjectBtn.addEventListener('click', async () => {
-                if (!confirm("Are you sure you want to share this project? It will be visible to everyone. This can not be undone without an admin being involved.")) return;
+                if (!confirm("Are you sure you want to share this project? It will be visible to everyone")) return;
                 try {
                   const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
                     method: 'PUT',
