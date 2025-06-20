@@ -580,6 +580,7 @@
           const user = comment.user?.username;
         } else {
           const user = comment.user || 'Anonymous'
+        }
         commentDiv.innerHTML = `
           <p class="comment-author">@${user}</p>
           <p class="comment-timestamp">${formatTimestamp(comment.createdAt)}</p>
