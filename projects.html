@@ -574,18 +574,23 @@
       comments.forEach(comment => {
         const commentDiv = document.createElement('div');
         commentDiv.className = 'comment-item';
+
         // Check if it's a reply and prepend username if needed
         const commentText = isReply && comment.replyToUser ? `@${comment.replyToUser} ${comment.text}` : comment.text;
-        if (comment.user === '[object Object]') {
-          const user = comment.user?.username;
-        } else {
-          const user = comment.user || 'Anonymous'
+
+        // Properly handle user extraction
+        let user = 'Anonymous';
+        if (typeof comment.user === 'object' && comment.user !== null) {
+          user = comment.user.username || 'Anonymous';
+        } else if (typeof comment.user === 'string') {
+          user = comment.user;
         }
+
         commentDiv.innerHTML = `
           <p class="comment-author">@${user}</p>
           <p class="comment-timestamp">${formatTimestamp(comment.createdAt)}</p>
           <p class="comment-text">${commentText}</p>
-          <button class="text-indigo-600 hover:underline text-sm reply-btn" data-comment-id="${comment.id}" data-comment-author="${comment.user || '(username removed)'}">
+          <button class="text-indigo-600 hover:underline text-sm reply-btn" data-comment-id="${comment.id}" data-comment-author="${user}">
             <i class="fa-solid fa-reply mr-1"></i> Reply
           </button>
           <div class="reply-form" id="reply-form-${comment.id}">
@@ -594,17 +599,17 @@
             <br>
             <button class="reply-button cancel-reply-btn bg-gray-500 hover:bg-gray-600 ml-2">Cancel</button>
           </div>
-          <div class="replies-container" id="replies-for-${comment.id}"></div>
+          <div class="replies-container ml-4" id="replies-for-${comment.id}"></div>
         `;
         container.appendChild(commentDiv);
 
         // Render replies recursively
-        if (comment.replies && comment.replies.length > 0) {
-          const repliesContainer = document.getElementById(`replies-for-${comment.id}`);
+        const repliesContainer = commentDiv.querySelector(`#replies-for-${comment.id}`);
+        if (comment.replies && comment.replies.length > 0 && repliesContainer) {
           renderComments(comment.replies, repliesContainer, true);
         }
       });
-
+    }
       // Add event listeners for reply buttons after rendering
       container.querySelectorAll('.reply-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
