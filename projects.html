@@ -574,7 +574,7 @@
         const commentText = isReply && comment.replyToUser ? `@${comment.replyToUser} ${comment.text}` : comment.text;
 
         commentDiv.innerHTML = `
-          <p class="comment-author">@${comment.user || 'Anonymous'}</p>
+          <p class="comment-author">@${comment.user || comment.user?.username || 'Anonymous'}</p>
           <p class="comment-timestamp">${formatTimestamp(comment.createdAt)}</p>
           <p class="comment-text">${commentText}</p>
           <button class="text-indigo-600 hover:underline text-sm reply-btn" data-comment-id="${comment.id}" data-comment-author="${comment.user || '(username removed)'}">
@@ -760,6 +760,7 @@
           if (res.status === 201) {
             document.getElementById('comment-input').value = '';
             fetchComments();
+            window.location.href = `projects#${window.location.hash.substring(1)}`;
           } else {
             const errorText = await res.text();
             alert(`Failed to post comment. Please try again. Error: ${errorText}`);
