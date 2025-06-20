@@ -349,26 +349,32 @@
       <button onclick="document.getElementById('login-modal').style.display = 'none'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mt-2">Close</button>
     </div>
   </div>
-<script>
+  <script>
+  // Get modal elements
   const reportModal = document.getElementById('id01');
   const loginModal = document.getElementById('login-modal');
   reportModal.style.display = 'none';
   loginModal.style.display = 'none';
 
+  // Extract project ID from URL hash
   const id = window.location.hash.slice(1);
+
+  // Set iframe source to embed Scratch GUI with project ID
   const iframe = document.getElementById('id-frame');
   const remix = document.getElementById('remix-btn');
   iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed#${id}`;
 
+  // Show/hide login modal
   function closeLoginModal() {
     loginModal.style.display = 'none';
   }
-
   function showLoginModal() {
     loginModal.style.display = 'flex';
   }
 
+  // Fetch and display project metadata (title, description, author, stats, etc)
   async function fetchMeta() {
+    // DOM elements for metadata section
     const loading = document.getElementById('meta-loading');
     const error = document.getElementById('meta-error');
     const content = document.getElementById('meta-content');
@@ -399,7 +405,7 @@
       const meta = await res.json();
       const isOwner = meta.author?.username === currentUsername;
 
-      // Fill in data
+      // Populate metadata fields
       metaTitleElement.textContent = meta.title || 'Untitled Project';
       editableTitleInput.value = meta.title || '';
       document.title = meta.title || 'Untitled Project';
@@ -419,7 +425,7 @@
         ? '<i class="fa-solid fa-pen-to-square mr-2"></i> Edit Project'
         : '<i class="fa-solid fa-code mr-2"></i> See Inside';
 
-      // Owner view
+      // Adjust UI for owner vs viewer (edit mode vs view-only)
       if (isOwner) {
         metaTitleElement.classList.add('hidden-by-js');
         editableTitleInput.classList.remove('hidden-by-js');
@@ -433,6 +439,7 @@
           shareProjectAlert.style.display = 'block';
         }
 
+        // Save button event listener - saves edited title & description
         if (!saveChangesBtn.dataset.listenerAttached) {
           saveChangesBtn.addEventListener('click', async () => {
             const updatedTitle = editableTitleInput.value.trim();
@@ -455,7 +462,7 @@
 
               if (saveRes.ok) {
                 alert('Saved successfully!');
-                fetchMeta();
+                fetchMeta(); // Refresh metadata after saving
               } else {
                 alert(await saveRes.text());
               }
@@ -466,6 +473,7 @@
           saveChangesBtn.dataset.listenerAttached = true;
         }
 
+        // Share project button event listener - marks project as shared
         if (!shareProjectBtn.dataset.listenerAttached) {
           shareProjectBtn.addEventListener('click', async () => {
             if (!confirm("Are you sure you want to share this project?")) return;
@@ -490,7 +498,7 @@
           shareProjectBtn.dataset.listenerAttached = true;
         }
       } else {
-        // Viewer
+        // Viewer mode - disable editing controls
         metaTitleElement.classList.remove('hidden-by-js');
         editableTitleInput.classList.add('hidden-by-js');
         metaDescriptionElement.classList.remove('hidden-by-js');
@@ -501,6 +509,7 @@
         shareProjectAlert.style.display = 'none';
       }
 
+      // Show metadata content and hide loading/error
       loading.classList.add('hidden');
       content.classList.remove('hidden');
       error.classList.add('hidden');
@@ -510,6 +519,150 @@
       error.classList.remove('hidden');
       loading.classList.add('hidden');
       content.classList.add('hidden');
+    }
+  }
+
+  // ========== COMMENTS FUNCTIONALITY ==========
+
+  // Fetch comments from backend and display them
+  async function fetchComments() {
+    if (!id) return;
+
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+      if (!res.ok) throw new Error('Failed to fetch comments');
+
+      const comments = await res.json();
+      displayComments(comments);
+    } catch (err) {
+      console.error('fetchComments error:', err);
+      // Optionally show error message in UI here
+    }
+  }
+
+  // Render comments and replies inside the comments container
+  function displayComments(comments) {
+    const container = document.getElementById('comments-container');
+    container.innerHTML = ''; // Clear previous comments
+
+    comments.forEach(comment => {
+      const commentEl = createCommentElement(comment);
+      container.appendChild(commentEl);
+    });
+  }
+
+  // Create a DOM element for a comment (including replies)
+  function createCommentElement(comment) {
+    const commentDiv = document.createElement('div');
+    commentDiv.className = 'comment';
+
+    // Comment text and info
+    const textP = document.createElement('p');
+    textP.textContent = comment.text;
+    commentDiv.appendChild(textP);
+
+    const infoSpan = document.createElement('span');
+    infoSpan.className = 'comment-info';
+    infoSpan.textContent = `By ${comment.user?.username || 'Anonymous'} at ${new Date(comment.createdAt).toLocaleString()}`;
+    commentDiv.appendChild(infoSpan);
+
+    // Reply button
+    const replyBtn = document.createElement('button');
+    replyBtn.textContent = 'Reply';
+    replyBtn.addEventListener('click', () => showReplyForm(commentDiv, comment.id));
+    commentDiv.appendChild(replyBtn);
+
+    // Replies container
+    if (comment.replies && comment.replies.length > 0) {
+      const repliesDiv = document.createElement('div');
+      repliesDiv.className = 'replies';
+      comment.replies.forEach(reply => {
+        const replyEl = createCommentElement(reply);
+        repliesDiv.appendChild(replyEl);
+      });
+      commentDiv.appendChild(repliesDiv);
+    }
+
+    return commentDiv;
+  }
+
+  // Show reply form under a comment
+  function showReplyForm(parentElement, commentId) {
+    // Prevent multiple reply forms open
+    if (parentElement.querySelector('.reply-form')) return;
+
+    const form = document.createElement('form');
+    form.className = 'reply-form';
+
+    const textarea = document.createElement('textarea');
+    textarea.placeholder = 'Write your reply here...';
+    textarea.required = true;
+    form.appendChild(textarea);
+
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.textContent = 'Post Reply';
+    form.appendChild(submitBtn);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = textarea.value.trim();
+      if (!text) return alert('Reply text cannot be empty.');
+
+      const username = localStorage.getItem('username') || 'Anonymous';
+
+      // POST reply to backend API
+      try {
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments/${commentId}/reply`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            text,
+            user: { username }
+          })
+        });
+        if (res.ok) {
+          alert('Reply posted!');
+          fetchComments(); // Refresh comments
+        } else {
+          alert('Failed to post reply.');
+        }
+      } catch (err) {
+        console.error('Reply post error:', err);
+        alert('Error posting reply.');
+      }
+    });
+
+    parentElement.appendChild(form);
+  }
+
+  // Post a new top-level comment
+  async function postNewComment(text) {
+    const username = localStorage.getItem('username');
+    if (!username) return showLoginModal();
+
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text,
+          user: { username }
+        })
+      });
+      if (res.ok) {
+        alert('Comment posted!');
+        fetchComments();
+      } else {
+        alert('Failed to post comment.');
+      }
+    } catch (err) {
+      console.error('Comment post error:', err);
+      alert('Error posting comment.');
     }
   }
 
@@ -525,8 +678,11 @@
       }
     }
 
+    // Fetch metadata and comments on page load
     await fetchMeta();
+    await fetchComments();
 
+    // Event listener for liking project
     document.getElementById('like-btn').addEventListener('click', async () => {
       const username = localStorage.getItem('username');
       if (!username) return showLoginModal();
@@ -546,6 +702,7 @@
       }
     });
 
+    // Event listener for favoriting project
     document.getElementById('fav-btn').addEventListener('click', async () => {
       const username = localStorage.getItem('username');
       if (!username) return showLoginModal();
@@ -565,15 +722,33 @@
       }
     });
 
+    // Go to editor page for this project
     document.getElementById('see-inside-btn').addEventListener('click', () => {
       window.location.href = `editor#${id}`;
     });
 
+    // Remix button: redirect to editor with remix param (requires login)
     remix.addEventListener('click', () => {
       if (!localStorage.getItem('username')) return showLoginModal();
       window.location.href = `editor?remix=${id}`;
     });
+
+    // Submit new comment form handler
+    const newCommentForm = document.getElementById('new-comment-form');
+    if (newCommentForm) {
+      newCommentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const textarea = newCommentForm.querySelector('textarea');
+        const text = textarea.value.trim();
+        if (!text) return alert('Comment cannot be empty.');
+
+        await postNewComment(text);
+        textarea.value = ''; // Clear input after posting
+      });
+    }
   };
+
+  // Copy current page URL to clipboard
   function copyToClipboard() {
     const url = window.location.href;
 
