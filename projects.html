@@ -541,19 +541,24 @@
   }
 
   // Render comments and replies inside the comments container
-  function displayComments(comments) {
-    const container = document.getElementById('comments-container');
-    container.innerHTML = ''; // Clear previous comments
+function displayComments(comments) {
+  const container = document.getElementById('comments-container');
+  container.innerHTML = ''; // Clear previous comments
 
-    comments.forEach(comment => {
-      if (comment.user === '[object Object]') {
-        const user = comment.user?.username;
-      } else {
-        const user = comment.user;
-      const commentEl = createCommentElement(comment, user);
-      container.appendChild(commentEl);
-    });
-  }
+  comments.forEach(comment => {
+    let user;
+
+    if (typeof comment.user === 'object' && comment.user !== null) {
+      user = comment.user.username; // get username from user object
+    } else {
+      user = comment.user; // assume user is a string
+    }
+
+    const commentEl = createCommentElement(comment, user);
+    container.appendChild(commentEl);
+  });
+}
+
 
   // Create a DOM element for a comment (including replies)
   function createCommentElement(comment, username) {
