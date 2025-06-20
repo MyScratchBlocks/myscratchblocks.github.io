@@ -458,7 +458,7 @@
             shareProjectAlert.style.display = 'block'; // Ensure it's visible
             if (!shareProjectBtn.hasAttribute('data-listener-attached')) {
               shareProjectBtn.addEventListener('click', async () => {
-                if (!confirm("Are you sure you want to share this project? It will be visible to everyone.")) return;
+                if (!confirm("Are you sure you want to share this project? It will be visible to everyone. This can not be undone without an admin being involved.")) return;
                 try {
                   const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
                     method: 'PUT',
