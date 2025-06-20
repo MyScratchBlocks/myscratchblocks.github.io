@@ -335,7 +335,7 @@
         id="comment-submit"><i class="fa-solid fa-plus mr-2"></i> Post Comment</button>
     </form>
   </section>
-  <section id="comments-section2" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+  <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
       <div id="comments-list" class="space-y-6">
       <p id="comments-loading" class="text-gray-500">Loading comments...</p>
       <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
@@ -542,7 +542,7 @@
 
   // Render comments and replies inside the comments container
 function displayComments(comments) {
-  const container = document.getElementById('comments-container');
+  const container = document.getElementById('comments-list');
   container.innerHTML = ''; // Clear previous comments
 
   comments.forEach(comment => {
