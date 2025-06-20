@@ -524,12 +524,11 @@
 
   // ========== COMMENTS FUNCTIONALITY ==========
 
+// Fetch comments
 async function fetchComments() {
   try {
     const response = await fetch(`https://editor-compiler.onrender.com/${id}/comments`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch comments');
-    }
+    if (!response.ok) throw new Error('Failed to fetch comments');
     const comments = await response.json();
     displayComments(comments);
   } catch (error) {
@@ -537,7 +536,7 @@ async function fetchComments() {
     alert('Could not load comments. Please try again later.');
   }
 }
-    
+
 // Post a new top-level comment
 async function postNewComment(text) {
   const username = localStorage.getItem('username');
@@ -552,7 +551,7 @@ async function postNewComment(text) {
       },
       body: JSON.stringify({
         text,
-        user: username  // <-- string here
+        user: { username }  // <-- Send user as object
       })
     });
     if (res.ok) {
@@ -599,7 +598,7 @@ function showReplyForm(parentElement, commentId) {
         },
         body: JSON.stringify({
           text,
-          user: username  // <-- string here
+          user: { username }  // <-- Send user as object here as well
         })
       });
       if (res.ok) {
@@ -624,8 +623,8 @@ function displayComments(comments) {
   container.innerHTML = ''; // Clear previous comments
 
   comments.forEach(comment => {
+    // user may be string or object { username }
     const username = typeof comment.user === 'string' ? comment.user : (comment.user?.username || 'Anonymous');
-
     const commentEl = createCommentElement(comment, username);
     container.appendChild(commentEl);
   });
