@@ -577,10 +577,11 @@
         // Check if it's a reply and prepend username if needed
         const commentText = isReply && comment.replyToUser ? `@${comment.replyToUser} ${comment.text}` : comment.text;
         if (comment.user === '[object Object]') {
-          comment.user = comment.user?.username;
-        }
+          const user = comment.user?.username;
+        } else {
+          const user = comment.user || 'Anonymous'
         commentDiv.innerHTML = `
-          <p class="comment-author">@${comment.user || comment.user?.username || 'Anonymous'}</p>
+          <p class="comment-author">@${user}</p>
           <p class="comment-timestamp">${formatTimestamp(comment.createdAt)}</p>
           <p class="comment-text">${commentText}</p>
           <button class="text-indigo-600 hover:underline text-sm reply-btn" data-comment-id="${comment.id}" data-comment-author="${comment.user || '(username removed)'}">
