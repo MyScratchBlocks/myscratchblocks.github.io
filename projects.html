@@ -524,155 +524,134 @@
 
   // ========== COMMENTS FUNCTIONALITY ==========
 
-  // Fetch comments from backend and display them
-  async function fetchComments() {
-    if (!id) return;
+// Post a new top-level comment
+async function postNewComment(text) {
+  const username = localStorage.getItem('username');
+  if (!username) return showLoginModal();
+
+  try {
+    const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': username
+      },
+      body: JSON.stringify({
+        text,
+        user: username  // <-- string here
+      })
+    });
+    if (res.ok) {
+      await fetchComments();
+    } else {
+      alert('Failed to post comment.');
+    }
+  } catch (err) {
+    console.error('Comment post error:', err);
+    alert('Error posting comment.');
+  }
+}
+
+// Show reply form under a comment
+function showReplyForm(parentElement, commentId) {
+  if (parentElement.querySelector('.reply-form')) return;
+
+  const form = document.createElement('form');
+  form.className = 'reply-form';
+
+  const textarea = document.createElement('textarea');
+  textarea.placeholder = 'Write your reply here...';
+  textarea.required = true;
+  form.appendChild(textarea);
+
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.textContent = 'Post Reply';
+  form.appendChild(submitBtn);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = textarea.value.trim();
+    if (!text) return alert('Reply text cannot be empty.');
+
+    const username = localStorage.getItem('username') || 'Anonymous';
 
     try {
-      const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`);
-      if (!res.ok) throw new Error('Failed to fetch comments');
-
-      const comments = await res.json();
-      displayComments(comments);
+      const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments/${commentId}/reply`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': username
+        },
+        body: JSON.stringify({
+          text,
+          user: username  // <-- string here
+        })
+      });
+      if (res.ok) {
+        alert('Reply posted!');
+        await fetchComments();
+        form.remove();  // Remove form after posting
+      } else {
+        alert('Failed to post reply.');
+      }
     } catch (err) {
-      console.error('fetchComments error:', err);
-      // Optionally show error message in UI here
+      console.error('Reply post error:', err);
+      alert('Error posting reply.');
     }
-  }
+  });
 
-  // Render comments and replies inside the comments container
+  parentElement.appendChild(form);
+}
+
+// Render comments and replies inside the comments container
 function displayComments(comments) {
   const container = document.getElementById('comments-list');
   container.innerHTML = ''; // Clear previous comments
 
   comments.forEach(comment => {
-    let user;
+    const username = typeof comment.user === 'string' ? comment.user : (comment.user?.username || 'Anonymous');
 
-    if (typeof comment.user === 'object' && comment.user !== null) {
-      user = comment.user.username; // get username from user object
-    } else {
-      user = comment.user; // assume user is a string
-    }
-
-    const commentEl = createCommentElement(comment, user);
+    const commentEl = createCommentElement(comment, username);
     container.appendChild(commentEl);
   });
 }
 
+// Create a DOM element for a comment (including replies)
+function createCommentElement(comment, username) {
+  const commentDiv = document.createElement('div');
+  commentDiv.className = 'comment';
 
-  // Create a DOM element for a comment (including replies)
-  function createCommentElement(comment, username) {
-    const commentDiv = document.createElement('div');
-    commentDiv.className = 'comment';
+  // Comment text and info
+  const textP = document.createElement('p');
+  textP.textContent = comment.text;
+  commentDiv.appendChild(textP);
 
-    // Comment text and info
-    const textP = document.createElement('p');
-    textP.textContent = comment.text;
-    commentDiv.appendChild(textP);
+  const infoSpan = document.createElement('span');
+  infoSpan.className = 'comment-info';
+  infoSpan.textContent = `By ${username} at ${new Date(comment.createdAt).toLocaleString()}`;
+  commentDiv.appendChild(infoSpan);
 
-    const infoSpan = document.createElement('span');
-    infoSpan.className = 'comment-info';
-    infoSpan.textContent = `By ${username} at ${new Date(comment.createdAt).toLocaleString()}`;
-    commentDiv.appendChild(infoSpan);
+  // Reply button
+  const replyBtn = document.createElement('button');
+  replyBtn.textContent = 'Reply';
+  replyBtn.addEventListener('click', () => showReplyForm(commentDiv, comment.id));
+  commentDiv.appendChild(replyBtn);
 
-    // Reply button
-    const replyBtn = document.createElement('button');
-    replyBtn.textContent = 'Reply';
-    replyBtn.addEventListener('click', () => showReplyForm(commentDiv, comment.id));
-    commentDiv.appendChild(replyBtn);
-
-    // Replies container
-    if (comment.replies && comment.replies.length > 0) {
-      const repliesDiv = document.createElement('div');
-      repliesDiv.className = 'replies';
-      comment.replies.forEach(reply => {
-        const replyEl = createCommentElement(reply);
-        repliesDiv.appendChild(replyEl);
-      });
-      commentDiv.appendChild(repliesDiv);
-    }
-
-    return commentDiv;
-  }
-
-  // Show reply form under a comment
-  function showReplyForm(parentElement, commentId) {
-    // Prevent multiple reply forms open
-    if (parentElement.querySelector('.reply-form')) return;
-
-    const form = document.createElement('form');
-    form.className = 'reply-form';
-
-    const textarea = document.createElement('textarea');
-    textarea.placeholder = 'Write your reply here...';
-    textarea.required = true;
-    form.appendChild(textarea);
-
-    const submitBtn = document.createElement('button');
-    submitBtn.type = 'submit';
-    submitBtn.textContent = 'Post Reply';
-    form.appendChild(submitBtn);
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const text = textarea.value.trim();
-      if (!text) return alert('Reply text cannot be empty.');
-
-      const username = localStorage.getItem('username') || 'Anonymous';
-
-      // POST reply to backend API
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments/${commentId}/reply`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            text,
-            user: { username }
-          })
-        });
-        if (res.ok) {
-          alert('Reply posted!');
-          fetchComments(); // Refresh comments
-        } else {
-          alert('Failed to post reply.');
-        }
-      } catch (err) {
-        console.error('Reply post error:', err);
-        alert('Error posting reply.');
-      }
+  // Replies container
+  if (comment.replies && comment.replies.length > 0) {
+    const repliesDiv = document.createElement('div');
+    repliesDiv.className = 'replies';
+    comment.replies.forEach(reply => {
+      const replyUser = typeof reply.user === 'string' ? reply.user : (reply.user?.username || 'Anonymous');
+      const replyEl = createCommentElement(reply, replyUser);
+      repliesDiv.appendChild(replyEl);
     });
-
-    parentElement.appendChild(form);
+    commentDiv.appendChild(repliesDiv);
   }
 
-  // Post a new top-level comment
-  async function postNewComment(text) {
-    const username = localStorage.getItem('username');
-    if (!username) return showLoginModal();
-
-    try {
-      const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          text,
-          user: { username }
-        })
-      });
-      if (res.ok) {
-        fetchComments();
-      } else {
-        alert('Failed to post comment.');
-      }
-    } catch (err) {
-      console.error('Comment post error:', err);
-      alert('Error posting comment.');
-    }
-  }
+  return commentDiv;
+}
 
   window.onload = async () => {
     const username = localStorage.getItem('username');
