@@ -529,7 +529,7 @@
     if (!id) return;
 
     try {
-      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`);
+      const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`);
       if (!res.ok) throw new Error('Failed to fetch comments');
 
       const comments = await res.json();
@@ -546,13 +546,17 @@
     container.innerHTML = ''; // Clear previous comments
 
     comments.forEach(comment => {
-      const commentEl = createCommentElement(comment);
+      if (comment.user === '[object Object]') {
+        const user = comment.user?.username;
+      } else {
+        const user = comment.user;
+      const commentEl = createCommentElement(comment, user);
       container.appendChild(commentEl);
     });
   }
 
   // Create a DOM element for a comment (including replies)
-  function createCommentElement(comment) {
+  function createCommentElement(comment, username) {
     const commentDiv = document.createElement('div');
     commentDiv.className = 'comment';
 
@@ -563,7 +567,7 @@
 
     const infoSpan = document.createElement('span');
     infoSpan.className = 'comment-info';
-    infoSpan.textContent = `By ${comment.user?.username || 'Anonymous'} at ${new Date(comment.createdAt).toLocaleString()}`;
+    infoSpan.textContent = `By ${username} at ${new Date(comment.createdAt).toLocaleString()}`;
     commentDiv.appendChild(infoSpan);
 
     // Reply button
@@ -613,7 +617,7 @@
 
       // POST reply to backend API
       try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments/${commentId}/reply`, {
+        const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments/${commentId}/reply`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -644,7 +648,7 @@
     if (!username) return showLoginModal();
 
     try {
-      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/comments`, {
+      const res = await fetch(`https://editor-compiler.onrender.com/${id}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
