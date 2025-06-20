@@ -524,6 +524,20 @@
 
   // ========== COMMENTS FUNCTIONALITY ==========
 
+async function fetchComments() {
+  try {
+    const response = await fetch(`https://editor-compiler.onrender.com/${id}/comments`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch comments');
+    }
+    const comments = await response.json();
+    displayComments(comments);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    alert('Could not load comments. Please try again later.');
+  }
+}
+    
 // Post a new top-level comment
 async function postNewComment(text) {
   const username = localStorage.getItem('username');
