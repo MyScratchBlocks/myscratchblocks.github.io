@@ -6,7 +6,7 @@
   <title>MyScratchBlocks - Project Viewer Page</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/gh/MarketingPipeline/Markdown-Tag/markdown-tag.js"></script> 
+  <script src="https://cdn.jsdelivr.net/gh/MarketingPipeline/Markdown-Tag/markdown-tag.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     * { box-sizing: border-box; }
@@ -29,13 +29,14 @@
       margin-bottom: 1.5rem;
     }
     button {
+      /* Base button styles, overridden by specific classes where needed */
       background-color: #04AA6D;
       color: white;
       padding: 14px 20px;
       margin: 8px 0;
       border: none;
       cursor: pointer;
-      width: 100%;
+      width: 100%; /* Default width, can be overridden */
       opacity: 0.9;
       font-size: 16px;
       border-radius: 6px;
@@ -106,29 +107,29 @@
       pointer-events: none;
     }
     /* The alert message box */
-.alert {
-  padding: 20px;
-  background-color: #f44336; /* Red */
-  color: white;
-  margin-bottom: 15px;
-}
+    .alert {
+      padding: 20px;
+      background-color: #f44336; /* Red */
+      color: white;
+      margin-bottom: 15px;
+    }
 
-/* The close button */
-.closebtn {
-  margin-left: 15px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+    /* The close button */
+    .closebtn {
+      margin-left: 15px;
+      color: white;
+      font-weight: bold;
+      float: right;
+      font-size: 22px;
+      line-height: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-/* When moving the mouse over the close button */
-.closebtn:hover {
-  color: black;
-}
+    /* When moving the mouse over the close button */
+    .closebtn:hover {
+      color: black;
+    }
 
     .hidden-by-js { display: none; }
     .visible-by-js { display: block; }
@@ -141,6 +142,7 @@
       padding: 1rem;
       margin-bottom: 1rem;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      text-align: left; /* Align comment text left */
     }
 
     .comment-author {
@@ -161,7 +163,7 @@
     }
 
     .reply-form {
-      display: none; /* Hidden by default */
+      display: none; /* Hidden by default, toggled by JS */
       margin-top: 0.75rem;
       padding-top: 0.75rem;
       border-top: 1px dashed #e2e8f0;
@@ -185,17 +187,18 @@
       font-size: 0.875rem; /* text-sm */
       cursor: pointer;
       transition: background-color 0.2s ease-in-out;
+      width: auto; /* Override default button width */
+      margin: 0; /* Override default button margin */
     }
 
     .reply-button:hover {
       background-color: #4338ca; /* Indigo-700 */
     }
 
-    .replies-container {
-      margin-left: 1.5rem; /* Indent replies */
+    /* Styles for nested replies */
+    .comment-item .replies-container {
       margin-top: 1rem;
-      padding-left: 1rem;
-      border-left: 2px solid #e0e7ff; /* Indigo-100 */
+      /* Indentation and border are applied directly to .comment-item by JS based on depth */
     }
   </style>
 </head>
@@ -320,12 +323,11 @@
     </div>
   </section>
 
-  <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+  <section id="comment-input-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
     <h3 class="text-xl font-semibold mb-4 text-indigo-700">
       <i class="fa-solid fa-comments mr-2" aria-hidden="true"></i> Comments
     </h3>
     <p class="text-sm text-gray-600 mb-6">Some rules apply when commenting, for example, following the Community Guidelines and not advertising your projects.</p>
-  
 
     <form id="comment-form" class="mt-8">
       <textarea id="comment-input" rows="3" placeholder="Add a comment..." required
@@ -335,12 +337,14 @@
         id="comment-submit"><i class="fa-solid fa-plus mr-2"></i> Post Comment</button>
     </form>
   </section>
-  <section id="comments-section" class="mt-12 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+
+  <section id="comments-display-section" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
       <div id="comments-list" class="space-y-6">
       <p id="comments-loading" class="text-gray-500">Loading comments...</p>
       <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
     </div>
   </section>
+
   <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
     <div class="modal-content">
       <h2 id="login-modal-title" class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
@@ -349,6 +353,7 @@
       <button onclick="document.getElementById('login-modal').style.display = 'none'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mt-2">Close</button>
     </div>
   </div>
+
   <script>
   // Get modal elements
   const reportModal = document.getElementById('id01');
@@ -374,7 +379,6 @@
 
   // Fetch and display project metadata (title, description, author, stats, etc)
   async function fetchMeta() {
-    // DOM elements for metadata section
     const loading = document.getElementById('meta-loading');
     const error = document.getElementById('meta-error');
     const content = document.getElementById('meta-content');
@@ -405,7 +409,6 @@
       const meta = await res.json();
       const isOwner = meta.author?.username === currentUsername;
 
-      // Populate metadata fields
       metaTitleElement.textContent = meta.title || 'Untitled Project';
       editableTitleInput.value = meta.title || '';
       document.title = meta.title || 'Untitled Project';
@@ -425,7 +428,6 @@
         ? '<i class="fa-solid fa-pen-to-square mr-2"></i> Edit Project'
         : '<i class="fa-solid fa-code mr-2"></i> See Inside';
 
-      // Adjust UI for owner vs viewer (edit mode vs view-only)
       if (isOwner) {
         metaTitleElement.classList.add('hidden-by-js');
         editableTitleInput.classList.remove('hidden-by-js');
@@ -439,7 +441,6 @@
           shareProjectAlert.style.display = 'block';
         }
 
-        // Save button event listener - saves edited title & description
         if (!saveChangesBtn.dataset.listenerAttached) {
           saveChangesBtn.addEventListener('click', async () => {
             const updatedTitle = editableTitleInput.value.trim();
@@ -462,7 +463,7 @@
 
               if (saveRes.ok) {
                 alert('Saved successfully!');
-                fetchMeta(); // Refresh metadata after saving
+                fetchMeta();
               } else {
                 alert(await saveRes.text());
               }
@@ -473,7 +474,6 @@
           saveChangesBtn.dataset.listenerAttached = true;
         }
 
-        // Share project button event listener - marks project as shared
         if (!shareProjectBtn.dataset.listenerAttached) {
           shareProjectBtn.addEventListener('click', async () => {
             if (!confirm("Are you sure you want to share this project?")) return;
@@ -498,7 +498,6 @@
           shareProjectBtn.dataset.listenerAttached = true;
         }
       } else {
-        // Viewer mode - disable editing controls
         metaTitleElement.classList.remove('hidden-by-js');
         editableTitleInput.classList.add('hidden-by-js');
         metaDescriptionElement.classList.remove('hidden-by-js');
@@ -509,7 +508,6 @@
         shareProjectAlert.style.display = 'none';
       }
 
-      // Show metadata content and hide loading/error
       loading.classList.add('hidden');
       content.classList.remove('hidden');
       error.classList.add('hidden');
@@ -522,79 +520,89 @@
     }
   }
 
-// ========== COMMENTS FUNCTIONALITY ==========
+  // ========== COMMENTS FUNCTIONALITY ==========
 
-const baseUrl = 'https://editor-compiler.onrender.com';
-const id = window.location.hash.substring(1); // Project ID from URL hash
+  const baseUrl = 'https://editor-compiler.onrender.com';
 
-// Fetch comments
-async function fetchComments() {
-  try {
-    const response = await fetch(`${baseUrl}/${id}/comments`);
-    if (!response.ok) throw new Error('Failed to fetch comments');
-    const comments = await response.json();
-    displayComments(comments);
-  } catch (error) {
-    console.error('Error fetching comments:', error);
-    alert('Could not load comments. Please try again later.');
-  }
-}
+  const commentsListContainer = document.getElementById('comments-list');
+  const commentsLoading = document.getElementById('comments-loading');
+  const commentsError = document.getElementById('comments-error');
+  const commentForm = document.getElementById('comment-form');
+  const commentInput = document.getElementById('comment-input');
+  const commentSubmitBtn = document.getElementById('comment-submit');
 
-// Post a new top-level comment
-async function postNewComment(text) {
-  const username = localStorage.getItem('username');
-  if (!username) return showLoginModal();
-
-  try {
-    const res = await fetch(`${baseUrl}/${id}/comments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text,
-        user: { username }
-      })
-    });
-
-    if (res.ok) {
-      await fetchComments();
-    } else {
-      alert('Failed to post comment.');
-    }
-  } catch (err) {
-    console.error('Comment post error:', err);
-    alert('Error posting comment.');
-  }
-}
-
-// Show reply form under a comment or reply
-function showReplyForm(parentElement, commentId) {
-  // Prevent multiple forms
-  if (parentElement.querySelector('.reply-form')) return;
-
-  const form = document.createElement('form');
-  form.className = 'reply-form';
-
-  const textarea = document.createElement('textarea');
-  textarea.placeholder = 'Write your reply here...';
-  textarea.required = true;
-  form.appendChild(textarea);
-
-  const submitBtn = document.createElement('button');
-  submitBtn.type = 'submit';
-  submitBtn.textContent = 'Post Reply';
-  form.appendChild(submitBtn);
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const text = textarea.value.trim();
-    if (!text) return alert('Reply text cannot be empty.');
-
-    const username = localStorage.getItem('username');
-    if (!username) return showLoginModal();
+  // Fetch comments
+  async function fetchComments() {
+    commentsLoading.classList.remove('hidden');
+    commentsError.classList.add('hidden');
+    commentsListContainer.innerHTML = ''; // Clear existing comments
 
     try {
+      const response = await fetch(`${baseUrl}/${id}/comments`);
+      if (!response.ok) throw new Error('Failed to fetch comments');
+      const comments = await response.json();
+      displayComments(comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      commentsError.textContent = 'Failed to load comments. Please try again later.';
+      commentsError.classList.remove('hidden');
+    } finally {
+      commentsLoading.classList.add('hidden');
+    }
+  }
+
+  // Post a new top-level comment
+  async function postNewComment(text) {
+    const username = localStorage.getItem('username');
+    if (!username) {
+      showLoginModal();
+      return;
+    }
+
+    try {
+      commentSubmitBtn.disabled = true; // Disable button to prevent double submission
+      commentSubmitBtn.textContent = 'Posting...';
+      const res = await fetch(`${baseUrl}/${id}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          user: { username }
+        })
+      });
+
+      if (res.ok) {
+        commentInput.value = ''; // Clear input
+        await fetchComments(); // Refresh comments
+      } else {
+        alert('Failed to post comment. Please try again.');
+      }
+    } catch (err) {
+      console.error('Comment post error:', err);
+      alert('Error posting comment.');
+    } finally {
+      commentSubmitBtn.disabled = false; // Re-enable button
+      commentSubmitBtn.innerHTML = '<i class="fa-solid fa-plus mr-2"></i> Post Comment';
+    }
+  }
+
+  // Post a reply to an existing comment/reply
+  async function postReply(commentId, text, formElement) {
+    const username = localStorage.getItem('username');
+    if (!username) {
+      showLoginModal();
+      return;
+    }
+
+    try {
+      const replySubmitBtn = formElement.querySelector('.reply-button');
+      if (replySubmitBtn) {
+        replySubmitBtn.disabled = true; // Disable button
+        replySubmitBtn.textContent = 'Posting Reply...';
+      }
+
       const res = await fetch(`${baseUrl}/${id}/comments/${commentId}/reply`, {
         method: 'POST',
         headers: {
@@ -607,92 +615,155 @@ function showReplyForm(parentElement, commentId) {
       });
 
       if (res.ok) {
-        await fetchComments();
-        form.remove();
+        formElement.remove(); // Remove the reply form
+        await fetchComments(); // Refresh comments
       } else {
-        alert('Failed to post reply.');
+        alert('Failed to post reply. Please try again.');
       }
     } catch (err) {
       console.error('Reply post error:', err);
       alert('Error posting reply.');
+    } finally {
+      if (formElement.querySelector('.reply-button')) {
+        formElement.querySelector('.reply-button').disabled = false;
+        formElement.querySelector('.reply-button').textContent = 'Post Reply';
+      }
     }
-  });
-
-  parentElement.appendChild(form);
-}
-
-// Display all comments recursively
-function displayComments(comments) {
-  const container = document.getElementById('comments-list');
-  container.innerHTML = '';
-
-  comments.forEach(comment => {
-    const username = typeof comment.user === 'string' ? comment.user : (comment.user?.username || 'Anonymous');
-    const commentEl = createCommentElement(comment, username);
-    container.appendChild(commentEl);
-  });
-}
-
-// Create a comment element (including nested replies)
-function createCommentElement(comment, username, depth = 0) {
-  const commentDiv = document.createElement('div');
-  commentDiv.className = 'comment';
-  commentDiv.style.marginLeft = `${depth * 20}px`; // Indent replies
-
-  // Text
-  const textP = document.createElement('p');
-  textP.textContent = comment.text;
-  commentDiv.appendChild(textP);
-
-  // Info
-  const infoSpan = document.createElement('span');
-  infoSpan.className = 'comment-info';
-  infoSpan.textContent = `By ${username} at ${new Date(comment.createdAt).toLocaleString()}`;
-  commentDiv.appendChild(infoSpan);
-
-  // Reply button
-  const replyBtn = document.createElement('button');
-  replyBtn.textContent = 'Reply';
-  replyBtn.addEventListener('click', () => showReplyForm(commentDiv, comment.id));
-  commentDiv.appendChild(replyBtn);
-
-  // Recursively render replies
-  if (comment.replies && comment.replies.length > 0) {
-    const repliesDiv = document.createElement('div');
-    repliesDiv.className = 'replies';
-    comment.replies.forEach(reply => {
-      const replyUser = typeof reply.user === 'string' ? reply.user : (reply.user?.username || 'Anonymous');
-      const replyEl = createCommentElement(reply, replyUser, depth + 1);
-      repliesDiv.appendChild(replyEl);
-    });
-    commentDiv.appendChild(repliesDiv);
   }
 
-  return commentDiv;
-}
+  // Show reply form under a comment or reply
+  function showReplyForm(parentCommentElement, commentId) {
+    // Check if a reply form already exists for this comment/reply
+    let existingForm = parentCommentElement.querySelector('.reply-form');
 
-// Example: Hook up comment form on page load
-document.addEventListener('DOMContentLoaded', () => {
-  if (!id) {
-    alert('No project ID found in URL.');
-  } else {
-    fetchComments();
+    if (existingForm) {
+      // Toggle visibility if it exists
+      existingForm.style.display = existingForm.style.display === 'none' ? 'block' : 'none';
+      existingForm.querySelector('.reply-textarea').focus(); // Focus on textarea when showing
+      return;
+    }
 
-    // Example: Submit new comment from form
-    const commentForm = document.getElementById('new-comment-form');
-    const textarea = document.getElementById('new-comment-text');
+    const form = document.createElement('form');
+    form.className = 'reply-form';
+    form.style.display = 'block'; // Ensure it's visible when created
 
-    if (commentForm && textarea) {
-      commentForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const text = textarea.value.trim();
-        if (!text) return alert('Comment cannot be empty.');
-        await postNewComment(text);
-        textarea.value = '';
+    const textarea = document.createElement('textarea');
+    textarea.className = 'reply-textarea'; // Apply styles from your CSS
+    textarea.placeholder = 'Write your reply here...';
+    textarea.required = true;
+    form.appendChild(textarea);
+
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.className = 'reply-button'; // Apply styles from your CSS
+    submitBtn.textContent = 'Post Reply';
+    form.appendChild(submitBtn);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = textarea.value.trim();
+      if (!text) return alert('Reply text cannot be empty.');
+      await postReply(commentId, text, form);
+    });
+
+    parentCommentElement.appendChild(form);
+    textarea.focus(); // Focus on the new textarea
+  }
+
+  // Display all comments recursively
+  function displayComments(comments) {
+    commentsListContainer.innerHTML = ''; // Clear existing comments
+
+    if (comments.length === 0) {
+      commentsListContainer.innerHTML = '<p class="text-gray-500">No comments yet. Be the first to comment!</p>';
+      return;
+    }
+
+    comments.forEach(comment => {
+      const commentEl = createCommentElement(comment);
+      commentsListContainer.appendChild(commentEl);
+    });
+  }
+
+  // Create a comment element (including nested replies)
+  function createCommentElement(comment, depth = 0) {
+    // Ensure `user` is treated consistently (object or string)
+    const username = typeof comment.user === 'string' ? comment.user : (comment.user?.username || 'Anonymous');
+
+    const commentItemDiv = document.createElement('div');
+    commentItemDiv.className = 'comment-item'; // Base comment styling
+
+    // Apply indentation and border for nested replies
+    if (depth > 0) {
+      // Limit max indentation for readability
+      commentItemDiv.style.marginLeft = `${Math.min(depth * 1.5, 6)}rem`;
+      commentItemDiv.style.borderLeft = '2px solid #e0e7ff'; // Tailwind indigo-100
+      commentItemDiv.style.paddingLeft = '1rem';
+      commentItemDiv.style.marginTop = '1rem'; // Space out nested replies
+    }
+
+    const authorDiv = document.createElement('div');
+    authorDiv.className = 'comment-author';
+    authorDiv.textContent = username;
+    commentItemDiv.appendChild(authorDiv);
+
+    const timestampDiv = document.createElement('div');
+    timestampDiv.className = 'comment-timestamp';
+    timestampDiv.textContent = new Date(comment.createdAt).toLocaleString();
+    commentItemDiv.appendChild(timestampDiv);
+
+    const textP = document.createElement('p');
+    textP.className = 'comment-text';
+    // Use github-md tag for markdown rendering
+    const markdownTag = document.createElement('github-md');
+    markdownTag.innerHTML = comment.text; // Inner HTML to allow Markdown
+    textP.appendChild(markdownTag);
+    commentItemDiv.appendChild(textP);
+
+    const replyBtn = document.createElement('button');
+    replyBtn.className = 'reply-button';
+    replyBtn.textContent = 'Reply';
+    // Store the comment ID directly on the button using a data attribute
+    replyBtn.dataset.commentId = comment.id;
+    commentItemDiv.appendChild(replyBtn);
+
+    // Container for nested replies (this is where recursive calls will append)
+    const repliesContainerDiv = document.createElement('div');
+    repliesContainerDiv.className = 'replies-container';
+    commentItemDiv.appendChild(repliesContainerDiv);
+
+    // Recursively render replies
+    if (comment.replies && comment.replies.length > 0) {
+      comment.replies.forEach(reply => {
+        const replyEl = createCommentElement(reply, depth + 1); // Increment depth for nested replies
+        repliesContainerDiv.appendChild(replyEl);
       });
     }
+
+    return commentItemDiv;
   }
-});
+
+  // Event listener for the main comment submission form
+  commentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = commentInput.value.trim();
+    if (!text) return alert('Comment cannot be empty.');
+    await postNewComment(text);
+  });
+
+  // Event delegation for reply buttons
+  // Attach a single click listener to the parent container (commentsListContainer)
+  // This listener will catch clicks on any .reply-button, even if dynamically added.
+  commentsListContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('reply-button')) {
+      const commentId = e.target.dataset.commentId; // Get the comment ID from the data attribute
+      // Find the closest ancestor with class 'comment-item' to append the reply form to
+      const parentCommentElement = e.target.closest('.comment-item');
+      if (parentCommentElement && commentId) {
+        showReplyForm(parentCommentElement, commentId);
+      }
+    }
+  });
 
 
   window.onload = async () => {
@@ -709,73 +780,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch metadata and comments on page load
     await fetchMeta();
-    await fetchComments();
-
-    // Event listener for liking project
-    document.getElementById('like-btn').addEventListener('click', async () => {
-      const username = localStorage.getItem('username');
-      if (!username) return showLoginModal();
-
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love/${username}`, {
-          method: 'POST',
-          headers: { 'Authorization': username }
-        });
-        if (res.ok) {
-          await fetchMeta();
-        } else {
-          alert('Failed to love this project.');
-        }
-      } catch (err) {
-        console.error('Like error:', err);
-      }
-    });
-
-    // Event listener for favoriting project
-    document.getElementById('fav-btn').addEventListener('click', async () => {
-      const username = localStorage.getItem('username');
-      if (!username) return showLoginModal();
-
-      try {
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite/${username}`, {
-          method: 'POST',
-          headers: { 'Authorization': username }
-        });
-        if (res.ok) {
-          await fetchMeta();
-        } else {
-          alert('Failed to favorite this project.');
-        }
-      } catch (err) {
-        console.error('Favorite error:', err);
-      }
-    });
-
-    // Go to editor page for this project
-    document.getElementById('see-inside-btn').addEventListener('click', () => {
-      window.location.href = `editor#${id}`;
-    });
-
-    // Remix button: redirect to editor with remix param (requires login)
-    remix.addEventListener('click', () => {
-      if (!localStorage.getItem('username')) return showLoginModal();
-      window.location.href = `editor?remix=${id}`;
-    });
-
-    // Submit new comment form handler
-    const newCommentForm = document.getElementById('new-comment-form');
-    if (newCommentForm) {
-      newCommentForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const textarea = newCommentForm.querySelector('textarea');
-        const text = textarea.value.trim();
-        if (!text) return alert('Comment cannot be empty.');
-
-        await postNewComment(text);
-        textarea.value = ''; // Clear input after posting
-      });
-    }
+    await fetchComments(); // Initial fetch of comments
   };
+
+  // Event listener for liking project
+  document.getElementById('like-btn').addEventListener('click', async () => {
+    const username = localStorage.getItem('username');
+    if (!username) return showLoginModal();
+
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love/${username}`, {
+        method: 'POST',
+        headers: { 'Authorization': username }
+      });
+      if (res.ok) {
+        await fetchMeta();
+      } else {
+        alert('Failed to upvote this project.');
+      }
+    } catch (err) {
+      console.error('Like error:', err);
+    }
+  });
+
+  // Event listener for favoriting project
+  document.getElementById('fav-btn').addEventListener('click', async () => {
+    const username = localStorage.getItem('username');
+    if (!username) return showLoginModal();
+
+    try {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite/${username}`, {
+        method: 'POST',
+        headers: { 'Authorization': username }
+      });
+      if (res.ok) {
+        await fetchMeta();
+      } else {
+        alert('Failed to favorite this project.');
+      }
+    } catch (err) {
+      console.error('Favorite error:', err);
+    }
+  });
+
+  // Go to editor page for this project
+  document.getElementById('see-inside-btn').addEventListener('click', () => {
+    window.location.href = `editor#${id}`;
+  });
+
+  // Remix button: redirect to editor with remix param (requires login)
+  remix.addEventListener('click', () => {
+    if (!localStorage.getItem('username')) return showLoginModal();
+    window.location.href = `editor?remix=${id}`;
+  });
 
   // Copy current page URL to clipboard
   function copyToClipboard() {
@@ -791,6 +848,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Failed to copy URL. Try again.');
       });
   }
-</script>
+  </script>
 </body>
-  </html>
+</html>
