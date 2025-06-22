@@ -89,7 +89,7 @@
   <iframe id="iframe" src="#"></iframe>
 
   <script>
-    const userProfileName = localStorage.getItem('userrname');
+    const userProfileName = localStorage.getItem('username');
     if(userProfileName) {
       document.getElementById('iframe').src = `https://editor-compiler.onrender.com/users/${userProfileName}`;
     } else {
