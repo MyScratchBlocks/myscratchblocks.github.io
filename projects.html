@@ -686,7 +686,6 @@
   }
 
 function createCommentElement(comment, depth = 0) {
-function createCommentElement(comment, depth = 0) {
     // Ensure `user` is treated consistently (object or string)
     const username = typeof comment.user === 'string' ? comment.user : (comment.user?.username || 'Anonymous');
 
