@@ -685,18 +685,18 @@
     });
   }
 
-  // Create a comment element (including nested replies)
-  function createCommentElement(comment, depth = 0) {
+function createCommentElement(comment, depth = 0) {
     // Ensure `user` is treated consistently (object or string)
     const username = typeof comment.user === 'string' ? comment.user : (comment.user?.username || 'Anonymous');
 
     const commentItemDiv = document.createElement('div');
     commentItemDiv.className = 'comment-item'; // Base comment styling
 
-    // Apply indentation and border for nested replies
+    // Apply indentation and border for replies.
+    // Indent only if it's a reply (depth > 0), but use a fixed indentation for all replies
+    // regardless of their nesting level.
     if (depth > 0) {
-      // Limit max indentation for readability
-      commentItemDiv.style.marginLeft = `${Math.min(depth * 1.5, 6)}rem`;
+      commentItemDiv.style.marginLeft = '3rem'; // Fixed indentation for all replies
       commentItemDiv.style.borderLeft = '2px solid #e0e7ff'; // Tailwind indigo-100
       commentItemDiv.style.paddingLeft = '1rem';
       commentItemDiv.style.marginTop = '1rem'; // Space out nested replies
@@ -735,13 +735,16 @@
     // Recursively render replies
     if (comment.replies && comment.replies.length > 0) {
       comment.replies.forEach(reply => {
-        const replyEl = createCommentElement(reply, depth + 1); // Increment depth for nested replies
+        // When rendering a reply, always pass '1' for the depth.
+        // This ensures that all replies (first-level or replies to replies)
+        // receive the same single level of indentation.
+        const replyEl = createCommentElement(reply, 1);
         repliesContainerDiv.appendChild(replyEl);
       });
     }
 
     return commentItemDiv;
-  }
+}
 
   // Event listener for the main comment submission form
   commentForm.addEventListener('submit', async (e) => {
@@ -796,7 +799,6 @@
       if (res.ok) {
         await fetchMeta();
       } else {
-        alert('Failed to upvote this project.');
       }
     } catch (err) {
       console.error('Like error:', err);
@@ -816,7 +818,6 @@
       if (res.ok) {
         await fetchMeta();
       } else {
-        alert('Failed to favorite this project.');
       }
     } catch (err) {
       console.error('Favorite error:', err);
