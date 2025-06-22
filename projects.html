@@ -696,9 +696,7 @@ function createCommentElement(comment, depth = 0) {
     // Indent only if it's a reply (depth > 0), but use a fixed indentation for all replies
     // regardless of their nesting level.
     if (depth > 0) {
-      commentItemDiv.style.marginLeft = '3rem'; // Fixed indentation for all replies
-      commentItemDiv.style.borderLeft = '2px solid #e0e7ff'; // Tailwind indigo-100
-      commentItemDiv.style.paddingLeft = '1rem';
+      commentItemDiv.style.marginLeft = '3rem'; // Fixed indentation for all 
       commentItemDiv.style.marginTop = '1rem'; // Space out nested replies
     }
 
