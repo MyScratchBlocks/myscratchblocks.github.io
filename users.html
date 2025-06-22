@@ -89,9 +89,7 @@
   <iframe id="iframe" src="#"></iframe>
 
   <script>
-    // Get the username from the URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const userProfileName = urlParams.get('username');
+    const userProfileName = localStorage.getItem('userrname');
     if(userProfileName) {
       document.getElementById('iframe').src = `https://editor-compiler.onrender.com/users/${userProfileName}`;
     } else {
