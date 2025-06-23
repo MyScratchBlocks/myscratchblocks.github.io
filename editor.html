@@ -61,8 +61,8 @@
 
           const res = await response.json();
 
-          if (res?.sb3File) {
-            window.location.href = `https://myscratchblocks.github.io/projects#${res.sb3File.replace(".sb3", "")}`;
+          if (res?.id) {
+            window.location.href = `https://myscratchblocks.github.io/projects#${res.id}`;
             localStorage.setItem('new-project', 'true');
             return; // Page will reload
           } else {
@@ -120,6 +120,7 @@
 
     const iframe = document.getElementById('scratchFrame');
     const iframeSrc = iframe.getAttribute('src');
+    const expectedSrc = `https://myscratchblocks.github.io/editor${res.id}`;
     if (iframeSrc !== expectedSrc) {
       window.location.href = `projects#${window.location.hash.substring(1)}`;
     }
