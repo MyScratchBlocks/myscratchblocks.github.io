@@ -860,7 +860,7 @@ function createCommentElement(comment, depth = 0) {
 
   // Go to editor page for this project
   document.getElementById('see-inside-btn').addEventListener('click', () => {
-    window.location.href = `/editor#${id}`;
+    window.location.href = `/editor/#${id}`;
   });
 
   // Remix button: redirect to editor with remix param (requires login)
