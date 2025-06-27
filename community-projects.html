@@ -105,7 +105,7 @@
 
           if (id) {
             try {
-              const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta`);
+              const res = await fetch(`https://corsproxy.io/?url=https://editor-compiler.onrender.com/api/projects/${id}/meta/${localStorage.getItem('username')}`);
               if (res.ok) {
                 const jsonData = await res.json();
               }
@@ -113,12 +113,12 @@
               console.warn('Failed to fetch author meta for project', id, err);
             }
           }
-
+          const link = project.link.replace("projects", "projects/");
           projectCard.innerHTML = `
             <img src="${project.image}" alt="${project.name} thumbnail" class="w-full h-40 object-cover rounded-md mb-4" />
             <h3 class="text-xl font-semibold text-gray-700 mb-2">${project.name}</h3>
             <p class="text-gray-600 text-sm mb-4">Author: ${author}</p>
-            <a href="${project.link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
+            <a href="${link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
               View Project
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
