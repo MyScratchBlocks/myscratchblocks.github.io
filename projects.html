@@ -1,1 +1,10 @@
-<script>window.location.href = window.location.pathname + window.location.hash;</script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    if (window.location.hash) {
+      const newUrl = window.location.pathname + window.location.hash;
+      if (window.location.href !== newUrl) {
+        window.location.href = newUrl;
+      }
+    }
+  });
+</script>
