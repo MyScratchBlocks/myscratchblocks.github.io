@@ -2,10 +2,11 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Hash Redirect</title>
-  
-  <script>
-    
+  <title>Hash Redirect</title> 
+</head>
+<body>
+  <p>redirecting...</p>
+  <script>  
     window.onload = async function () {
       if (window.location.hash) {
         const newUrl = window.location.pathname + window.location.hash;
@@ -15,8 +16,5 @@
       }
     });
   </script>
-</head>
-<body>
-  <p>redirecting...</p>
 </body>
 </html>
