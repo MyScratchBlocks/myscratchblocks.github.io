@@ -214,6 +214,173 @@
         .fixed-bottom.hidden-ad {
             transform: translateY(100%); /* Moves it off-screen downwards */
         }
+
+            /* --- Vignette Ad Styles --- */
+        .vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+            z-index: 2000; /* Higher than other fixed elements */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            pointer-events: none; /* Allows clicks to pass through when hidden */
+        }
+
+        .vignette-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* Enables clicks when visible */
+        }
+
+        .vignette-content {
+            background: linear-gradient(135deg, #f0f9ff, #cbe8f8); /* Light blue gradient */
+            padding: 4rem; /* Increased padding for more space */
+            border-radius: 1.5rem; /* More rounded corners */
+            max-width: 90vw; /* Occupy 90% of viewport width */
+            max-height: 90vh; /* Occupy 90% of viewport height */
+            width: 100%; /* Ensure it tries to take available width */
+            height: 100%; /* Ensure it tries to take available height */
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+            position: relative;
+            transform: scale(0.9); /* Start slightly smaller */
+            transition: transform 0.3s ease-in-out;
+            display: flex; /* Use flexbox for internal centering */
+            flex-direction: column; /* Stack content vertically */
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
+        }
+
+        .vignette-overlay.show .vignette-content {
+            transform: scale(1); /* Scale up when shown */
+        }
+
+        .vignette-close-btn {
+            position: absolute;
+            top: 1.5rem; /* Adjusted position */
+            right: 1.5rem; /* Adjusted position */
+            background: none;
+            border: none;
+            color: #4a5568; /* Darker grey for visibility */
+            font-size: 2.5rem; /* Larger close button */
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            border-radius: 50%;
+            line-height: 1; /* Adjust line height for better centering of X */
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+
+        .vignette-close-btn:hover {
+            background-color: #e2e8f0; /* Light grey on hover */
+            color: #2d3748;
+        }
+
+        /* --- Ad Info/Report Dropdown Styles (AdChoices style) --- */
+        .ad-info-dropdown-container {
+            position: absolute;
+            top: 1rem; /* Position at top */
+            left: 1rem; /* Position at left */
+            z-index: 2020; /* Higher than other vignette content */
+        }
+
+        .ad-info-toggle-btn {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 32px; /* Small circle button */
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            color: #4a5568;
+            font-weight: bold; /* For 'i' text if used directly */
+        }
+        .ad-info-toggle-btn:hover {
+            background-color: #e2e8f0;
+            transform: scale(1.05);
+        }
+
+        .ad-info-menu {
+            position: absolute;
+            top: calc(100% + 8px); /* Position below the button with some spacing */
+            left: 0; /* Align to the left of the button */
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 0.5rem 0;
+            min-width: 220px; /* Wider to accommodate "Why this advert?" */
+            text-align: left;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.2s ease-out;
+            pointer-events: none;
+        }
+
+        .ad-info-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .ad-info-menu-item {
+            padding: 0.75rem 1rem;
+            color: #4a5568;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            font-size: 0.95rem;
+        }
+        .ad-info-menu-item:hover {
+            background-color: #f0f4f8;
+            color: #2d3748;
+        }
+
+        .ad-info-menu-separator {
+            border-top: 1px solid #e2e8f0;
+            margin: 0.5rem 0;
+        }
+
+        .ad-info-menu-header {
+            padding: 0.5rem 1rem 0.25rem;
+            font-size: 0.8rem;
+            color: #718096; /* Light grey text */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Temporary message for "Why this advert?" */
+        .info-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+            z-index: 2030;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            max-width: 80%;
+        }
+        .info-message.show {
+            opacity: 1;
+            visibility: visible;
+        }
   </style>
 </head>
 <body class="antialiased">
@@ -381,6 +548,52 @@
         </button>
     </footer>
 
+      <!-- 5. Vignette Ad Overlay -->
+    <div id="vignette-ad" class="vignette-overlay">
+        <div class="vignette-content">
+            <button id="close-vignette-ad" class="vignette-close-btn">&times;</button>
+
+            <!-- Ad Info/Report Dropdown Container (AdChoices style) -->
+            <div class="ad-info-dropdown-container">
+                <button id="ad-info-toggle-btn" class="ad-info-toggle-btn">
+                    <!-- Using a simple info icon (can be SVG or actual icon font) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="ad-info-menu" class="ad-info-menu">
+                    <div class="ad-info-menu-item" id="why-this-advert">Why this advert?</div>
+                    <div class="ad-info-menu-separator"></div>
+                    <div class="ad-info-menu-header">Report this ad:</div>
+                    <div class="ad-info-menu-item" data-reason="Irrelevant">Irrelevant</div>
+                    <div class="ad-info-menu-item" data-reason="Misleading">Misleading</div>
+                    <div class="ad-info-menu-item" data-reason="Offensive">Offensive content</div>
+                    <div class="ad-info-menu-item" data-reason="Already bought">Already bought this item</div>
+                    <div class="ad-info-menu-item" data-reason="Repetitive">Repetitive</div>
+                    <div class="ad-info-menu-item" data-reason="Other">Other reason</div>
+                </div>
+            </div>
+
+            <h2 class="text-4xl md:text-5xl font-extrabold text-blue-800 mb-4 drop-shadow-sm leading-tight">
+                Claim this project <br class="md:hidden">advert slot!
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
+                Get your MyScratchBlocks project seen! Get your special ad slot today!
+                <br>Up to <span class="font-bold text-blue-600 text-3xl md:text-4xl">Prices starting from</span> 55 MyScratfhBucks for a Vignette Ad
+            </p>
+            <button class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg md:text-xl shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                <a href="/claim-Vignette-Ad-slot" class="block w-full h-full text-white no-underline flex items-center justify-center">Claim Now!</a>
+            </button>
+
+            <!-- Info Message for "Why this advert?" -->
+            <div id="why-this-ad-message" class="info-message">
+                <p><b>Why This Advert?</b></p>
+                <p>Someone paid some MyScratchBucks to our team in exchange for this ad slot. It is currently shown to everyone.</p>
+                <p class="mt-2 text-sm text-gray-300">Click anywhere to dismiss this message.</p>
+            </div>
+        </div>
+    </div>
+  
   <script>
   // Get modal elements
   const reportModal = document.getElementById('id01');
@@ -901,6 +1114,141 @@ function createCommentElement(comment, depth = 0) {
                     }, adDisplayTime);
                 });
             }
+        });
+
+                // --- Vignette Ad Logic ---
+            function showVignette() {
+                vignetteAd.classList.add('show');
+                disableBodyScroll();
+                console.log('Vignette ad shown.');
+            }
+
+            function hideVignetteAndNavigate() {
+                vignetteAd.classList.remove('show');
+                enableBodyScroll();
+                closeAdInfoDropdown(); // Ensure ad info dropdown is closed when vignette hides
+                hideWhyThisAdMessage(); // Ensure why this ad message is hidden
+                console.log('Vignette ad hidden.');
+
+                // Navigate to the stored URL after the ad is dismissed
+                if (targetUrl) {
+                    // Introduce a small delay to allow vignette transition to complete
+                    setTimeout(() => {
+                        window.location.href = targetUrl; // Perform navigation
+                        targetUrl = null; // Reset for next click
+                    }, 100); // Small delay, e.g., 100ms
+                }
+            }
+
+            // Function to handle ad reporting
+            function reportAd(reason) {
+                console.log(`Ad Reported! Reason: "${reason}". Vignette Ad shown for URL: ${targetUrl}`);
+                // In a real application, you would send this data to a server
+                // e.g., fetch('/api/report-ad', { method: 'POST', body: JSON.stringify({ url: targetUrl, adId: 'vignette-ad-123', reason: reason }) });
+
+                // After reporting, close the ad and proceed with navigation
+                hideVignetteAndNavigate();
+            }
+
+            // --- Ad Info/Report Dropdown Logic ---
+            function toggleAdInfoDropdown() {
+                adInfoMenu.classList.toggle('show');
+            }
+
+            function closeAdInfoDropdown() {
+                adInfoMenu.classList.remove('show');
+            }
+
+            function showWhyThisAdMessage() {
+                whyThisAdMessage.classList.add('show');
+            }
+
+            function hideWhyThisAdMessage() {
+                whyThisAdMessage.classList.remove('show');
+            }
+
+            if (vignetteAd && closeVignetteButton && adInfoToggleBtn && adInfoMenu) {
+                closeVignetteButton.addEventListener('click', hideVignetteAndNavigate);
+                
+                // Toggle Ad Info Dropdown
+                adInfoToggleBtn.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent document click from immediately closing it
+                    toggleAdInfoDropdown();
+                });
+
+                // Handle "Why this advert?" click
+                whyThisAdvertBtn.addEventListener('click', () => {
+                    console.log("User clicked 'Why this advert?'. Ad shown for URL: " + targetUrl);
+                    closeAdInfoDropdown(); // Close the dropdown menu
+                    showWhyThisAdMessage(); // Show the informational message
+
+                    // Hide the info message if clicked anywhere on the vignette ad overlay
+                    // This event listener is specifically for the info message
+                    const dismissInfoMessage = (event) => {
+                        // Only dismiss if the click is not on the ad info toggle or menu itself
+                        if (!adInfoToggleBtn.contains(event.target) && !adInfoMenu.contains(event.target)) {
+                             hideWhyThisAdMessage();
+                             vignetteAd.removeEventListener('click', dismissInfoMessage); // Remove listener after dismissing
+                        }
+                    };
+                    vignetteAd.addEventListener('click', dismissInfoMessage);
+                });
+
+                // Add click listeners to each report menu item
+                reportAdMenuItems.forEach(item => {
+                    item.addEventListener('click', (event) => {
+                        const reason = event.target.dataset.reason;
+                        reportAd(reason); // Call reportAd with the specific reason
+                    });
+                });
+
+                // Close dropdown if clicked outside of it
+                document.addEventListener('click', (event) => {
+                    // Check if the click target is outside the dropdown container and the toggle button
+                    if (!adInfoMenu.contains(event.target) && !adInfoToggleBtn.contains(event.target)) {
+                        closeAdInfoDropdown();
+                    }
+                });
+            }
+
+            // --- Intercept all relevant link clicks to show vignette ---
+            document.addEventListener('click', (event) => {
+                let targetElement = event.target;
+
+                // Traverse up the DOM tree to find the nearest ancestor <a> tag
+                while (targetElement && targetElement.tagName !== 'A' && targetElement.parentElement) {
+                    targetElement = targetElement.parentElement;
+                }
+
+                // Check if an anchor tag was clicked and it's not:
+                // 1. A hash link (internal page jump)
+                // 2. A mailto, tel, or other non-HTTP/HTTPS protocol link
+                // 3. A link that is part of the fixed top navigation (so it doesn't trigger for basic nav)
+                // 4. A link inside the anchor ad itself (to allow its own CTA to work directly)
+                // 5. A link inside the vignette ad's main CTA (it should work directly once the vignette is shown)
+                // 6. Any element within the ad info dropdown (toggle button or menu items)
+
+                const isTopNavLink = targetElement.closest('.fixed-top');
+                const isAnchorAdLink = targetElement.closest('#anchor-ad');
+                const isVignetteAdCTA = targetElement.closest('#vignette-ad button a');
+                const isAdInfoDropdownElement = targetElement.closest('.ad-info-dropdown-container'); // Check for clicks within the new dropdown structure
+
+                if (targetElement && targetElement.tagName === 'A' && targetElement.href &&
+                    !targetElement.href.startsWith('#') &&
+                    !targetElement.href.startsWith('mailto:') &&
+                    !targetElement.href.startsWith('tel:') &&
+                    !isTopNavLink &&
+                    !isAnchorAdLink &&
+                    !isVignetteAdCTA &&
+                    !isAdInfoDropdownElement) { // Exclude clicks within the Ad Info dropdown
+
+                    event.preventDefault(); // Prevent default navigation immediately
+                    targetUrl = targetElement.href; // Store the target URL
+
+                    showVignette(); // Show the vignette ad
+                    console.log('Link clicked. Intercepted: ' + targetUrl);
+                }
+            });
         });
   </script>
 </body>
