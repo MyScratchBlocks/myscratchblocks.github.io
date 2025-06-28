@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Ultimate Solution - Advertisement</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Apply Inter font and basic styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e0f2f7; /* Lighter blue background */
+            min-height: 150vh; /* Ensure enough height for scrolling to see fixed elements */
+            position: relative;
+        }
+
+        /* --- Fixed Positioning Examples --- */
+        /* Fixed to the top (Ad Banner) */
+        .fixed-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Fixed to the bottom (Anchor Ad Bar) */
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out; /* Smooth transition for closing */
+        }
+        /* Class to hide the anchor ad */
+        .fixed-bottom.hidden-ad {
+            transform: translateY(100%); /* Moves it off-screen downwards */
+        }
+
+
+        /* Fixed to the left side (Social Media/Quick Links) */
+        .fixed-left {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 999;
+        }
+
+        /* Fixed to the right side (Special Offer Alert) */
+        .fixed-right {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100%;
+            z-index: 999;
+        }
+
+        /* Adjust body padding to prevent content from being hidden by fixed elements */
+        body {
+            padding-top: 72px; /* Height of the fixed-top bar */
+            padding-bottom: 96px; /* Increased padding for the anchor ad */
+            padding-left: 80px; /* Width of the fixed-left bar */
+            padding-right: 80px; /* Width of the fixed-right bar */
+        }
+
+        /* --- Float Examples (for flowing content in feature sections) --- */
+        .float-left-promo {
+            float: left;
+            margin-right: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .float-right-testimonial {
+            float: right;
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Clearfix to contain floats within their parent */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* --- Flexbox and Grid for general layout and alignment --- */
+        /* Example: Sticking an item to the bottom of a flex container */
+        .flex-container-bottom-cta {
+            display: flex;
+            flex-direction: column;
+            min-height: 250px; /* Adjusted for ad content */
+        }
+
+        .flex-item-bottom-button {
+            margin-top: auto;
+        }
+
+        /* Example: Grid layout for features/services */
+        .grid-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid columns */
+            gap: 2rem;
+        }
+
+        /* --- Vignette Ad Styles --- */
+        .vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+            z-index: 2000; /* Higher than other fixed elements */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            pointer-events: none; /* Allows clicks to pass through when hidden */
+        }
+
+        .vignette-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* Enables clicks when visible */
+        }
+
+        .vignette-content {
+            background: linear-gradient(135deg, #f0f9ff, #cbe8f8); /* Light blue gradient */
+            padding: 4rem; /* Increased padding for more space */
+            border-radius: 1.5rem; /* More rounded corners */
+            max-width: 90vw; /* Occupy 90% of viewport width */
+            max-height: 90vh; /* Occupy 90% of viewport height */
+            width: 100%; /* Ensure it tries to take available width */
+            height: 100%; /* Ensure it tries to take available height */
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+            position: relative;
+            transform: scale(0.9); /* Start slightly smaller */
+            transition: transform 0.3s ease-in-out;
+            display: flex; /* Use flexbox for internal centering */
+            flex-direction: column; /* Stack content vertically */
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
+        }
+
+        .vignette-overlay.show .vignette-content {
+            transform: scale(1); /* Scale up when shown */
+        }
+
+        .vignette-close-btn {
+            position: absolute;
+            top: 1.5rem; /* Adjusted position */
+            right: 1.5rem; /* Adjusted position */
+            background: none;
+            border: none;
+            color: #4a5568; /* Darker grey for visibility */
+            font-size: 2.5rem; /* Larger close button */
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            border-radius: 50%;
+            line-height: 1; /* Adjust line height for better centering of X */
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+
+        .vignette-close-btn:hover {
+            background-color: #e2e8f0; /* Light grey on hover */
+            color: #2d3748;
+        }
+
+        /* --- Ad Info/Report Dropdown Styles (AdChoices style) --- */
+        .ad-info-dropdown-container {
+            position: absolute;
+            top: 1rem; /* Position at top */
+            left: 1rem; /* Position at left */
+            z-index: 2020; /* Higher than other vignette content */
+        }
+
+        .ad-info-toggle-btn {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 32px; /* Small circle button */
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            color: #4a5568;
+            font-weight: bold; /* For 'i' text if used directly */
+        }
+        .ad-info-toggle-btn:hover {
+            background-color: #e2e8f0;
+            transform: scale(1.05);
+        }
+
+        .ad-info-menu {
+            position: absolute;
+            top: calc(100% + 8px); /* Position below the button with some spacing */
+            left: 0; /* Align to the left of the button */
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 0.5rem 0;
+            min-width: 220px; /* Wider to accommodate "Why this advert?" */
+            text-align: left;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.2s ease-out;
+            pointer-events: none;
+        }
+
+        .ad-info-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .ad-info-menu-item {
+            padding: 0.75rem 1rem;
+            color: #4a5568;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            font-size: 0.95rem;
+        }
+        .ad-info-menu-item:hover {
+            background-color: #f0f4f8;
+            color: #2d3748;
+        }
+
+        .ad-info-menu-separator {
+            border-top: 1px solid #e2e8f0;
+            margin: 0.5rem 0;
+        }
+
+        .ad-info-menu-header {
+            padding: 0.5rem 1rem 0.25rem;
+            font-size: 0.8rem;
+            color: #718096; /* Light grey text */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Temporary message for "Why this advert?" */
+        .info-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+            z-index: 2030;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            max-width: 80%;
+        }
+        .info-message.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="selection:bg-pink-200 selection:text-pink-800">
+
+    <!-- 1. Fixed Top Ad Banner -->
+    <header class="fixed-top bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 shadow-xl flex items-center justify-center sm:justify-between rounded-b-xl animate-fade-in-down">
+        <h1 class="text-3xl font-extrabold text-center sm:text-left drop-shadow-lg">✨ Unlock Your Potential Today! ✨</h1>
+        <button class="hidden sm:inline-block bg-white text-purple-600 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-purple-100 transition-all duration-300 ease-in-out transform hover:scale-105">Learn More</button>
+    </header>
+
+    <!-- 2. Fixed Left Social Media/Quick Links -->
+    <aside class="fixed-left bg-gray-900 text-gray-100 w-20 p-4 shadow-2xl overflow-y-auto rounded-r-xl hidden md:block">
+        <ul class="space-y-8 mt-20 text-center">
+            <li><a href="#" class="block text-xl p-2 rounded-lg hover:bg-gray-700 transition-colors transform hover:scale-110">👍</a><span class="text-xs">Like Us</span></li>
+            <li><a href="#" class="block text-xl p-2 rounded-lg hover:bg-gray-700 transition-colors transform hover:scale-110">⭐</a><span class="text-xs">Reviews</span></li>
+            <li><a href="#" class="block text-xl p-2 rounded-lg hover:bg-gray-700 transition-colors transform hover:scale-110">📞</a><span class="text-xs">Call Now</span></li>
+            <li><a href="#" class="block text-xl p-2 rounded-lg hover:bg-gray-700 transition-colors transform hover:scale-110">📧</a><span class="text-xs">Email</span></li>
+        </ul>
+    </aside>
+
+    <!-- 3. Fixed Right Special Offer Alert -->
+    <aside class="fixed-right bg-yellow-400 text-yellow-900 w-20 p-4 shadow-2xl overflow-y-auto rounded-l-xl hidden md:block">
+        <div class="space-y-6 mt-20 text-center font-bold">
+            <p class="text-lg animate-bounce">🚨</p>
+            <p class="text-sm">Limited</p>
+            <p class="text-sm">Time</p>
+            <p class="text-sm">Offer!</p>
+            <button class="bg-yellow-700 text-white text-xs py-1 px-2 rounded-full mt-4 hover:bg-yellow-800 transition-colors">Claim!</button>
+        </div>
+    </aside>
+
+    <main class="container mx-auto p-6 md:p-8 bg-white rounded-3xl shadow-2xl mt-12 mb-12 transform hover:scale-100.5 transition-transform duration-300">
+
+        <!-- Hero Section -->
+        <section class="text-center py-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl mb-12 shadow-inner">
+            <h2 class="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-4 animate-fade-in-up">
+                Revolutionize Your World.
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto animate-fade-in">
+                Discover the innovation that's changing lives. Simple, powerful, and designed for you.
+            </p>
+            <button class="bg-indigo-600 text-white font-bold py-4 px-10 rounded-full text-lg shadow-xl hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-indigo-300 animate-pulse">
+                <a href="#hero-section-link">Get Started Now!</a>
+            </button>
+        </section>
+
+        <!-- Product Features Section -->
+        <section class="mb-12 clearfix">
+            <h3 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">🚀 Core Features That Shine</h3>
+
+            <!-- Feature 1: Floated Left -->
+            <img src="https://placehold.co/200x150/A78BFA/ffffff?text=Feature+1" alt="Innovative Feature 1" class="float-left-promo rounded-xl shadow-lg border border-purple-200">
+            <h4 class="text-2xl font-bold text-purple-700 mb-3">Intuitive User Experience</h4>
+            <p class="text-gray-600 mb-6">
+                Our platform is designed with you in mind. Enjoy a seamless, easy-to-navigate interface that makes complex tasks simple. No more frustrations, just pure productivity and enjoyment.
+            </p>
+
+            <!-- Feature 2: Floated Right -->
+            <div class="float-right-testimonial bg-pink-100 border border-pink-300 p-6 w-64 text-gray-700 rounded-xl shadow-lg">
+                <p class="text-base italic mb-3">"This product exceeded my expectations! So easy to use."</p>
+                <p class="text-sm font-semibold text-right">- Happy Customer</p>
+            </div>
+            <h4 class="text-2xl font-bold text-teal-700 mb-3">Unrivaled Performance</h4>
+            <p class="text-gray-600 mb-6">
+                Experience lightning-fast speeds and robust reliability. Our advanced technology ensures you get the best performance, every single time, without compromise.
+            </p>
+
+            <p class="text-gray-600 clear-both pt-8">
+                And there's more! Each feature is crafted to bring maximum value and efficiency to your daily activities. Explore the possibilities!
+            </p>
+        </section>
+
+        <!-- Benefits/Offer Section (Flexbox) -->
+        <section class="mb-12">
+            <h3 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">🎁 Special Offer Just For You!</h3>
+
+            <div class="bg-gradient-to-br from-green-500 to-teal-600 p-8 rounded-3xl shadow-xl flex-container-bottom-cta border border-green-700 text-white">
+                <div class="mb-4">
+                    <p class="text-3xl font-bold mb-2">Get 50% Off Your First Month!</p>
+                    <p class="text-xl">Limited slots available. Don't miss out on this incredible opportunity.</p>
+                </div>
+                <div class="flex-item-bottom-button text-center">
+                    <button class="bg-white text-green-700 font-bold py-3 px-8 rounded-full text-xl shadow-xl hover:bg-green-100 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white">
+                        <a href="https://example.com/discount">Claim Your Discount Now!</a>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services/Packages Section (Grid) -->
+        <section class="mb-12">
+            <h3 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">🌐 Our Flexible Plans</h3>
+
+            <div class="grid-features">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-blue-200 text-center transform hover:scale-105 transition-transform duration-300">
+                    <h4 class="text-2xl font-bold text-blue-700 mb-3">Basic Package</h4>
+                    <p class="text-gray-600 mb-4">Perfect for individuals. Get started with essential features.</p>
+                    <p class="text-4xl font-extrabold text-blue-900 mb-4">$9<span class="text-lg font-normal">/month</span></p>
+                    <button class="bg-blue-500 text-white py-2 px-6 rounded-full hover:bg-blue-600 transition-colors">
+                        <a href="https://example.com/basic-plan">Choose Plan</a>
+                    </button>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-indigo-300 text-center transform hover:scale-105 transition-transform duration-300">
+                    <h4 class="text-2xl font-bold text-indigo-700 mb-3">Pro Package</h4>
+                    <p class="text-gray-600 mb-4">Ideal for growing teams. Unlock advanced capabilities.</p>
+                    <p class="text-4xl font-extrabold text-indigo-900 mb-4">$29<span class="text-lg font-normal">/month</span></p>
+                    <button class="bg-indigo-500 text-white py-2 px-6 rounded-full hover:bg-indigo-600 transition-colors">
+                        <a href="https://example.com/pro-plan">Choose Plan</a>
+                    </button>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-purple-200 text-center transform hover:scale-105 transition-transform duration-300">
+                    <h4 class="text-2xl font-bold text-purple-700 mb-3">Enterprise</h4>
+                    <p class="text-gray-600 mb-4">For large organizations. Custom solutions and dedicated support.</p>
+                    <p class="text-4xl font-extrabold text-purple-900 mb-4">Contact Us</p>
+                    <button class="bg-purple-500 text-white py-2 px-6 rounded-full hover:bg-purple-600 transition-colors">
+                        <a href="https://example.com/enterprise-inquiry">Inquire Now</a>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="text-center py-10 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-2xl shadow-xl">
+            <h3 class="text-4xl font-extrabold mb-4">Ready to Transform?</h3>
+            <p class="text-xl mb-8">Join thousands of satisfied users today and experience the difference!</p>
+            <button class="bg-white text-red-600 font-bold py-4 px-12 rounded-full text-xl shadow-lg hover:bg-red-100 transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white">
+                <a href="https://example.com/download">Download Now!</a>
+            </button>
+        </section>
+
+    </main>
+
+    <!-- 4. Fixed Bottom Anchor Ad Bar -->
+    <footer id="anchor-ad" class="fixed-bottom bg-gradient-to-r from-blue-700 to-cyan-600 text-white p-4 sm:p-5 shadow-lg rounded-t-xl flex items-center justify-between animate-fade-in-up">
+        <p class="text-base sm:text-lg font-semibold flex-grow text-center sm:text-left mr-4">
+            🚀 Exclusive Offer: Get 30% Off Your First Purchase!
+        </p>
+        <button class="bg-white text-blue-700 font-bold py-2 px-5 rounded-full shadow-md hover:bg-blue-100 transition-all duration-300 ease-in-out transform hover:scale-105 mr-2">
+            Claim Now!
+        </button>
+        <button id="close-anchor-ad" class="bg-transparent text-white text-xl p-1 rounded-full hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-white">
+            &times;
+        </button>
+    </footer>
+
+    <!-- 5. Vignette Ad Overlay -->
+    <div id="vignette-ad" class="vignette-overlay">
+        <div class="vignette-content">
+            <button id="close-vignette-ad" class="vignette-close-btn">&times;</button>
+
+            <!-- Ad Info/Report Dropdown Container (AdChoices style) -->
+            <div class="ad-info-dropdown-container">
+                <button id="ad-info-toggle-btn" class="ad-info-toggle-btn">
+                    <!-- Using a simple info icon (can be SVG or actual icon font) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="ad-info-menu" class="ad-info-menu">
+                    <div class="ad-info-menu-item" id="why-this-advert">Why this advert?</div>
+                    <div class="ad-info-menu-separator"></div>
+                    <div class="ad-info-menu-header">Report this ad:</div>
+                    <div class="ad-info-menu-item" data-reason="Irrelevant">Irrelevant</div>
+                    <div class="ad-info-menu-item" data-reason="Misleading">Misleading</div>
+                    <div class="ad-info-menu-item" data-reason="Offensive">Offensive content</div>
+                    <div class="ad-info-menu-item" data-reason="Already bought">Already bought this item</div>
+                    <div class="ad-info-menu-item" data-reason="Repetitive">Repetitive</div>
+                    <div class="ad-info-menu-item" data-reason="Other">Other reason</div>
+                </div>
+            </div>
+
+            <h2 class="text-4xl md:text-5xl font-extrabold text-blue-800 mb-4 drop-shadow-sm leading-tight">
+                🎉 Flash Sale Alert! <br class="md:hidden">Last Chance for Epic Savings! 🎉
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
+                Don't miss out on our special limited-time deals!
+                <br>Up to <span class="font-bold text-blue-600 text-3xl md:text-4xl">70% OFF</span> selected items!
+            </p>
+            <button class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg md:text-xl shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                <a href="https://example.com/flash-sale" class="block w-full h-full text-white no-underline flex items-center justify-center">Shop Now & Save!</a>
+            </button>
+
+            <!-- Info Message for "Why this advert?" -->
+            <div id="why-this-ad-message" class="info-message">
+                <p>This advert is shown to you based on your browsing history and interests.</p>
+                <p class="mt-2 text-sm text-gray-300">Click anywhere to dismiss this message.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const anchorAd = document.getElementById('anchor-ad');
+            const closeAnchorButton = document.getElementById('close-anchor-ad');
+            const vignetteAd = document.getElementById('vignette-ad');
+            const closeVignetteButton = document.getElementById('close-vignette-ad');
+            
+            // Ad Info/Report Dropdown elements
+            const adInfoToggleBtn = document.getElementById('ad-info-toggle-btn');
+            const adInfoMenu = document.getElementById('ad-info-menu');
+            const whyThisAdvertBtn = document.getElementById('why-this-advert');
+            const reportAdMenuItems = adInfoMenu.querySelectorAll('.ad-info-menu-item[data-reason]');
+            const whyThisAdMessage = document.getElementById('why-this-ad-message');
+
+
+            const anchorAdReappearTime = 30 * 1000; // 30 seconds for anchor ad
+            let targetUrl = null; // To store the URL of the clicked link
+
+            // Function to disable body scrolling
+            function disableBodyScroll() {
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Function to enable body scrolling
+            function enableBodyScroll() {
+                document.body.style.overflow = ''; // Resets to default
+            }
+
+            // --- Anchor Ad Logic ---
+            if (closeAnchorButton && anchorAd) {
+                closeAnchorButton.addEventListener('click', () => {
+                    anchorAd.classList.add('hidden-ad');
+                    console.log('Anchor ad hidden. Will reappear in ' + anchorAdReappearTime / 1000 + ' seconds.');
+
+                    setTimeout(() => {
+                        anchorAd.classList.remove('hidden-ad');
+                        console.log('Anchor ad reappeared.');
+                    }, anchorAdReappearTime);
+                });
+            }
+
+            // --- Vignette Ad Logic ---
+            function showVignette() {
+                vignetteAd.classList.add('show');
+                disableBodyScroll();
+                console.log('Vignette ad shown.');
+            }
+
+            function hideVignetteAndNavigate() {
+                vignetteAd.classList.remove('show');
+                enableBodyScroll();
+                closeAdInfoDropdown(); // Ensure ad info dropdown is closed when vignette hides
+                hideWhyThisAdMessage(); // Ensure why this ad message is hidden
+                console.log('Vignette ad hidden.');
+
+                // Navigate to the stored URL after the ad is dismissed
+                if (targetUrl) {
+                    // Introduce a small delay to allow vignette transition to complete
+                    setTimeout(() => {
+                        window.location.href = targetUrl; // Perform navigation
+                        targetUrl = null; // Reset for next click
+                    }, 100); // Small delay, e.g., 100ms
+                }
+            }
+
+            // Function to handle ad reporting
+            function reportAd(reason) {
+                console.log(`Ad Reported! Reason: "${reason}". Vignette Ad shown for URL: ${targetUrl}`);
+                // In a real application, you would send this data to a server
+                // e.g., fetch('/api/report-ad', { method: 'POST', body: JSON.stringify({ url: targetUrl, adId: 'vignette-ad-123', reason: reason }) });
+
+                // After reporting, close the ad and proceed with navigation
+                hideVignetteAndNavigate();
+            }
+
+            // --- Ad Info/Report Dropdown Logic ---
+            function toggleAdInfoDropdown() {
+                adInfoMenu.classList.toggle('show');
+            }
+
+            function closeAdInfoDropdown() {
+                adInfoMenu.classList.remove('show');
+            }
+
+            function showWhyThisAdMessage() {
+                whyThisAdMessage.classList.add('show');
+            }
+
+            function hideWhyThisAdMessage() {
+                whyThisAdMessage.classList.remove('show');
+            }
+
+            if (vignetteAd && closeVignetteButton && adInfoToggleBtn && adInfoMenu) {
+                closeVignetteButton.addEventListener('click', hideVignetteAndNavigate);
+                
+                // Toggle Ad Info Dropdown
+                adInfoToggleBtn.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent document click from immediately closing it
+                    toggleAdInfoDropdown();
+                });
+
+                // Handle "Why this advert?" click
+                whyThisAdvertBtn.addEventListener('click', () => {
+                    console.log("User clicked 'Why this advert?'. Ad shown for URL: " + targetUrl);
+                    closeAdInfoDropdown(); // Close the dropdown menu
+                    showWhyThisAdMessage(); // Show the informational message
+
+                    // Hide the info message if clicked anywhere on the vignette ad overlay
+                    // This event listener is specifically for the info message
+                    const dismissInfoMessage = (event) => {
+                        // Only dismiss if the click is not on the ad info toggle or menu itself
+                        if (!adInfoToggleBtn.contains(event.target) && !adInfoMenu.contains(event.target)) {
+                             hideWhyThisAdMessage();
+                             vignetteAd.removeEventListener('click', dismissInfoMessage); // Remove listener after dismissing
+                        }
+                    };
+                    vignetteAd.addEventListener('click', dismissInfoMessage);
+                });
+
+                // Add click listeners to each report menu item
+                reportAdMenuItems.forEach(item => {
+                    item.addEventListener('click', (event) => {
+                        const reason = event.target.dataset.reason;
+                        reportAd(reason); // Call reportAd with the specific reason
+                    });
+                });
+
+                // Close dropdown if clicked outside of it
+                document.addEventListener('click', (event) => {
+                    // Check if the click target is outside the dropdown container and the toggle button
+                    if (!adInfoMenu.contains(event.target) && !adInfoToggleBtn.contains(event.target)) {
+                        closeAdInfoDropdown();
+                    }
+                });
+            }
+
+            // --- Intercept all relevant link clicks to show vignette ---
+            document.addEventListener('click', (event) => {
+                let targetElement = event.target;
+
+                // Traverse up the DOM tree to find the nearest ancestor <a> tag
+                while (targetElement && targetElement.tagName !== 'A' && targetElement.parentElement) {
+                    targetElement = targetElement.parentElement;
+                }
+
+                // Check if an anchor tag was clicked and it's not:
+                // 1. A hash link (internal page jump)
+                // 2. A mailto, tel, or other non-HTTP/HTTPS protocol link
+                // 3. A link that is part of the fixed top navigation (so it doesn't trigger for basic nav)
+                // 4. A link inside the anchor ad itself (to allow its own CTA to work directly)
+                // 5. A link inside the vignette ad's main CTA (it should work directly once the vignette is shown)
+                // 6. Any element within the ad info dropdown (toggle button or menu items)
+
+                const isTopNavLink = targetElement.closest('.fixed-top');
+                const isAnchorAdLink = targetElement.closest('#anchor-ad');
+                const isVignetteAdCTA = targetElement.closest('#vignette-ad button a');
+                const isAdInfoDropdownElement = targetElement.closest('.ad-info-dropdown-container'); // Check for clicks within the new dropdown structure
+
+                if (targetElement && targetElement.tagName === 'A' && targetElement.href &&
+                    !targetElement.href.startsWith('#') &&
+                    !targetElement.href.startsWith('mailto:') &&
+                    !targetElement.href.startsWith('tel:') &&
+                    !isTopNavLink &&
+                    !isAnchorAdLink &&
+                    !isVignetteAdCTA &&
+                    !isAdInfoDropdownElement) { // Exclude clicks within the Ad Info dropdown
+
+                    event.preventDefault(); // Prevent default navigation immediately
+                    targetUrl = targetElement.href; // Store the target URL
+
+                    showVignette(); // Show the vignette ad
+                    console.log('Link clicked. Intercepted: ' + targetUrl);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
