@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Hash Redirect</title>
+  
   <script>
-    window.addEventListener('DOMContentLoaded', function () {
+    
+    window.onload = async function () {
       if (window.location.hash) {
         const newUrl = window.location.pathname + window.location.hash;
         if (window.location.href !== newUrl) {
@@ -15,6 +17,6 @@
   </script>
 </head>
 <body>
-  <p></p>
+  <p>redirecting...</p>
 </body>
 </html>
