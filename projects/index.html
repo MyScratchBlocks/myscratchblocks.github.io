@@ -1097,7 +1097,7 @@ function createCommentElement(comment, depth = 0) {
       });
   }
 
-    document.addEventListener('DOMContentLoaded', () => {
+          document.addEventListener('DOMContentLoaded', () => {
             const anchorAd = document.getElementById('anchor-ad');
             const closeButton = document.getElementById('close-anchor-ad');
             const adDisplayTime = 25 * 1000; // 20 seconds and milliseconds
@@ -1112,9 +1112,9 @@ function createCommentElement(comment, depth = 0) {
                         anchorAd.classList.remove('hidden-ad'); // Remove class to show it again
                         console.log('Anchor ad reappeared.');
                     }, adDisplayTime);
-                });
-            }
-        });
+                    });
+                }
+            }); // This one is correctly closed.
 
                 // --- Vignette Ad Logic ---
             function showVignette() {
