@@ -1097,24 +1097,24 @@ function createCommentElement(comment, depth = 0) {
       });
   }
 
-          document.addEventListener('DOMContentLoaded', () => {
-            const anchorAd = document.getElementById('anchor-ad');
-            const closeButton = document.getElementById('close-anchor-ad');
-            const adDisplayTime = 25 * 1000; // 20 seconds and milliseconds
+document.addEventListener('DOMContentLoaded', () => {
+    const anchorAd = document.getElementById('anchor-ad');
+    const closeButton = document.getElementById('close-anchor-ad');
+    const adDisplayTime = 25 * 1000; // 25 seconds in milliseconds
 
-            if (closeButton && anchorAd) {
-                closeButton.addEventListener('click', () => {
-                    anchorAd.classList.add('hidden-ad'); // Add class to hide it
-                    console.log('Anchor ad hidden. Will reappear in ' + adDisplayTime / 1000 + ' seconds.');
+    if (closeButton && anchorAd) {
+        closeButton.addEventListener('click', () => {
+            anchorAd.classList.add('hidden-ad'); // Add class to hide it
+            console.log('Anchor ad hidden. Will reappear in ' + adDisplayTime / 1000 + ' seconds.');
 
-                    // Set a timeout to make the ad reappear
-                    setTimeout(() => {
-                        anchorAd.classList.remove('hidden-ad'); // Remove class to show it again
-                        console.log('Anchor ad reappeared.');
-                    }, adDisplayTime);
-                    });
-                }
-            }); // This one is correctly closed.
+            // Set a timeout to make the ad reappear
+            setTimeout(() => {
+                anchorAd.classList.remove('hidden-ad'); // Remove class to show it again
+                console.log('Anchor ad reappeared.');
+            }, adDisplayTime);
+        });
+    }
+});
 
                 // --- Vignette Ad Logic ---
             function showVignette() {
