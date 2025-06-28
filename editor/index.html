@@ -79,13 +79,13 @@
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
       document.getElementById("scratchFrame").src = finalUrl;
       if(!localStorage.getItem('new-project') === '') {
-        window.location.href = `projects#${hash}`;
+        window.location.href = `projects/#${hash}`;
         localStorage.setItem('new-project', '');
       }
 
       // Redirect specific usernames to projects.html
       if (username === '.....' && !hash) {
-        window.location.href = 'projects.html';
+        window.location.href = 'projects.html/#1';
       }
     }
 
@@ -109,18 +109,9 @@
     // Run init() once on load
     await init();
 
-    // Poll every 5 seconds until hash is set
-    const pollInterval = setInterval(async () => {
-      if (window.location.hash.substring(1)) {
-        clearInterval(pollInterval);
-        return;
-      }
-      await init();
-    }, 5000);
-
     const iframe = document.getElementById('scratchFrame');
     const iframeSrc = iframe.getAttribute('src');
-    const expectedSrc = `https://myscratchblocks.github.io/editor${res.id}`;
+    const expectedSrc = `https://myscratchblocks.github.io/editor/#${res.id}`;
     if (iframeSrc !== expectedSrc) {
       window.location.href = `projects#${window.location.hash.substring(1)}`;
     }
