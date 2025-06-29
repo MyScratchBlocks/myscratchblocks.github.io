@@ -1118,7 +1118,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('DOMContentLoaded', () => {
             const vignetteAd = document.getElementById('vignette-ad');
             const closeVignetteButton = document.getElementById('close-vignette-ad');
-            
+            let targetUrl = null; // To store the URL of the clicked link
+        
             // Ad Info/Report Dropdown elements
             const adInfoToggleBtn = document.getElementById('ad-info-toggle-btn');
             const adInfoMenu = document.getElementById('ad-info-menu');
