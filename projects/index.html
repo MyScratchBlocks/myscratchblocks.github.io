@@ -1033,9 +1033,9 @@ function createCommentElement(comment, depth = 0) {
     await fetchMeta();
     await fetchComments(); // Initial fetch of comments
     const res = await fetch('https://editor-compiler.onrender.com/ad/random');
-    const data = res.json();
+    const data = await res.json();
     const ads = data.ad.ad;
-    document.getElementById('adsPr').innerHTMl = `<p>Check Out This New <a href="/projects/#${ads}">Project!</a></p>`;
+    document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects/#${ads}">Project!</a></p>`;
   };
 
   // Event listener for liking project
