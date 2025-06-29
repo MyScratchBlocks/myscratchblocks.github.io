@@ -1034,7 +1034,7 @@ function createCommentElement(comment, depth = 0) {
     await fetchComments(); // Initial fetch of comments
     const res = await fetch('https://editor-compiler.onrender.com/ad/random');
     const data = await res.json();
-    const ads = data.ad.ad;
+    const ads = data.ad.replace('ad:', '');
     document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects/#${ads}">Project!</a></p>`;
   };
 
