@@ -1127,6 +1127,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const reportAdMenuItems = adInfoMenu.querySelectorAll('.ad-info-menu-item[data-reason]');
             const whyThisAdMessage = document.getElementById('why-this-ad-message');
 
+                    // Function to disable body scrolling
+            function disableBodyScroll() {
+                document.body.style.overflow = 'hidden';
+            }
+
+                    // Function to enable body scrolling
+            function enableBodyScroll() {
+                document.body.style.overflow = ''; // Resets to default
+            }
+
 
                 // --- Vignette Ad Logic ---
             function showVignette() {
