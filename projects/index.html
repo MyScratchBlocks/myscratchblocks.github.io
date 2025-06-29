@@ -1275,8 +1275,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('claimAd').addEventListener('click', () => {
       const project = prompt('What Is Your Project Link?');
-      const id = project.replace("myscratchblocks.github.io/projects/#", "").replace("https://", "");
-      postAd(id);
+      if(!project.includes('myscratchblocks')) {
+        alert('Invalid Link');
+      } else {
+        const id = project.replace("myscratchblocks.github.io/projects/#", "").replace("https://", "");
+        postAd(id);
+      } 
      });
 
 async function postAd(id) {
