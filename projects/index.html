@@ -1115,6 +1115,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+      document.addEventListener('DOMContentLoaded', () => {
+            const vignetteAd = document.getElementById('vignette-ad');
+            const closeVignetteButton = document.getElementById('close-vignette-ad');
+            
+            // Ad Info/Report Dropdown elements
+            const adInfoToggleBtn = document.getElementById('ad-info-toggle-btn');
+            const adInfoMenu = document.getElementById('ad-info-menu');
+            const whyThisAdvertBtn = document.getElementById('why-this-advert');
+            const reportAdMenuItems = adInfoMenu.querySelectorAll('.ad-info-menu-item[data-reason]');
+            const whyThisAdMessage = document.getElementById('why-this-ad-message');
+
 
                 // --- Vignette Ad Logic ---
             function showVignette() {
