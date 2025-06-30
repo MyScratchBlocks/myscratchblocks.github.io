@@ -1064,16 +1064,20 @@ function createCommentElement(comment, depth = 0) {
     const res = await fetch('https://editor-compiler.onrender.com/ad/random');
     const data = await res.json();
     const ads = data.ad.replace('ad:', '');
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${ads}/meta/test123`);
-    const data2 = await res2.json();
-    if (!res.error) {
-      if (ads !== 'undefined') {
-        document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects#${ads}"><u>Project!</u></a></p>`;
+    if (ads === 21) {
+      fetchAds();
+    } else {
+      const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${ads}/meta/test123`);
+      const data2 = await res2.json();
+      if (!res.error) {
+        if (ads !== 'undefined') {
+          document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects#${ads}"><u>Project!</u></a></p>`;
+        } else {
+          fetchAds();
+        }
       } else {
         fetchAds();
       }
-    } else {
-      fetchAds();
     }
   };
 
@@ -1081,16 +1085,20 @@ function createCommentElement(comment, depth = 0) {
     const res = await fetch('https://editor-compiler.onrender.com/ad/random');
     const data = await res.json();
     const ads = data.ad.replace('ad:', '');
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${ads}/meta/test123`);
-    const data2 = await res2.json();
-    if (!res.error) {
-      if (ads !== 'undefined') {
-        document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects#${ads}"><u>Project!</u></a></p>`;
+    if (ads === 21) {
+      fetchAds()
+    } else {
+      const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${ads}/meta/test123`);
+      const data2 = await res2.json();
+      if (!res.error) {
+        if (ads !== 'undefined') {
+          document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects#${ads}"><u>Project!</u></a></p>`;
+        } else {
+          fetchAds();
+        }
       } else {
         fetchAds();
       }
-    } else {
-      fetchAds();
     }
   }
     
