@@ -1333,20 +1333,21 @@ document.addEventListener('DOMContentLoaded', () => {
      });
 
 async function postAd(id) {
-    try {
-      const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/test123`);
-      if (res2.ok) {
-        const res = await fetch(`https://editor-compiler.onrender.com/ad/${window.location.hash.substring(1)}/set/${id}`);
-        if (res.ok) {
-          alert('Ad Uploaded!');
-        } else {
-          alert('Failed To Upload Ad!');
-        }
-      } catch (err) {
-        alert('Error:' + err);
+  try {
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/test123`);
+    if (res2.ok) {
+      const res = await fetch(`https://editor-compiler.onrender.com/ad/${window.location.hash.substring(1)}/set/${id}`);
+      if (res.ok) {
+        alert('Ad Uploaded!');
+      } else {
+        alert('Failed To Upload Ad!');
+      }
+    } else {
+      alert('Invalid Project, Insert A Valid Project Link!');
     }
-  } else {
-    alert('Invalid Project, Insert A Valid Project Link!')
+  } catch (err) {
+    alert('Error: ' + err);
+  }
 }
   </script>
 </body>
