@@ -46,6 +46,9 @@
       <button onclick="github()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
         Sign In With Github
       </button>
+      <button onclick="guest()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
+        Continue as a temporary guest user
+      </button>
       <p id="scratchMessage" class="text-sm text-green-600 mt-4"></p>
     </section>
 
@@ -56,6 +59,7 @@
         <b>Risk Of Getting Banned:</b> <p id="banRisk">Low risk</p>
         <button onclick="logout()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Logout</button>
         <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">My Projects</button>
+        <p id="scratchMessage" class="text-sm text-orange-600 mt-4"></p>
       </div>
 
       <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto mt-6">
@@ -192,6 +196,18 @@
       window.location.href = 'account.html';
     }
 
+    function guest() {
+     const DIGITS = 6;
+     const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
+     const randomId = randomNumber.toString().padStart(DIGITS, '0');
+     const randomUsername = `GuestUser-${randomId}`;  
+     const DK = btoba(randomUsername);
+     localStorage.setItem('usernameEnc', DK);
+     localStorage.setItem('username', randomUsername);
+     localStorage.setItem('loggedIn', 'true');
+     localStorage.setItem('guestUser', 'yes');
+    }
+
     function myprojects() {
       const username = localStorage.getItem('username');
       if (username) {
@@ -257,6 +273,8 @@
     document.getElementById("banRisk").innerHTML = "Super High Risk - Account Limited - Certain features are disabled, stop breaking the rules!";
     document.getElementById('banRisk').style.color = 'SlateBlue';
 }
+
+
   </script>
 </body>
 
