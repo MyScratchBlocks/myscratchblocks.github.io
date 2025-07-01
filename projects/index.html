@@ -600,31 +600,6 @@
     </div>
   
   <script>
-window.onload = function() {
-  // Wait until the document is fully loaded
-  window.addEventListener('load', function() {
-    // Get the current URL without the hash
-    const currentUrlNoHash = window.location.href.split('#')[0];
-
-    // Try to use the Performance API to get the last navigation entry
-    const entries = performance.getEntriesByType('navigation');
-
-    if (entries.length > 0) {
-      const referrer = document.referrer;
-
-      if (referrer) {
-        const referrerNoHash = referrer.split('#')[0];
-
-        // Check if the base URL matches and hash differs
-        if (referrerNoHash === currentUrlNoHash && referrer !== window.location.href) {
-          // Force a reload
-          window.location.reload();
-        }
-      }
-    }
-  });
-})();
-
   // Get modal elements
   const reportModal = document.getElementById('id01');
   const loginModal = document.getElementById('login-modal');
