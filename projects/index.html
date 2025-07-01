@@ -600,7 +600,7 @@
     </div>
   
   <script>
-(function() {
+window.onload = function() {
   // Wait until the document is fully loaded
   window.addEventListener('load', function() {
     // Get the current URL without the hash
@@ -1061,46 +1061,68 @@ function createCommentElement(comment, depth = 0) {
     // Fetch metadata and comments on page load
     await fetchMeta();
     await fetchComments(); // Initial fetch of comments
-    const res = await fetch('https://editor-compiler.onrender.com/ad/random');
-    const data = await res.json();
-    const ads = data.ad.replace('ad:', '');
-    if (ads === 21) {
-      fetchAds();
-    } else {
-      const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${ads}/meta/test123`);
-      const data2 = await res2.json();
-      if (!res.error) {
-        if (ads !== 'undefined') {
-          document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects#${ads}"><u>Project!</u></a></p>`;
-        } else {
-          fetchAds();
-        }
-      } else {
-        fetchAds();
-      }
-    }
-  };
+    await fetchAds();
 
-  async function fetchAds() {
+async function fetchAds() {
+  try {
     const res = await fetch('https://editor-compiler.onrender.com/ad/random');
-    const data = await res.json();
-    const ads = data.ad.replace('ad:', '');
-    if (ads === 21) {
-      fetchAds()
-    } else {
-      const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${ads}/meta/test123`);
-      const data2 = await res2.json();
-      if (!res.error) {
-        if (ads !== 'undefined') {
-          document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects#${ads}"><u>Project!</u></a></p>`;
-        } else {
-          fetchAds();
-        }
-      } else {
-        fetchAds();
-      }
+    if (!res.ok) { // Check if the first response was successful
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
+    const data = await res.json();
+
+    // Ensure data.ad exists and is a string before attempting replace
+    if (!data.ad || typeof data.ad !== 'string') {
+      console.warn("Unexpected ad format received:", data.ad);
+      fetchAds(); // Retry if ad format is unexpected
+      return;
+    }
+
+    const adId = data.ad.replace('ad:', '');
+
+    // It seems you're trying to re-fetch if the adId is '21'.
+    // If '21' is a specific ID you want to exclude, this logic is fine.
+    // However, if '21' is meant to be a status code or a different kind of flag,
+    // you might need to adjust the condition. Assuming '21' is an ad ID to skip.
+    if (adId === '21') {
+      fetchAds();
+      return;
+    }
+
+    // Validate adId before using it in the URL
+    if (!adId || adId === 'undefined') {
+      console.warn("Invalid or undefined adId received after processing:", adId);
+      fetchAds(); // Retry if adId is invalid
+      return;
+    }
+
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test123`);
+    if (!res2.ok) { // Check if the second response was successful
+      throw new Error(`HTTP error! status: ${res2.status} for project meta`);
+    }
+    const data2 = await res2.json();
+
+    // The original code had `if (!res.error)` here, which isn't how fetch errors work.
+    // Errors are typically caught by the .catch block or checked with `!res.ok`.
+    // Assuming you want to proceed if data2 doesn't indicate an error within its payload.
+    // If data2 has an 'error' property indicating an issue with the project meta,
+    // you'll need to adjust this condition based on the actual structure of data2.
+    if (!data2.error) { // Assuming your API returns an 'error' property on failure
+      document.getElementById('adsPr').innerHTML = `<p>Check Out This New <a href="/projects#${adId}"><u>Project!</u></a></p>`;
+    } else {
+      console.warn("Project meta data indicated an error:", data2.error);
+      fetchAds(); // Retry if project meta had an error
+    }
+  } catch (error) {
+    console.error("Failed to fetch ads:", error);
+    fetchAds();
+    // You might want to implement a retry mechanism here with a delay,
+    // or display a fallback message to the user instead of infinitely retrying on error.
+    // For now, it will simply log the error and stop trying,
+    // or you could uncomment fetchAds() to retry on *any* network/parsing error.
+    // fetchAds(); // Uncomment to retry on general errors
   }
+}
     
   // Event listener for liking project
   document.getElementById('like-btn').addEventListener('click', async () => {
@@ -1164,136 +1186,7 @@ function createCommentElement(comment, depth = 0) {
         console.error('Failed to copy URL:', err);
         alert('Failed to copy URL. Try again.');
       });
-  }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const anchorAd = document.getElementById('anchor-ad');
-    const closeButton = document.getElementById('close-anchor-ad');
-    const adDisplayTime = 25 * 1000; // 25 seconds in milliseconds
-
-    if (closeButton && anchorAd) {
-        closeButton.addEventListener('click', () => {
-            anchorAd.classList.add('hidden-ad'); // Add class to hide it
-            console.log('Anchor ad hidden. Will reappear in ' + adDisplayTime / 1000 + ' seconds.');
-
-            // Set a timeout to make the ad reappear
-            setTimeout(() => {
-                anchorAd.classList.remove('hidden-ad'); // Remove class to show it again
-                console.log('Anchor ad reappeared.');
-            }, adDisplayTime);
-        });
-    }
-});
-      document.addEventListener('DOMContentLoaded', () => {
-            const vignetteAd = document.getElementById('vignette-ad');
-            const closeVignetteButton = document.getElementById('close-vignette-ad');
-            let targetUrl = null; // To store the URL of the clicked link
-        
-            // Ad Info/Report Dropdown elements
-            const adInfoToggleBtn = document.getElementById('ad-info-toggle-btn');
-            const adInfoMenu = document.getElementById('ad-info-menu');
-            const whyThisAdvertBtn = document.getElementById('why-this-advert');
-            const reportAdMenuItems = adInfoMenu.querySelectorAll('.ad-info-menu-item[data-reason]');
-            const whyThisAdMessage = document.getElementById('why-this-ad-message');
-
-                    // Function to disable body scrolling
-            function disableBodyScroll() {
-                document.body.style.overflow = 'hidden';
-            }
-
-                    // Function to enable body scrolling
-            function enableBodyScroll() {
-                document.body.style.overflow = ''; // Resets to default
-            }
-
-
-                // --- Vignette Ad Logic ---
-            function showVignette() {
-                vignetteAd.classList.add('show');
-                disableBodyScroll();
-                console.log('Vignette ad shown.');
-            }
-
-            function hideVignetteAndNavigate() {
-                vignetteAd.classList.remove('show');
-                enableBodyScroll();
-                closeAdInfoDropdown(); // Ensure ad info dropdown is closed when vignette hides
-                hideWhyThisAdMessage(); // Ensure why this ad message is hidden
-                console.log('Vignette ad hidden.');
-
-                // Navigate to the stored URL after the ad is dismissed
-                if (targetUrl) {
-                    // Introduce a small delay to allow vignette transition to complete
-                    setTimeout(() => {
-                        window.location.href = targetUrl; // Perform navigation
-                        targetUrl = null; // Reset for next click
-                    }, 100); // Small delay, e.g., 100ms
-                }
-            }
-
-            // Function to handle ad reporting
-            function reportAd(reason) {
-                console.log(`Ad Reported! Reason: "${reason}". Vignette Ad shown for URL: ${targetUrl}`);
-                // In a real application, you would send this data to a server
-                // e.g., fetch('/api/report-ad', { method: 'POST', body: JSON.stringify({ url: targetUrl, adId: 'vignette-ad-123', reason: reason }) });
-
-                // After reporting, close the ad and proceed with navigation
-                hideVignetteAndNavigate();
-            }
-
-            // --- Ad Info/Report Dropdown Logic ---
-            function toggleAdInfoDropdown() {
-                adInfoMenu.classList.toggle('show');
-            }
-
-            function closeAdInfoDropdown() {
-                adInfoMenu.classList.remove('show');
-            }
-
-            function showWhyThisAdMessage() {
-                whyThisAdMessage.classList.add('show');
-            }
-
-            function hideWhyThisAdMessage() {
-                whyThisAdMessage.classList.remove('show');
-            }
-
-            if (vignetteAd && closeVignetteButton && adInfoToggleBtn && adInfoMenu) {
-                closeVignetteButton.addEventListener('click', hideVignetteAndNavigate);
-                
-                // Toggle Ad Info Dropdown
-                adInfoToggleBtn.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent document click from immediately closing it
-                    toggleAdInfoDropdown();
-                });
-
-                // Handle "Why this advert?" click
-                whyThisAdvertBtn.addEventListener('click', () => {
-                    console.log("User clicked 'Why this advert?'. Ad shown for URL: " + targetUrl);
-                    closeAdInfoDropdown(); // Close the dropdown menu
-                    showWhyThisAdMessage(); // Show the informational message
-
-                    // Hide the info message if clicked anywhere on the vignette ad overlay
-                    // This event listener is specifically for the info message
-                    const dismissInfoMessage = (event) => {
-                        // Only dismiss if the click is not on the ad info toggle or menu itself
-                        if (!adInfoToggleBtn.contains(event.target) && !adInfoMenu.contains(event.target)) {
-                             hideWhyThisAdMessage();
-                             vignetteAd.removeEventListener('click', dismissInfoMessage); // Remove listener after dismissing
-                        }
-                    };
-                    vignetteAd.addEventListener('click', dismissInfoMessage);
-                });
-
-                // Add click listeners to each report menu item
-                reportAdMenuItems.forEach(item => {
-                    item.addEventListener('click', (event) => {
-                        const reason = event.target.dataset.reason;
-                        reportAd(reason); // Call reportAd with the specific reason
-                    });
-                });
-
-                
+  }             
 
     document.getElementById('claimAd').addEventListener('click', () => {
       const project = prompt('What Is Your Project Link?');
