@@ -197,15 +197,15 @@
     }
 
     function guest() {
-     const DIGITS = 6;
-     const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
-     const randomId = randomNumber.toString().padStart(DIGITS, '0');
-     const randomUsername = `GuestUser-${randomId}`;  
-     const DK = btoba(randomUsername);
-     localStorage.setItem('usernameEnc', DK);
-     localStorage.setItem('username', randomUsername);
-     localStorage.setItem('loggedIn', 'true');
-     localStorage.setItem('guestUser', 'yes');
+      const DIGITS = 6;
+      const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
+      const randomId = randomNumber.toString().padStart(DIGITS, '0');
+      const randomUsername = `GuestUser-${randomId}`;  
+      const DK = btoba(randomUsername);
+      localStorage.setItem('usernameEnc', DK);
+      localStorage.setItem('username', randomUsername);
+      localStorage.setItem('loggedIn', 'true');
+      localStorage.setItem('guestUser', 'yes');
     }
 
     function myprojects() {
@@ -214,6 +214,14 @@
         window.location.href = `https://myscratchblocks.github.io/mystuff`;
       }
     }
+    
+      const guestUser = localStorage.getItem('guestUser');
+      if (guestUser) {
+        const messageBox = document.getElementById("scratchMessage");
+        messageBox.textContent = "WARNING: You are using a temporary guest account. After signing out, you will loose adminstrative access over your projects that you uploaded using Guest Mode.";
+        document.getElementById("banRisk").innerHTML = "Not Evaluated - Guest accounts can't be evaluated for a ban risk";
+        document.getElementById('banRisk').style.color = 'gray';
+      }
 
     function devToken() {
       const username = localStorage.getItem('username');
