@@ -202,7 +202,7 @@
       const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
       const randomId = randomNumber.toString().padStart(DIGITS, '0');
       const randomUsername = `GuestUser-${randomId}`;  
-      const DK = btoba(randomUsername);
+      const DK = btoa(randomUsername);
       localStorage.setItem('usernameEnc', DK);
       localStorage.setItem('username', randomUsername);
       localStorage.setItem('loggedIn', 'true');
