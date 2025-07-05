@@ -51,7 +51,10 @@
 
       const meta = await res.json();
       const isOwner = meta.author?.username === currentUsername;
-
+      const el = document.getElementById('change-main-coder-btn');
+      if(isOwner) {
+        el.classList.remove('hidden-by-js');
+      } 
       metaTitleElement.textContent = meta.title || 'Untitled Project';
       editableTitleInput.value = meta.title || '';
       document.title = meta.title || 'Untitled Project';
