@@ -600,5 +600,76 @@
     </div>
   
 <script src="projects.bundle.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const uploadThumbnailBtn = document.getElementById('change-main-coder-btn'); // Assuming this is your "Upload Thumbnail" button
+    const projectId = window.location.hash.substring(1); // Get project ID from URL hash
+
+    // Create a hidden file input element
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*'; // Accept only image files
+    fileInput.style.display = 'none'; // Hide the input
+    document.body.appendChild(fileInput); // Append it to the body
+
+    if (uploadThumbnailBtn) {
+        uploadThumbnailBtn.addEventListener('click', () => {
+            fileInput.click(); // Programmatically click the hidden file input
+        });
+    }
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // Check if the selected file is an image
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file for the thumbnail.');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = async (e) => {
+                const imageData = e.target.result; // Base64 or ArrayBuffer, depending on readAs method
+                
+                // For this endpoint, we want to send the raw image data, not base64.
+                // FileReader.readAsArrayBuffer is suitable for sending binary data directly.
+                // However, the provided server-side code snippet `req.headers['content-type']`
+                // suggests it expects the actual image content as the request body,
+                // and the `Content-Type` header to be set correctly.
+
+                try {
+                    const response = await fetch(`https://editor-compiler.onrender.com/api/upload/${projectId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': file.type // Set the content type to the actual image MIME type
+                        },
+                        body: file // Send the File object directly as the body
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        alert('Thumbnail uploaded successfully!');
+                        console.log('Upload successful:', result);
+                        // Optionally, update the UI to show the new thumbnail
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Failed to upload thumbnail: ${errorData.error || response.statusText}`);
+                        console.error('Upload failed:', errorData);
+                    }
+                } catch (error) {
+                    alert('An error occurred during upload. Please try again.');
+                    console.error('Network error or unexpected issue:', error);
+                }
+            };
+
+            // Read the file as an ArrayBuffer, which is often suitable for sending binary data
+            // If the server expects base64 encoded data, you would use reader.readAsDataURL(file);
+            // and then process the base64 string before sending.
+            reader.readAsArrayBuffer(file); // Or reader.readAsDataURL(file) if your backend expects base64
+        }
+    });
+}); 
+</script>
 </body>
 </html>
