@@ -34,6 +34,7 @@
     const saveChangesBtn = document.getElementById('save-changes-btn');
     const shareProjectBtn = document.getElementById('share-project-btn');
     const shareProjectAlert = document.getElementById('share-project-btn2');
+    const elem = document.getElementById('change-main-coder-btn');
 
     const currentUsername = localStorage.getItem('username') || 'MyScratchBlocks-1312';
     if (!id) return;
@@ -76,6 +77,7 @@
 
       if (isOwner) {
         metaTitleElement.classList.add('hidden-by-js');
+        elem.classList.remove('hidden-by-js');
         editableTitleInput.classList.remove('hidden-by-js');
         metaDescriptionElement.classList.add('hidden-by-js');
         editableDescriptionTextarea.classList.remove('hidden-by-js');
