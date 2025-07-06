@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,12 +42,13 @@
       <button onclick="registerScratchAuth()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
         Sign In With ScratchID
       </button>
+      <br>
       <button onclick="github()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
         Sign In With Github
       </button>
     </br>
       <button onclick="guest()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
-        Continue as a temporary guest user
+        Continue as a temporary guest user (temp removed) 
       </button>
       <p id="scratchMessage" class="text-sm text-green-600 mt-4"></p>
     </section>
@@ -197,18 +197,18 @@
       window.location.href = 'account.html';
     }
 
-    function guest() {
-      const DIGITS = 6;
-      const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
-      const randomId = randomNumber.toString().padStart(DIGITS, '0');
-      const randomUsername = `GuestUser-${randomId}`;  
-      const DK = btoa(randomUsername);
-      localStorage.setItem('usernameEnc', DK);
-      localStorage.setItem('username', randomUsername);
-      localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('guestUser', 'yes');
-      window.location.href = 'account.html';
-    }
+//    function guest() {
+//      const DIGITS = 6;
+//      const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
+//      const randomId = randomNumber.toString().padStart(DIGITS, '0');
+//      const randomUsername = `GuestUser-${randomId}`;  
+//      const DK = btoa(randomUsername);
+//      localStorage.setItem('usernameEnc', DK);
+//      localStorage.setItem('username', randomUsername);
+//      localStorage.setItem('loggedIn', 'true');
+//      localStorage.setItem('guestUser', 'yes');
+//      window.location.href = 'account.html';
+//    }
 
     function myprojects() {
       const username = localStorage.getItem('username');
