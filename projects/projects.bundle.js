@@ -1,4 +1,4 @@
-  // Get modal elements
+  // get modal elements 
   const reportModal = document.getElementById('id01');
   const loginModal = document.getElementById('login-modal');
   reportModal.style.display = 'none';
