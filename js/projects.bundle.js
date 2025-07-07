@@ -5,7 +5,7 @@
   loginModal.style.display = 'none';
 
   // Extract project ID from URL hash
-  const hash = window.location.hash.substring(1); // "page?param=value"
+  const hash = window.location.hash.substring(1); 
   const id = hash.split('?')[0]; // "page"
 
   // Set iframe source to embed Scratch GUI with project ID
