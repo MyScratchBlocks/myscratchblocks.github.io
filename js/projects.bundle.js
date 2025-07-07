@@ -230,12 +230,12 @@ function reverseData(data) {
           user: { username }
         })
       });
-
+      const json2 = res.json();
       if (res.ok) {
         commentInput.value = ''; // Clear input
         await fetchComments(); // Refresh comments
       } else {
-        alert('Failed to post comment. Please try again.');
+        alert(json2.error);
       }
     } catch (err) {
       console.error('Comment post error:', err);
@@ -271,12 +271,12 @@ function reverseData(data) {
           user: { username }
         })
       });
-
+      const json3 = res.json();
       if (res.ok) {
         formElement.remove(); // Remove the reply form
         await fetchComments(); // Refresh comments
       } else {
-        alert('Failed to post reply. Please try again.');
+        alert(json3.error);
       }
     } catch (err) {
       console.error('Reply post error:', err);
