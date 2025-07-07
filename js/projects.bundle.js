@@ -6,7 +6,7 @@
 
   // Extract project ID from URL hash
   const hash = window.location.hash.substring(1); 
-  const id = hash.split('?')[0]; // "page"
+  const id = hash.split('?')[0];
 
   // Set iframe source to embed Scratch GUI with project ID
   const iframe = document.getElementById('id-frame');
