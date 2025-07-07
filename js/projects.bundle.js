@@ -239,7 +239,7 @@ function reverseData(data) {
       }
     } catch (err) {
       console.error('Comment post error:', err);
-      alert('Error posting comment.');
+      alert(json2.error);
     } finally {
       commentSubmitBtn.disabled = false; // Re-enable button
       commentSubmitBtn.innerHTML = '<i class="fa-solid fa-plus mr-2"></i> Post Comment';
@@ -280,7 +280,7 @@ function reverseData(data) {
       }
     } catch (err) {
       console.error('Reply post error:', err);
-      alert('Error posting reply.');
+      alert(json3.error);
     } finally {
       if (formElement.querySelector('.reply-button')) {
         formElement.querySelector('.reply-button').disabled = false;
