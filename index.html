@@ -186,6 +186,7 @@
                     mobileMessagesButton.classList.remove('hidden');
                 }
             }
+         
 function escapeHTML(str) {
   return str
     .replace(/&/g, "&amp;")
@@ -213,7 +214,7 @@ function escapeHTML(str) {
                     const response = await fetch(PROJECTS_API_URL);
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
-                    const projects = data.projects.slice(0, 5); // Displaying only the first 3 featured projects
+                    const projects = data.projects.slice(0, 3);
 
                     if (!Array.isArray(projects) || projects.length === 0) {
                         projectsContainer.innerHTML = '<p class="col-span-full text-gray-600">No featured projects available at the moment.</p>';
@@ -239,8 +240,8 @@ function escapeHTML(str) {
                         }
 
                         projectCard.innerHTML = `
-                            <img src="https://editor-compiler.onrender.com${escapeHTML(project.image)}" alt="${project.name} thumbnail" class="w-full h-40 object-cover rounded-md mb-4" />
-                            <h3 class="text-xl font-semibold text-gray-700 mb-2">${escapeHTML(projectName)}</h3>
+                            <img src="https://editor-compiler.onrender.com${escapeHTML(project.image)}" alt="${escapeHTML(project.name)} thumbnail" class="w-full h-40 object-cover rounded-md mb-4" />
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">${escapeHTML(project.name)}</h3>
                             <p class="text-gray-600 text-sm mb-4">Author: ${author}</p>
                             <a href="${project.link}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
                                 View Project
