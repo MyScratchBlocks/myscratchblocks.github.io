@@ -583,7 +583,7 @@ async function postAd(projectId) {
   try {
     const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectId}/meta/test123`);
     if (res2.ok) {
-      const res = await fetch(`https://editor-compiler.onrender.com/ad/${window.location.hash.substring(1)}/set/${projectId}`);
+      const res = await fetch(`https://editor-compiler.onrender.com/ad/${window.location.hash.split('?')[0]}/set/${projectId}`);
       if (res.ok) {
         alert('Ad Uploaded!');
       } else {
