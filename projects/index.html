@@ -459,7 +459,7 @@
           <button id="change-main-coder-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
               <i class="fa-solid fa-upload mr-2"></i> Upload Thumbnail
           </button>
-            <button onclick="postAd(projectId)" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
+            <button onclick="uploadAd()" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
               <i class="fa-solid fa-ad mr-2"></i> Create Temp Project Ad
           </button>
           <button id="save-changes-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
@@ -611,6 +611,10 @@
     if (!uploadThumbnailBtn) {
       console.error("Button with ID 'change-main-coder-btn' not found.");
       return;
+    }
+
+    function uploadAd() {
+      postAd(projectId)
     }
 
     uploadThumbnailBtn.addEventListener('click', () => {
