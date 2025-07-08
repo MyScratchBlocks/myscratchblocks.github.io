@@ -574,16 +574,16 @@ function createCommentElement(comment, depth = 0) {
       if(!project.includes('myscratchblocks')) {
         alert('Invalid Link!');
       } else {
-        const ProjectId = project.replace("myscratchblocks.github.io/projects/#", "").replace("https://", "");
-        postAd(ProjectId);
+        const projectId = project.replace("myscratchblocks.github.io/projects/#", "").replace("https://", "");
+        postAd(projectId);
       }
      });
 
-async function postAd(ProjectId) {
+async function postAd(projectId) {
   try {
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${ProjectId}/meta/test123`);
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectId}/meta/test123`);
     if (res2.ok) {
-      const res = await fetch(`https://editor-compiler.onrender.com/ad/${window.location.hash.substring(1)}/set/${ProjectId}`);
+      const res = await fetch(`https://editor-compiler.onrender.com/ad/${window.location.hash.substring(1)}/set/${projectId}`);
       if (res.ok) {
         alert('Ad Uploaded!');
       } else {
