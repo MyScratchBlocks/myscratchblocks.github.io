@@ -73,8 +73,7 @@
   </main>
 
   <script>
-    const s = localStorage();
-    if(s.getItem('username').includes('GuestUser')) {
+    if(localStorage.getItem('username').includes('GuestUser')) {
       logout();
     } 
     window.onload = async function() {
@@ -120,7 +119,7 @@
 
       if (username) {
         const encodedUsername = btoa(username);
-        s.setItem('usernameEnc', encodedUsername);
+        localStorage.setItem('usernameEnc', encodedUsername);
         localStorage.setItem('username', username);
         localStorage.setItem('loggedIn', 'true');
         window.location.href = 'account.html';
