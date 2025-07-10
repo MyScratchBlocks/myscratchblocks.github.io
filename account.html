@@ -150,7 +150,7 @@
 
     async function checkAuth() {
       const PC = new URLSearchParams(window.location.search).get('id');
-
+      localStorage.setItem('SECURE_ID', PC);
       if (PC) {
         try {
           const res = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${PC}`);
