@@ -73,9 +73,11 @@
   </main>
 
   <script>
-    if(localStorage.getItem('username').includes('GuestUser')) {
-      logout();
-    } 
+const username = localStorage.getItem('username');
+if (username && username.includes('GuestUser')) {
+  logout();
+}
+
     window.onload = async function() {
   const code = new URLSearchParams(window.location.search).get('code');
   if (code) {
