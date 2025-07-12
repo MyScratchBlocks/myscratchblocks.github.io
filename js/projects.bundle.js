@@ -495,20 +495,38 @@ if (commentsListContainer) { // Added null check
 window.onload = async () => {
   await fetchAds();
   await fetchMeta();
-  await fetchComments();
-  const accountElement = document.getElementById('account'); // Get the element once
+  await fetchComments(); // Ensure comments are fetched and rendered
+
+  const accountElement = document.getElementById('account');
   const username = localStorage.getItem('username');
   const params = new URLSearchParams(window.location.search);
   const scrollToId = params.get('commentId');
+
   if (scrollToId) {
-    const element = document.getElementById(scrollToId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' }); // or 'auto'
-    }
+    // Add a small timeout to allow the browser to fully render the comments
+    setTimeout(() => {
+      const element = document.getElementById(scrollToId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Optional: Add a temporary visual highlight for debugging
+        element.style.outline = '2px solid blue';
+        setTimeout(() => {
+          element.style.outline = ''; // Remove highlight after a few seconds
+        }, 2000);
+        console.log(`Successfully scrolled to comment ID: ${scrollToId}`);
+      } else {
+        // CHANGED HERE: Use alert instead of console.warn
+        alert(`Comment with ID '${scrollToId}' not found.`);
+        // You might still want a console log for debugging purposes, but the alert is now primary
+        console.error(`Element with ID '${scrollToId}' not found for scrolling after comments loaded.`);
+      }
+    }, 100); // A small delay of 100ms is still recommended to ensure rendering
+  } else {
+    console.log("No 'commentId' parameter found in URL for scrolling.");
   }
 
   if (username) {
-    if (accountElement) accountElement.textContent = username; // Check before accessing textContent
+    if (accountElement) accountElement.textContent = username;
     try {
       await fetch(`https://editor-compiler.onrender.com/api/${id}/views/${username}`, {
         method: 'POST'
@@ -517,7 +535,7 @@ window.onload = async () => {
       console.warn("Failed to record view:", err);
     }
   }
-}; // Closing brace for window.onload (moved up)
+};
 
 async function fetchAds() {
   try {
