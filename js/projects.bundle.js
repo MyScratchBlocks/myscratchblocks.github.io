@@ -423,6 +423,7 @@ function createCommentElement(comment, depth = 0) {
 
   const commentItemDiv = document.createElement('div');
   commentItemDiv.className = 'comment-item';
+  commentItemDiv.id = comment.id;
 
   if (depth > 0) {
     commentItemDiv.style.marginLeft = '3rem';
