@@ -495,6 +495,14 @@ if (commentsListContainer) { // Added null check
 window.onload = async () => {
   const accountElement = document.getElementById('account'); // Get the element once
   const username = localStorage.getItem('username');
+  const params = new URLSearchParams(window.location.search);
+  const scrollToId = params.get('commentId');
+  if (scrollToId) {
+    const element = document.getElementById(scrollToId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' }); // or 'auto'
+    }
+  }
 
   if (username) {
     if (accountElement) accountElement.textContent = username; // Check before accessing textContent
