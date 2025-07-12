@@ -41,7 +41,8 @@
       const data = await res5.json();
       const key = Object.keys(data)[0];
       const currentUsername = data[key].user;
-    } 
+    } else {
+      const currentUsername = 'test123';
     if (!id) return;
 
     try {
