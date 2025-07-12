@@ -493,6 +493,9 @@ if (commentsListContainer) { // Added null check
 
 
 window.onload = async () => {
+  await fetchAds();
+  await fetchMeta();
+  await fetchComments();
   const accountElement = document.getElementById('account'); // Get the element once
   const username = localStorage.getItem('username');
   const params = new URLSearchParams(window.location.search);
@@ -514,11 +517,6 @@ window.onload = async () => {
       console.warn("Failed to record view:", err);
     }
   }
-
-  // Fetch metadata and comments on page load
-  await fetchMeta();
-  await fetchComments(); // Initial fetch of comments
-  await fetchAds();
 }; // Closing brace for window.onload (moved up)
 
 async function fetchAds() {
