@@ -36,10 +36,12 @@
     const shareProjectBtn = document.getElementById('share-project-btn');
     const shareProjectAlert = document.getElementById('share-project-btn2');
     const elem = document.getElementById('change-main-coder-btn');
-    const res5 = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${localStorage.getItem('SECURE_ID')}/`);
-    const data = await res5.json();
-    const key = Object.keys(data)[0];
-    const currentUsername = data[key].user || 'MyScratchBlocks-1312';
+    if(localStorage.getItem('SECURE_ID')) {
+      const res5 = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${localStorage.getItem('SECURE_ID')}/`);
+      const data = await res5.json();
+      const key = Object.keys(data)[0];
+      const currentUsername = data[key].user;
+    } 
     if (!id) return;
 
     try {
