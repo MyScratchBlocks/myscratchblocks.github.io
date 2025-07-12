@@ -509,7 +509,7 @@ window.onload = async () => {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         // Optional: Add a temporary visual highlight for debugging
-        element.style.outline = '2px solid blue';
+        element.style.outline = '2px solid red';
         setTimeout(() => {
           element.style.outline = ''; // Remove highlight after a few seconds
         }, 2000);
