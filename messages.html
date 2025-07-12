@@ -156,7 +156,8 @@
                     if (!Array.isArray(messages) || messages.length === 0) {
                         noMessages.classList.remove('hidden');
                     } else {
-                        messages.forEach(message => {
+                        const messages2 = messages.slice().reverse();
+                            messages2.forEach(message => {
                             const messageDiv = document.createElement('div');
                             messageDiv.className = 'message-item';
                             // Using innerHTML to render the <a> tags from the API response
