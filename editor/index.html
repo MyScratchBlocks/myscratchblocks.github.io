@@ -29,6 +29,9 @@
 
     async function init() {
       const username = localStorage.getItem('username');
+      if(!localStorage.getItem('SECURE_ID')) {
+        window.location.href = '/account';
+       } 
       const sb3Base64 = localStorage.getItem('sb3');
 
       const params = new URLSearchParams(window.location.search);
