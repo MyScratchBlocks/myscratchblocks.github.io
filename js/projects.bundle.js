@@ -45,18 +45,17 @@
     if (!id) return;
 
     try {
-      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername}`, {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername || 'test123'}`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': currentUsername
+          'Content-Type': 'application/json'
         }
       });
 
       if (!res.ok) throw new Error(await res.text());
 
       const meta = await res.json();
-      const isOwner = meta.author?.username === currentUsername;
+      const isOwner = meta.author?.username === currentUsername || 'test123';
       const el = document.getElementById('change-main-coder-btn');
       if(isOwner) {
         el.classList.remove('hidden-by-js');
@@ -106,7 +105,7 @@
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': currentUsername
+                  'Authorization': currentUsername || 'test123'
                 },
                 body: JSON.stringify({
                   title: updatedTitle,
@@ -134,8 +133,7 @@
               const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
                 method: 'PUT',
                 headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': currentUsername
+                  'Content-Type': 'application/json'
                 }
               });
               if (shareRes.ok) {
@@ -218,7 +216,7 @@ function reverseData(data) {
     const res4 = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${localStorage.getItem('SECURE_ID')}/`);
     const data = await res4.json();
     const key = Object.keys(data)[0];
-    const currentUsername = data[key].user || 'MyScratchBlocks-1312';
+    const currentUsername = data[key].user;
     const username = currentUsername;
     if (!username) {
       showLoginModal();
