@@ -639,6 +639,7 @@
 <script src="/js/projects.bundle.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    await fetchAndDisplayAds();
     const uploadThumbnailBtn = document.getElementById('change-main-coder-btn');
     const projectId = window.location.hash.substring(1); // Get project ID from URL hash
 
@@ -689,8 +690,7 @@
       }
     }
 
-    // Call the function to fetch and display ads when the page loads
-    fetchAndDisplayAds();
+    
 
     uploadThumbnailBtn.addEventListener('click', () => {
       const fileInput = document.createElement('input');
