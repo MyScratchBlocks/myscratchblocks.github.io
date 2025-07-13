@@ -1,8 +1,8 @@
-// get modal elements
+// Get modal elements
 const reportModal = document.getElementById('id01');
 const loginModal = document.getElementById('login-modal');
-if (reportModal) reportModal.style.display = 'none'; // Added null check
-if (loginModal) loginModal.style.display = 'none';   // Added null check
+if (reportModal) reportModal.style.display = 'none';
+if (loginModal) loginModal.style.display = 'none';
 
 // Extract project ID from URL hash
 const hash = window.location.hash.substring(1);
@@ -11,7 +11,7 @@ const id = hash.split('?')[0];
 // Set iframe source to embed Scratch GUI with project ID
 const iframe = document.getElementById('id-frame');
 const remix = document.getElementById('remix-btn');
-if (iframe) { // Added null check
+if (iframe) {
   iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed?settings-button&addons=pause,gamepad,clones,mute-project#${id}`;
 }
 
@@ -37,18 +37,17 @@ async function fetchMeta() {
   const seeInsideBtn = document.getElementById('see-inside-btn');
   const saveChangesBtn = document.getElementById('save-changes-btn');
   const shareProjectBtn = document.getElementById('share-project-btn');
-  const shareProjectAlert = document.getElementById('share-project-btn2'); // This ID seems a bit off, usually alerts have different IDs
-  const changeMainCoderBtn = document.getElementById('change-main-coder-btn'); // Renamed `elem` for clarity
+  const shareProjectAlert = document.getElementById('share-project-btn2');
+  const uploadThumbnailBtn = document.getElementById('change-main-coder-btn'); // Renamed for clarity to reflect its primary action in code
 
   // Ensure elements exist before trying to access properties
   if (!loading || !error || !content || !metaTitleElement || !editableTitleInput ||
     !metaDescriptionElement || !editableDescriptionTextarea || !metaAuthorElement ||
-    !seeInsideBtn || !saveChangesBtn || !shareProjectBtn || !shareProjectAlert || !changeMainCoderBtn) {
+    !seeInsideBtn || !saveChangesBtn || !shareProjectBtn || !shareProjectAlert || !uploadThumbnailBtn) {
     console.error("One or more meta elements not found. Cannot fetch metadata.");
     return;
   }
 
-  // Moved currentUsername declaration outside the if/else to ensure scope
   let currentUsername = 'test123'; // Default username
 
   if (localStorage.getItem('SECURE_ID')) {
@@ -62,7 +61,6 @@ async function fetchMeta() {
       }
     } catch (err) {
       console.error('Error fetching secure ID verification:', err);
-      // Fallback to default username if verification fails
       currentUsername = 'test123';
     }
   }
@@ -74,7 +72,7 @@ async function fetchMeta() {
   }
 
   try {
-    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername}`, { // Use dynamic currentUsername
+    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -84,12 +82,12 @@ async function fetchMeta() {
     if (!res.ok) throw new Error(await res.text());
 
     const meta = await res.json();
-    const isOwner = meta.author?.username === currentUsername; // Check ownership correctly
+    const isOwner = meta.author?.username === currentUsername;
 
     if (isOwner) {
-      changeMainCoderBtn.classList.remove('hidden-by-js');
+      uploadThumbnailBtn.classList.remove('hidden-by-js');
     } else {
-      changeMainCoderBtn.classList.add('hidden-by-js'); // Ensure it's hidden if not owner
+      uploadThumbnailBtn.classList.add('hidden-by-js');
     }
 
     metaTitleElement.textContent = meta.title || 'Untitled Project';
@@ -121,74 +119,66 @@ async function fetchMeta() {
       if (meta.visibility === 'unshared') {
         shareProjectBtn.classList.remove('hidden-by-js');
         shareProjectAlert.classList.remove('hidden');
-        shareProjectAlert.style.display = 'block';
       } else {
-        // Ensure share elements are hidden if project is already shared
         shareProjectBtn.classList.add('hidden-by-js');
         shareProjectAlert.classList.add('hidden');
-        shareProjectAlert.style.display = 'none';
       }
-
 
       // Event listener for save changes button
-      if (!saveChangesBtn.dataset.listenerAttached) {
-        saveChangesBtn.addEventListener('click', async () => {
-          const updatedTitle = editableTitleInput.value.trim();
-          const updatedDescription = editableDescriptionTextarea.value.trim();
+      // No need for dataset.listenerAttached with proper DOMContentLoaded usage
+      saveChangesBtn.addEventListener('click', async () => {
+        const updatedTitle = editableTitleInput.value.trim();
+        const updatedDescription = editableDescriptionTextarea.value.trim();
 
-          if (!updatedTitle) return alert('Title is required');
+        if (!updatedTitle) return alert('Title is required');
 
-          try {
-            const saveRes = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': currentUsername // Use dynamic currentUsername
-              },
-              body: JSON.stringify({
-                title: updatedTitle,
-                description: updatedDescription
-              })
-            });
+        try {
+          const saveRes = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': currentUsername
+            },
+            body: JSON.stringify({
+              title: updatedTitle,
+              description: updatedDescription
+            })
+          });
 
-            if (saveRes.ok) {
-              alert('Saved successfully!');
-              await fetchMeta(); // Re-fetch meta to update display
-            } else {
-              alert(await saveRes.text());
-            }
-          } catch (err) {
-            alert('Failed to save project details.');
-            console.error('Save project error:', err);
+          if (saveRes.ok) {
+            alert('Saved successfully!');
+            await fetchMeta();
+          } else {
+            alert(await saveRes.text());
           }
-        });
-        saveChangesBtn.dataset.listenerAttached = true;
-      }
+        } catch (err) {
+          alert('Failed to save project details.');
+          console.error('Save project error:', err);
+        }
+      });
+
 
       // Event listener for share project button
-      if (!shareProjectBtn.dataset.listenerAttached) {
-        shareProjectBtn.addEventListener('click', async () => {
-          if (!confirm("Are you sure you want to share this project?")) return;
-          try {
-            const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            });
-            if (shareRes.ok) {
-              alert('Project shared!');
-              await fetchMeta(); // Re-fetch meta to update visibility
-            } else {
-              alert(await shareRes.text());
+      shareProjectBtn.addEventListener('click', async () => {
+        if (!confirm("Are you sure you want to share this project?")) return;
+        try {
+          const shareRes = await fetch(`https://editor-compiler.onrender.com/api/share/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
             }
-          } catch (err) {
-            alert('Error sharing project.');
-            console.error('Share project error:', err);
+          });
+          if (shareRes.ok) {
+            alert('Project shared!');
+            await fetchMeta();
+          } else {
+            alert(await shareRes.text());
           }
-        });
-        shareProjectBtn.dataset.listenerAttached = true;
-      }
+        } catch (err) {
+          alert('Error sharing project.');
+          console.error('Share project error:', err);
+        }
+      });
     } else {
       // Not owner: hide editable fields and save/share buttons
       metaTitleElement.classList.remove('hidden-by-js');
@@ -198,7 +188,6 @@ async function fetchMeta() {
       saveChangesBtn.classList.add('hidden-by-js');
       shareProjectBtn.classList.add('hidden-by-js');
       shareProjectAlert.classList.add('hidden');
-      shareProjectAlert.style.display = 'none';
     }
 
     loading.classList.add('hidden');
@@ -211,7 +200,7 @@ async function fetchMeta() {
     loading.classList.add('hidden');
     content.classList.add('hidden');
   }
-} // Corrected closing brace for fetchMeta
+}
 
 // ========== COMMENTS FUNCTIONALITY ==========
 
@@ -224,26 +213,24 @@ const commentForm = document.getElementById('comment-form');
 const commentInput = document.getElementById('comment-input');
 const commentSubmitBtn = document.getElementById('comment-submit');
 
-// Added null checks for comment elements
 if (!commentsListContainer || !commentsLoading || !commentsError || !commentForm || !commentInput || !commentSubmitBtn) {
   console.error("One or more comment elements not found. Comments functionality may be limited.");
 }
 
 function reverseData(data) {
   if (!Array.isArray(data)) {
-    // It's better to throw an error or return an empty array/original data if the input isn't an array
     console.error("Input to reverseData must be an array.");
-    return []; // Or throw new Error("Input must be an array.");
+    return [];
   }
   return data.slice().reverse();
 }
 
 // Fetch comments
 async function fetchComments() {
-  if (!commentsLoading || !commentsError || !commentsListContainer) return; // Prevent errors if elements don't exist
+  if (!commentsLoading || !commentsError || !commentsListContainer) return;
   commentsLoading.classList.remove('hidden');
   commentsError.classList.add('hidden');
-  commentsListContainer.innerHTML = ''; // Clear existing comments
+  commentsListContainer.innerHTML = '';
 
   try {
     const response = await fetch(`${baseUrl}/${id}/comments`);
@@ -261,9 +248,9 @@ async function fetchComments() {
 
 // Post a new top-level comment
 async function postNewComment(text) {
-  if (!commentSubmitBtn || !commentInput) return; // Prevent errors if elements don't exist
+  if (!commentSubmitBtn || !commentInput) return;
 
-  let currentUsername = 'test123'; // Default username
+  let currentUsername = 'test123';
 
   if (localStorage.getItem('SECURE_ID')) {
     try {
@@ -276,18 +263,17 @@ async function postNewComment(text) {
       }
     } catch (err) {
       console.error('Error fetching secure ID for comment:', err);
-      // Fallback to default username if verification fails
       currentUsername = 'test123';
     }
   }
 
-  if (currentUsername === 'test123') { // If user is not logged in or verification failed
+  if (currentUsername === 'test123') {
     showLoginModal();
     return;
   }
 
   try {
-    commentSubmitBtn.disabled = true; // Disable button to prevent double submission
+    commentSubmitBtn.disabled = true;
     commentSubmitBtn.textContent = 'Posting...';
     const res = await fetch(`${baseUrl}/${id}/comments`, {
       method: 'POST',
@@ -298,30 +284,45 @@ async function postNewComment(text) {
         text,
         user: {
           username: currentUsername
-        } // Use dynamic currentUsername
+        }
       })
     });
-    const jsonResponse = await res.json(); // Await json()
+    const jsonResponse = await res.json();
     if (res.ok) {
-      commentInput.value = ''; // Clear input
-      await fetchComments(); // Refresh comments
+      commentInput.value = '';
+      await fetchComments();
     } else {
-      alert(jsonResponse.error || 'Failed to post comment.'); // Display specific error from backend
+      alert(jsonResponse.error || 'Failed to post comment.');
     }
   } catch (err) {
     console.error('Comment post error:', err);
     alert(err);
   } finally {
-    commentSubmitBtn.disabled = false; // Re-enable button
+    commentSubmitBtn.disabled = false;
     commentSubmitBtn.innerHTML = '<i class="fa-solid fa-plus mr-2"></i> Post Comment';
   }
 }
 
 // Post a reply to an existing comment/reply
 async function postReply(commentId, text, formElement) {
-  let currentUsername = localStorage.getItem('username'); // Use localStorage for username
+  let currentUsername = 'test123'; // Re-verify username for replies as well
 
-  if (!currentUsername) { // If username not in localStorage
+  if (localStorage.getItem('SECURE_ID')) {
+    try {
+      const res4 = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${localStorage.getItem('SECURE_ID')}/`);
+      if (!res4.ok) throw new Error(`Verification failed: ${res4.statusText}`);
+      const data = await res4.json();
+      const key = Object.keys(data)[0];
+      if (data[key] && data[key].user) {
+        currentUsername = data[key].user;
+      }
+    } catch (err) {
+      console.error('Error fetching secure ID for reply:', err);
+      currentUsername = 'test123';
+    }
+  }
+
+  if (currentUsername === 'test123') {
     showLoginModal();
     return;
   }
@@ -329,7 +330,7 @@ async function postReply(commentId, text, formElement) {
   try {
     const replySubmitBtn = formElement.querySelector('.reply-button');
     if (replySubmitBtn) {
-      replySubmitBtn.disabled = true; // Disable button
+      replySubmitBtn.disabled = true;
       replySubmitBtn.textContent = 'Posting Reply...';
     }
 
@@ -345,12 +346,12 @@ async function postReply(commentId, text, formElement) {
         }
       })
     });
-    const jsonResponse = await res.json(); // Await json()
+    const jsonResponse = await res.json();
     if (res.ok) {
-      formElement.remove(); // Remove the reply form
-      await fetchComments(); // Refresh comments
+      formElement.remove();
+      await fetchComments();
     } else {
-      alert(jsonResponse.error || 'Failed to post reply.'); // Display specific error from backend
+      alert(jsonResponse.error || 'Failed to post reply.');
     }
   } catch (err) {
     console.error('Reply post error:', err);
@@ -365,29 +366,27 @@ async function postReply(commentId, text, formElement) {
 
 // Show reply form under a comment or reply
 function showReplyForm(parentCommentElement, commentId) {
-  // Check if a reply form already exists for this comment/reply
   let existingForm = parentCommentElement.querySelector('.reply-form');
 
   if (existingForm) {
-    // Toggle visibility if it exists
     existingForm.style.display = existingForm.style.display === 'none' ? 'block' : 'none';
-    existingForm.querySelector('.reply-textarea').focus(); // Focus on textarea when showing
+    existingForm.querySelector('.reply-textarea').focus();
     return;
   }
 
   const form = document.createElement('form');
   form.className = 'reply-form';
-  form.style.display = 'block'; // Ensure it's visible when created
+  form.style.display = 'block';
 
   const textarea = document.createElement('textarea');
-  textarea.className = 'reply-textarea'; // Apply styles from your CSS
+  textarea.className = 'reply-textarea';
   textarea.placeholder = 'Write your reply here...';
   textarea.required = true;
   form.appendChild(textarea);
 
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
-  submitBtn.className = 'reply-button'; // Apply styles from your CSS
+  submitBtn.className = 'reply-button';
   submitBtn.textContent = 'Post Reply';
   form.appendChild(submitBtn);
 
@@ -399,13 +398,13 @@ function showReplyForm(parentCommentElement, commentId) {
   });
 
   parentCommentElement.appendChild(form);
-  textarea.focus(); // Focus on the new textarea
+  textarea.focus();
 }
 
 // Display all comments recursively
 function displayComments(comments) {
-  if (!commentsListContainer) return; // Prevent error if element doesn't exist
-  commentsListContainer.innerHTML = ''; // Clear existing comments
+  if (!commentsListContainer) return;
+  commentsListContainer.innerHTML = '';
 
   if (comments.length === 0) {
     commentsListContainer.innerHTML = '<p class="text-gray-500">No comments yet. Be the first to comment!</p>';
@@ -468,7 +467,7 @@ function createCommentElement(comment, depth = 0) {
 }
 
 // Event listener for the main comment submission form
-if (commentForm) { // Added null check
+if (commentForm) {
   commentForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const text = commentInput.value.trim();
@@ -477,9 +476,8 @@ if (commentForm) { // Added null check
   });
 }
 
-
 // Event delegation for reply buttons
-if (commentsListContainer) { // Added null check
+if (commentsListContainer) {
   commentsListContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('reply-button')) {
       const commentId = e.target.dataset.commentId;
@@ -491,52 +489,6 @@ if (commentsListContainer) { // Added null check
   });
 }
 
-
-window.onload = async () => {
-  await fetchAds();
-  await fetchMeta();
-  await fetchComments(); // Ensure comments are fetched and rendered
-
-  const accountElement = document.getElementById('account');
-  const username = localStorage.getItem('username');
-  const params = new URLSearchParams(window.location.search);
-  const scrollToId = params.get('commentId');
-
-  if (scrollToId) {
-    // Add a small timeout to allow the browser to fully render the comments
-    setTimeout(() => {
-      const element = document.getElementById(scrollToId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        // Optional: Add a temporary visual highlight for debugging
-        element.style.outline = '2px solid red';
-        setTimeout(() => {
-          element.style.outline = ''; // Remove highlight after a few seconds
-        }, 2000);
-        console.log(`Successfully scrolled to comment ID: ${scrollToId}`);
-      } else {
-        // CHANGED HERE: Use alert instead of console.warn
-        alert(`Comment with ID '${scrollToId}' not found.`);
-        // You might still want a console log for debugging purposes, but the alert is now primary
-        console.error(`Element with ID '${scrollToId}' not found for scrolling after comments loaded.`);
-      }
-    }, 100); // A small delay of 100ms is still recommended to ensure rendering
-  } else {
-    console.log("No 'commentId' parameter found in URL for scrolling.");
-  }
-
-  if (username) {
-    if (accountElement) accountElement.textContent = username;
-    try {
-      await fetch(`https://editor-compiler.onrender.com/api/${id}/views/${username}`, {
-        method: 'POST'
-      });
-    } catch (err) {
-      console.warn("Failed to record view:", err);
-    }
-  }
-};
-
 async function fetchAds() {
   try {
     const res = await fetch('https://editor-compiler.onrender.com/ad/random');
@@ -547,17 +499,15 @@ async function fetchAds() {
 
     if (!data.ad || typeof data.ad !== 'string') {
       console.warn("Unexpected ad format received, retrying:", data.ad);
-      // It's good to have a small delay here to prevent hammering the server on bad responses
       setTimeout(fetchAds, 1000);
       return;
     }
 
     const adId = data.ad.replace('ad:', '');
 
-    // Skip adId '21' as per original logic
     if (adId === '21') {
       console.log("Skipping adId 21, fetching another ad.");
-      setTimeout(fetchAds, 100); // Small delay before retrying
+      setTimeout(fetchAds, 100);
       return;
     }
 
@@ -573,7 +523,6 @@ async function fetchAds() {
     }
     const data2 = await res2.json();
 
-    // Check if data2 indicates an error in its payload
     if (!data2.error) {
       const adsPrElement = document.getElementById('adsPr');
       if (adsPrElement) {
@@ -587,14 +536,70 @@ async function fetchAds() {
     }
   } catch (error) {
     console.error("Failed to fetch ads:", error);
-    // Implement a backoff strategy if retrying on error
-    setTimeout(fetchAds, 2000); // Retry after 2 seconds on error
+    setTimeout(fetchAds, 2000);
   }
-} // Corrected closing brace for fetchAds
+}
+
+// Function to fetch and display ads in the sidebar
+async function fetchAndDisplayAds() {
+  const adsSidebar = document.getElementById('ads-sidebar');
+  if (!adsSidebar) {
+    console.error("Element with ID 'ads-sidebar' not found.");
+    return;
+  }
+  adsSidebar.innerHTML = ''; // Clear previous ads
+
+  for (let i = 0; i < 5; i++) {
+    try {
+      const response = await fetch('https://editor-compiler.onrender.com/ad/random');
+      if (response.ok) {
+        const ad = await response.json();
+        // Skip adId '21' as per logic in fetchAds
+        const adId = ad.ad.replace('ad:', '');
+        if (adId === '21') {
+          console.log("Skipping adId 21 for sidebar, fetching another ad.");
+          i--; // Decrement counter to ensure 5 ads are fetched
+          continue;
+        }
+
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test`);
+        if (res.ok) {
+          const json = await res.json();
+          const adItem = document.createElement('div');
+          adItem.classList.add('ad-item');
+          adItem.innerHTML = `
+            <h4>${json.title || 'Untitled Project'}</h4>
+            <img src="https://editor-compiler.onrender.com${json.image || '/default-thumbnail.png'}" alt="${json.title || 'Ad Image'}" onerror="this.onerror=null;this.src='/default-thumbnail.png';">
+            <a href="/projects#${adId}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">By ${json.author?.username || 'Unknown'}</a>
+          `;
+          adsSidebar.appendChild(adItem);
+        } else {
+          console.error(`Failed to fetch project meta for ad ${i + 1}:`, res.status, res.statusText);
+          const adItem = document.createElement('div');
+          adItem.classList.add('ad-item');
+          adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Details not available.</p>`;
+          adsSidebar.appendChild(adItem);
+        }
+      } else {
+        console.error(`Failed to fetch ad ${i + 1}:`, response.status, response.statusText);
+        const adItem = document.createElement('div');
+        adItem.classList.add('ad-item');
+        adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Please try again later.</p>`;
+        adsSidebar.appendChild(adItem);
+      }
+    } catch (error) {
+      console.error(`Error fetching ad ${i + 1}:`, error);
+      const adItem = document.createElement('div');
+      adItem.classList.add('ad-item');
+      adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Network error.</p>`;
+      adsSidebar.appendChild(adItem);
+    }
+  }
+}
 
 // Event listener for liking project
 const likeBtn = document.getElementById('like-btn');
-if (likeBtn) { // Added null check
+if (likeBtn) {
   likeBtn.addEventListener('click', async () => {
     const username = localStorage.getItem('username');
     if (!username) return showLoginModal();
@@ -607,9 +612,8 @@ if (likeBtn) { // Added null check
         }
       });
       if (res.ok) {
-        await fetchMeta(); // Refresh meta after successful like
+        await fetchMeta();
       } else {
-        // Handle specific server errors if needed
         console.error('Failed to like project:', await res.text());
       }
     } catch (err) {
@@ -618,10 +622,9 @@ if (likeBtn) { // Added null check
   });
 }
 
-
 // Event listener for favoriting project
 const favBtn = document.getElementById('fav-btn');
-if (favBtn) { // Added null check
+if (favBtn) {
   favBtn.addEventListener('click', async () => {
     const username = localStorage.getItem('username');
     if (!username) return showLoginModal();
@@ -634,9 +637,8 @@ if (favBtn) { // Added null check
         }
       });
       if (res.ok) {
-        await fetchMeta(); // Refresh meta after successful favorite
+        await fetchMeta();
       } else {
-        // Handle specific server errors if needed
         console.error('Failed to favorite project:', await res.text());
       }
     } catch (err) {
@@ -645,25 +647,22 @@ if (favBtn) { // Added null check
   });
 }
 
-
 // Go to editor page for this project
-const seeInsideBtn = document.getElementById('see-inside-btn'); // Re-get the element here as it might be used before global scope
-if (seeInsideBtn) { // Added null check
-  seeInsideBtn.addEventListener('click', () => {
+// `seeInsideBtn` is already defined in fetchMeta, but getting it here for clarity for its own event listener
+const seeInsideBtnGlobal = document.getElementById('see-inside-btn');
+if (seeInsideBtnGlobal) {
+  seeInsideBtnGlobal.addEventListener('click', () => {
     window.location.href = `/editor/#${id}`;
   });
 }
 
-
 // Remix button: redirect to editor with remix param (requires login)
-// `remix` is already defined globally, but check if it exists
-if (remix) { // Added null check
+if (remix) {
   remix.addEventListener('click', () => {
     if (!localStorage.getItem('username')) return showLoginModal();
     window.location.href = `/editor/?remix=${id}`;
   });
 }
-
 
 // Copy current page URL to clipboard
 function copyToClipboard() {
@@ -682,148 +681,149 @@ function copyToClipboard() {
 
 // Event listener for claimAd button
 const claimAdBtn = document.getElementById('claimAd');
-if (claimAdBtn) { // Added null check
+if (claimAdBtn) {
   claimAdBtn.addEventListener('click', () => {
     const project = prompt('What Is Your Project Link?');
-    if (!project) return; // User cancelled prompt
+    if (!project) return;
 
-    // Basic validation for URL inclusion
     if (!project.includes('myscratchblocks')) {
       alert('Invalid Link! The link must be from myscratchblocks.github.io.');
       return;
     }
 
-    // Extract project ID more robustly
     const projectIdMatch = project.match(/#([a-zA-Z0-9]+)$/);
-    let projectId = '';
+    let projectIdToClaim = ''; // Renamed to avoid confusion with global `id`
     if (projectIdMatch && projectIdMatch[1]) {
-      projectId = projectIdMatch[1];
+      projectIdToClaim = projectIdMatch[1];
     } else {
       alert('Could not extract project ID from the link. Please ensure it ends with #YOUR_PROJECT_ID.');
       return;
     }
 
-    postAd(projectId);
+    postAd(projectIdToClaim);
   });
 }
 
-
-async function postAd(projectId) {
+async function postAd(projectIdToClaim) {
   try {
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectId}/meta/test123`);
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectIdToClaim}/meta/test123`);
     if (res2.ok) {
-      const res = await fetch(`https://editor-compiler.onrender.com/ad/${id}/set/${projectId}`); // Changed window.location.hash.split('?')[0] to global `id`
+      const res = await fetch(`https://editor-compiler.onrender.com/ad/${id}/set/${projectIdToClaim}`);
       if (res.ok) {
         alert('Ad Uploaded!');
       } else {
-        alert('Failed To Upload Ad! ' + (await res.text())); // Provide more specific error
+        alert('Failed To Upload Ad! ' + (await res.text()));
       }
     } else {
-      alert('Invalid Project, Insert A Valid Project Link! ' + (await res2.text())); // Provide more specific error
+      alert('Invalid Project, Insert A Valid Project Link! ' + (await res2.text()));
     }
   } catch (err) {
-    alert('Error posting ad: ' + err.message); // Use err.message for clearer error
+    alert('Error posting ad: ' + err.message);
     console.error('Error in postAd:', err);
   }
-                                         }
-document.getElementById('change-main-coder-btn').addEventListener('click', () => {
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = 'image/*';
-      fileInput.style.display = 'none';
-      document.body.appendChild(fileInput);
+}
 
-      fileInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
+// Event listener for uploading thumbnail
+const uploadThumbnailBtn = document.getElementById('change-main-coder-btn'); // Get the element again for this specific listener
+if (uploadThumbnailBtn) {
+  uploadThumbnailBtn.addEventListener('click', () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
 
-        if (!file) return;
+    fileInput.addEventListener('change', async (event) => {
+      const file = event.target.files[0];
 
-        if (!file.type.startsWith('image/')) {
-          alert('Please select an image file for the thumbnail.');
-          return;
-        }
+      if (!file) return;
 
-        try {
-          const response = await fetch(`https://editor-compiler.onrender.com/api/upload/${projectId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': file.type
-            },
-            body: file
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            alert('Thumbnail uploaded successfully!');
-            console.log('Upload successful:', result);
-          } else {
-            const errorData = await response.json();
-            alert(`Failed to upload thumbnail: ${errorData.error || response.statusText}`);
-            console.error('Upload failed:', errorData);
-          }
-        } catch (error) {
-          alert('An error occurred during upload. Please try again.');
-          console.error('Network error or unexpected issue:', error);
-        }
-
-        document.body.removeChild(fileInput);
-      });
-
-      fileInput.click();
-    });
-  });
-
-  document.getElementById('close-anchor-ad').addEventListener('click', () => {
-    document.getElementById('anchor-ad').style.display = 'none';
-   });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    await fetchAndDisplayAds();
-    const uploadThumbnailBtn = document.getElementById('change-main-coder-btn');
-    const projectId = window.location.hash.substring(1); // Get project ID from URL hash
-
-    if (!uploadThumbnailBtn) {
-      console.error("Button with ID 'change-main-coder-btn' not found.");
-      return;
-    }
-
-    // Function to fetch and display ads
-    async function fetchAndDisplayAds() {
-      const adsSidebar = document.getElementById('ads-sidebar');
-      adsSidebar.innerHTML = ''; // Clear previous ads
-
-      for (let i = 0; i < 5; i++) {
-        try {
-          const response = await fetch('https://editor-compiler.onrender.com/ad/random');
-          if (response.ok) {
-            const ad = await response.json();
-            // Create ad element
-            const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${ad.ads}/meta/test`);
-            if (res.ok) {
-              const json = await res.json();
-              const adItem = document.createElement('div');
-              adItem.classList.add('ad-item');
-              adItem.innerHTML = `
-                <h4>${json.title || 'Untitled Project'}</h4>
-                <img src="https://editor-compiler.onrender.com${json.image}" alt="${json.title || 'Ad Image'}">
-                <a href="/projects/#${ad.ad.replace('ad:', '')}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">By ${json.author.username}</a>
-              `;
-              adsSidebar.appendChild(adItem);
-            }            
-          } else {
-            console.error(`Failed to fetch ad ${i + 1}:`, response.status, response.statusText);
-            // Optionally add a placeholder for failed ads
-            const adItem = document.createElement('div');
-            adItem.classList.add('ad-item');
-            adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Please try again later.</p>`;
-            adsSidebar.appendChild(adItem);
-          }
-        } catch (error) {
-          console.error(`Error fetching ad ${i + 1}:`, error);
-          const adItem = document.createElement('div');
-            adItem.classList.add('ad-item');
-            adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Network error.</p>`;
-            adsSidebar.appendChild(adItem);
-        }
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file for the thumbnail.');
+        return;
       }
+
+      try {
+        const response = await fetch(`https://editor-compiler.onrender.com/api/upload/${id}`, { // Use global `id`
+          method: 'POST',
+          headers: {
+            'Content-Type': file.type
+          },
+          body: file
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          alert('Thumbnail uploaded successfully!');
+          console.log('Upload successful:', result);
+        } else {
+          const errorData = await response.json();
+          alert(`Failed to upload thumbnail: ${errorData.error || response.statusText}`);
+          console.error('Upload failed:', errorData);
+        }
+      } catch (error) {
+        alert('An error occurred during upload. Please try again.');
+        console.error('Network error or unexpected issue:', error);
+      }
+
+      document.body.removeChild(fileInput);
+    });
+
+    fileInput.click();
+  });
+}
+
+const closeAnchorAdBtn = document.getElementById('close-anchor-ad');
+if (closeAnchorAdBtn) {
+  closeAnchorAdBtn.addEventListener('click', () => {
+    const anchorAd = document.getElementById('anchor-ad');
+    if (anchorAd) {
+      anchorAd.style.display = 'none';
     }
+  });
+}
+
+// Main initialization logic
+document.addEventListener('DOMContentLoaded', async () => {
+  await fetchAds(); // Fetch main project ad
+  await fetchAndDisplayAds(); // Fetch sidebar ads
+  await fetchMeta(); // Fetch project metadata
+  await fetchComments(); // Fetch comments
+
+  const accountElement = document.getElementById('account');
+  const username = localStorage.getItem('username');
+  const params = new URLSearchParams(window.location.search);
+  const scrollToId = params.get('commentId');
+
+  if (scrollToId) {
+    setTimeout(() => {
+      const element = document.getElementById(scrollToId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth'
+        });
+        element.style.outline = '2px solid red';
+        setTimeout(() => {
+          element.style.outline = '';
+        }, 2000);
+        console.log(`Successfully scrolled to comment ID: ${scrollToId}`);
+      } else {
+        alert(`Comment with ID '${scrollToId}' not found.`);
+        console.error(`Element with ID '${scrollToId}' not found for scrolling after comments loaded.`);
+      }
+    }, 100);
+  } else {
+    console.log("No 'commentId' parameter found in URL for scrolling.");
+  }
+
+  if (username) {
+    if (accountElement) accountElement.textContent = username;
+    try {
+      await fetch(`https://editor-compiler.onrender.com/api/${id}/views/${username}`, {
+        method: 'POST'
+      });
+    } catch (err) {
+      console.warn("Failed to record view:", err);
+    }
+  }
+});
