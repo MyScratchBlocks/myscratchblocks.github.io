@@ -174,7 +174,7 @@ async function checkAuth() {
         await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
       } else if (email !== null) {
         // If user entered something invalid (but not cancelled)
-        alert("Invalid email entered. Skipping email linking.");
+        alert("Invalid email entered. Skipping email linking. You can sign out and sign back in to set a email, but it is fine for now.");
       }
       
       localStorage.setItem('usernameEnc', encodedUsername);
