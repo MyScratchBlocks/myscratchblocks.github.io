@@ -665,10 +665,9 @@
               const adItem = document.createElement('div');
               adItem.classList.add('ad-item');
               adItem.innerHTML = `
-                <h4>${ad.title || 'Untitled Ad'}</h4>
-                <p>${ad.description || 'No description available.'}</p>
-                ${ad.imageUrl ? `<img src="https://editor-compiler.onrender.com${json.image}" alt="${json.title || 'Ad Image'}">` : ''}
-                ${ad.link ? `<a href="/projects/#${ad.ads}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">${json.title}</a>` : ''}
+                <h4>${json.title || 'Untitled Project'}</h4>
+                <img src="https://editor-compiler.onrender.com${json.image}" alt="${json.title || 'Ad Image'}">
+                <a href="/projects/#${ad.ad.replace('ad:', '')}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">By ${json.author.username}</a>
               `;
               adsSidebar.appendChild(adItem);
             }            
