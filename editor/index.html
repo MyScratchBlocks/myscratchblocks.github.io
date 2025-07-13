@@ -46,8 +46,8 @@
         });
 
         const json = await res.json();
-        if(json.id) {
-          window.location.href = `/projects#${json.id}`;
+        if(json.projectData.newDataJson) {
+          window.location.href = `/projects#${json.projectData.newDataJson.id}`;
         }
       }
         
