@@ -46,9 +46,7 @@
         });
 
         const json = await res.json();
-        if(json.projectData.newDataJson) {
-          window.location.href = `/projects#${json.projectData.newDataJson.id}`;
-        }
+        window.location.href = `/projects#${json.id}`;
       }
         
       // If no hash and both username and sb3 exist, try to share the project
