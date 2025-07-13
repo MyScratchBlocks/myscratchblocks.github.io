@@ -12,7 +12,7 @@ const id = hash.split('?')[0];
 const iframe = document.getElementById('id-frame');
 const remix = document.getElementById('remix-btn');
 if (iframe) { // Added null check
-  iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed?settings-button#${id}`;
+  iframe.src = `https://myscratchblocks.github.io/scratch-gui/embed?settings-button&addons=pause#${id}`;
 }
 
 // Show/hide login modal
