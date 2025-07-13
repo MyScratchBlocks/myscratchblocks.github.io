@@ -507,7 +507,7 @@ window.onload = async () => {
     setTimeout(() => {
       const element = document.getElementById(scrollToId);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.scrollIntoView({ behavior: 'smooth' });
         // Optional: Add a temporary visual highlight for debugging
         element.style.outline = '2px solid red';
         setTimeout(() => {
@@ -650,7 +650,7 @@ if (favBtn) { // Added null check
 const seeInsideBtn = document.getElementById('see-inside-btn'); // Re-get the element here as it might be used before global scope
 if (seeInsideBtn) { // Added null check
   seeInsideBtn.addEventListener('click', () => {
-    window.location.href = `/editor#${id}`;
+    window.location.href = `/editor/#${id}`;
   });
 }
 
@@ -660,7 +660,7 @@ if (seeInsideBtn) { // Added null check
 if (remix) { // Added null check
   remix.addEventListener('click', () => {
     if (!localStorage.getItem('username')) return showLoginModal();
-    window.location.href = `/editor?remix=${id}`;
+    window.location.href = `/editor/?remix=${id}`;
   });
 }
 
