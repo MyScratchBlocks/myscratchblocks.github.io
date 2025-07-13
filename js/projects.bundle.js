@@ -310,7 +310,7 @@ async function postNewComment(text) {
     }
   } catch (err) {
     console.error('Comment post error:', err);
-    alert('Failed to post comment due to network or server error.');
+    alert(err);
   } finally {
     commentSubmitBtn.disabled = false; // Re-enable button
     commentSubmitBtn.innerHTML = '<i class="fa-solid fa-plus mr-2"></i> Post Comment';
