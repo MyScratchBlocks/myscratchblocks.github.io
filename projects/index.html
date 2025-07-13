@@ -17,6 +17,9 @@
       color: #334155;
       margin: 0;
       padding: 0;
+      display: flex; /* Use flexbox for main layout */
+      flex-direction: column; /* Stack header and main content vertically */
+      min-height: 100vh; /* Ensure body takes full viewport height */
     }
     iframe {
       border: 8px solid #0c99d5;
@@ -29,14 +32,13 @@
       margin-bottom: 1.5rem;
     }
     button {
-      /* Base button styles, overridden by specific classes where needed */
       background-color: #04AA6D;
       color: white;
       padding: 14px 20px;
       margin: 8px 0;
       border: none;
       cursor: pointer;
-      width: 100%; /* Default width, can be overridden */
+      width: 100%;
       opacity: 0.9;
       font-size: 16px;
       border-radius: 6px;
@@ -106,15 +108,12 @@
       opacity: 0.5;
       pointer-events: none;
     }
-    /* The alert message box */
     .alert {
       padding: 20px;
-      background-color: #f44336; /* Red */
+      background-color: #f44336;
       color: white;
       margin-bottom: 15px;
     }
-
-    /* The close button */
     .closebtn {
       margin-left: 15px;
       color: white;
@@ -125,16 +124,11 @@
       cursor: pointer;
       transition: 0.3s;
     }
-
-    /* When moving the mouse over the close button */
     .closebtn:hover {
       color: black;
     }
-
     .hidden-by-js { display: none; }
     .visible-by-js { display: block; }
-
-    /* Custom styles for comments */
     .comment-item {
       background-color: #fff;
       border: 1px solid #e2e8f0;
@@ -142,245 +136,285 @@
       padding: 1rem;
       margin-bottom: 1rem;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      text-align: left; /* Align comment text left */
+      text-align: left;
     }
-
     .comment-author {
       font-weight: 600;
-      color: #4338ca; /* Indigo-700 */
+      color: #4338ca;
       margin-bottom: 0.25rem;
     }
-
     .comment-timestamp {
-      font-size: 0.75rem; /* text-xs */
-      color: #64748b; /* Slate-500 */
+      font-size: 0.75rem;
+      color: #64748b;
       margin-bottom: 0.5rem;
     }
-
     .comment-text {
-      color: #334155; /* Slate-700 */
+      color: #334155;
       margin-bottom: 0.75rem;
     }
-
     .reply-form {
-      display: none; /* Hidden by default, toggled by JS */
+      display: none;
       margin-top: 0.75rem;
       padding-top: 0.75rem;
       border-top: 1px dashed #e2e8f0;
     }
-
     .reply-textarea {
       width: 100%;
       padding: 0.75rem;
-      border-radius: 0.375rem; /* rounded-md */
-      border: 1px solid #cbd5e1; /* border-gray-300 */
+      border-radius: 0.375rem;
+      border: 1px solid #cbd5e1;
       resize: vertical;
       min-height: 40px;
       margin-bottom: 0.5rem;
     }
-
     .reply-button {
-      background-color: #4f46e5; /* Indigo-600 */
+      background-color: #4f46e5;
       color: white;
       padding: 0.5rem 1rem;
       border-radius: 0.375rem;
-      font-size: 0.875rem; /* text-sm */
+      font-size: 0.875rem;
       cursor: pointer;
       transition: background-color 0.2s ease-in-out;
-      width: auto; /* Override default button width */
-      margin: 0; /* Override default button margin */
+      width: auto;
+      margin: 0;
     }
-
     .reply-button:hover {
-      background-color: #4338ca; /* Indigo-700 */
+      background-color: #4338ca;
     }
-
-    /* Styles for nested replies */
     .comment-item .replies-container {
       margin-top: 1rem;
-      /* Indentation and border are applied directly to .comment-item by JS based on depth */
+    }
+    .fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        transition: transform 0.3s ease-in-out;
+    }
+    .fixed-bottom.hidden-ad {
+        transform: translateY(100%);
+    }
+    .vignette-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 2000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        pointer-events: none;
+    }
+    .vignette-overlay.show {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    .vignette-content {
+        background: linear-gradient(135deg, #f0f9ff, #cbe8f8);
+        padding: 4rem;
+        border-radius: 1.5rem;
+        max-width: 90vw;
+        max-height: 90vh;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        position: relative;
+        transform: scale(0.9);
+        transition: transform 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .vignette-overlay.show .vignette-content {
+        transform: scale(1);
+    }
+    .vignette-close-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        color: #4a5568;
+        font-size: 2.5rem;
+        cursor: pointer;
+        padding: 0.2rem 0.5rem;
+        border-radius: 50%;
+        line-height: 1;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    }
+    .vignette-close-btn:hover {
+        background-color: #e2e8f0;
+        color: #2d3748;
+    }
+    .ad-info-dropdown-container {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 2020;
+    }
+    .ad-info-toggle-btn {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+        color: #4a5568;
+        font-weight: bold;
+    }
+    .ad-info-toggle-btn:hover {
+        background-color: #e2e8f0;
+        transform: scale(1.05);
+    }
+    .ad-info-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 0.5rem 0;
+        min-width: 220px;
+        text-align: left;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.2s ease-out;
+        pointer-events: none;
+    }
+    .ad-info-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+    .ad-info-menu-item {
+        padding: 0.75rem 1rem;
+        color: #4a5568;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        font-size: 0.95rem;
+    }
+    .ad-info-menu-item:hover {
+        background-color: #f0f4f8;
+        color: #2d3748;
+    }
+    .ad-info-menu-separator {
+        border-top: 1px solid #e2e8f0;
+        margin: 0.5rem 0;
+    }
+    .ad-info-menu-header {
+        padding: 0.5rem 1rem 0.25rem;
+        font-size: 0.8rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .info-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        font-size: 1.2rem;
+        z-index: 2030;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        max-width: 80%;
+    }
+    .info-message.show {
+        opacity: 1;
+        visibility: visible;
     }
 
-    /* Fixed to the bottom (Anchor Ad Bar) */
-        .fixed-bottom {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            transition: transform 0.3s ease-in-out; /* Smooth transition for closing */
-        }
-        /* Class to hide the anchor ad */
-        .fixed-bottom.hidden-ad {
-            transform: translateY(100%); /* Moves it off-screen downwards */
-        }
+    /* New styles for sidebar ads */
+    .main-content-wrapper {
+        display: flex;
+        flex: 1; /* Allows main content to grow */
+        width: 100%; /* Take full width of parent */
+        max-width: 1200px; /* Limit overall width */
+        margin: 0 auto; /* Center the wrapper */
+        padding: 1rem; /* Add some padding */
+    }
 
-            /* --- Vignette Ad Styles --- */
-        .vignette-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
-            z-index: 2000; /* Higher than other fixed elements */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-            pointer-events: none; /* Allows clicks to pass through when hidden */
-        }
+    .project-viewer-area {
+        flex: 1; /* Project content takes available space */
+        min-width: 0; /* Allow content to shrink */
+    }
 
-        .vignette-overlay.show {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto; /* Enables clicks when visible */
-        }
+    .ads-sidebar {
+        width: 300px; /* Fixed width for the sidebar */
+        margin-left: 2rem; /* Spacing between main content and sidebar */
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem; /* Space between ads */
+        display: none; /* Hidden by default for small screens */
+    }
 
-        .vignette-content {
-            background: linear-gradient(135deg, #f0f9ff, #cbe8f8); /* Light blue gradient */
-            padding: 4rem; /* Increased padding for more space */
-            border-radius: 1.5rem; /* More rounded corners */
-            max-width: 90vw; /* Occupy 90% of viewport width */
-            max-height: 90vh; /* Occupy 90% of viewport height */
-            width: 100%; /* Ensure it tries to take available width */
-            height: 100%; /* Ensure it tries to take available height */
-            text-align: center;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow */
-            position: relative;
-            transform: scale(0.9); /* Start slightly smaller */
-            transition: transform 0.3s ease-in-out;
-            display: flex; /* Use flexbox for internal centering */
+    .ads-sidebar .ad-item {
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .ads-sidebar .ad-item img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .ads-sidebar .ad-item h4 {
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 0.25rem;
+    }
+
+    .ads-sidebar .ad-item p {
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+
+    /* Responsive adjustments */
+    @media (min-width: 1024px) { /* On desktop and tablet (larger than phone) */
+        .ads-sidebar {
+            display: flex; /* Show sidebar on larger screens */
+        }
+        .main-content-wrapper {
+            flex-direction: row; /* Layout content and sidebar in a row */
+        }
+    }
+    @media (max-width: 1023px) { /* On phones and smaller tablets */
+        .main-content-wrapper {
             flex-direction: column; /* Stack content vertically */
-            justify-content: center; /* Center content vertically */
-            align-items: center; /* Center content horizontally */
+            padding: 1rem;
         }
-
-        .vignette-overlay.show .vignette-content {
-            transform: scale(1); /* Scale up when shown */
+        .ads-sidebar {
+            display: none; /* Hide sidebar on smaller screens */
         }
-
-        .vignette-close-btn {
-            position: absolute;
-            top: 1.5rem; /* Adjusted position */
-            right: 1.5rem; /* Adjusted position */
-            background: none;
-            border: none;
-            color: #4a5568; /* Darker grey for visibility */
-            font-size: 2.5rem; /* Larger close button */
-            cursor: pointer;
-            padding: 0.2rem 0.5rem;
-            border-radius: 50%;
-            line-height: 1; /* Adjust line height for better centering of X */
-            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-        }
-
-        .vignette-close-btn:hover {
-            background-color: #e2e8f0; /* Light grey on hover */
-            color: #2d3748;
-        }
-
-        /* --- Ad Info/Report Dropdown Styles (AdChoices style) --- */
-        .ad-info-dropdown-container {
-            position: absolute;
-            top: 1rem; /* Position at top */
-            left: 1rem; /* Position at left */
-            z-index: 2020; /* Higher than other vignette content */
-        }
-
-        .ad-info-toggle-btn {
-            background-color: rgba(255, 255, 255, 0.8);
-            border: none;
-            border-radius: 50%;
-            width: 32px; /* Small circle button */
-            height: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-            color: #4a5568;
-            font-weight: bold; /* For 'i' text if used directly */
-        }
-        .ad-info-toggle-btn:hover {
-            background-color: #e2e8f0;
-            transform: scale(1.05);
-        }
-
-        .ad-info-menu {
-            position: absolute;
-            top: calc(100% + 8px); /* Position below the button with some spacing */
-            left: 0; /* Align to the left of the button */
-            background-color: #ffffff;
-            border-radius: 0.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            padding: 0.5rem 0;
-            min-width: 220px; /* Wider to accommodate "Why this advert?" */
-            text-align: left;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.2s ease-out;
-            pointer-events: none;
-        }
-
-        .ad-info-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .ad-info-menu-item {
-            padding: 0.75rem 1rem;
-            color: #4a5568;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-            font-size: 0.95rem;
-        }
-        .ad-info-menu-item:hover {
-            background-color: #f0f4f8;
-            color: #2d3748;
-        }
-
-        .ad-info-menu-separator {
-            border-top: 1px solid #e2e8f0;
-            margin: 0.5rem 0;
-        }
-
-        .ad-info-menu-header {
-            padding: 0.5rem 1rem 0.25rem;
-            font-size: 0.8rem;
-            color: #718096; /* Light grey text */
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Temporary message for "Why this advert?" */
-        .info-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            font-size: 1.2rem;
-            z-index: 2030;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-            max-width: 80%;
-        }
-        .info-message.show {
-            opacity: 1;
-            visibility: visible;
-        }
+    }
   </style>
 </head>
 <body>
@@ -407,88 +441,90 @@
     </div>
   </header>
 
-  <section id="featured-projects" class="py-16 bg-gray-100">
-    <div class="container mx-auto px-4">
-      <iframe id="id-frame" src="#" title="Project Viewer"></iframe>
+  <div class="main-content-wrapper">
+    <div class="project-viewer-area">
+      <section id="featured-projects" class="py-4 bg-gray-100">
+        <div class="container mx-auto px-4">
+          <iframe id="id-frame" src="#" title="Project Viewer"></iframe>
 
-      <div id="project-meta" class="bg-white p-6 rounded-lg shadow-md">
-        <div id="meta-loading" class="text-sm text-gray-500">Loading project metadata...</div>
-        <div id="meta-error" class="hidden text-sm text-red-600">Failed to load metadata. The project may not exist, or there is a temp error on our end.</div>
-        <div id="meta-content" class="hidden">
-          <center>
-            <h2 class="text-2xl font-bold text-indigo-700 mb-2" id="meta-title"></h2>
-            <input type="text" id="editable-title" class="hidden-by-js text-2xl font-bold text-indigo-700 mb-2 w-full text-center p-2 border border-gray-300 rounded" />
-          </center>
-          <github-md><p class="text-gray-700 mb-4" id="meta-description"></p></github-md>
-          <textarea id="editable-description" class="hidden-by-js w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4" rows="3"></textarea>
-          <github-md><p class="text-gray-600 mb-4" id="meta-instructions"></p></github-md>
-        </br>
-          <small id="noteMark">Note to the Main Coder: Markdown can be used for styling</small>
-          <div class="mb-4">
-            <p class="text-sm text-gray-500"><i class="fa-solid fa-user" style="color: #63E6BE;" aria-hidden="true"></i><strong>Main Coder:</strong> <span id="meta-author"></span></p>
-            <p class="text-sm text-gray-500"><i class="fa-solid fa-calendar" style="color: #63E6BE;" aria-hidden="true"></i><strong> Created:</strong> <span id="meta-date"></span></p>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-4">
-            <div>
-              <i class="fa-solid fa-eye" style="color: #63E6BE;" aria-hidden="true"></i>
-              <p class="text-lg font-semibold text-indigo-600" id="meta-views">0</p>
-              <p class="text-sm text-gray-500">Views</p>
+          <div id="project-meta" class="bg-white p-6 rounded-lg shadow-md">
+            <div id="meta-loading" class="text-sm text-gray-500">Loading project metadata...</div>
+            <div id="meta-error" class="hidden text-sm text-red-600">Failed to load metadata. The project may not exist, or there is a temp error on our end.</div>
+            <div id="meta-content" class="hidden">
+              <center>
+                <h2 class="text-2xl font-bold text-indigo-700 mb-2" id="meta-title"></h2>
+                <input type="text" id="editable-title" class="hidden-by-js text-2xl font-bold text-indigo-700 mb-2 w-full text-center p-2 border border-gray-300 rounded" />
+              </center>
+              <github-md><p class="text-gray-700 mb-4" id="meta-description"></p></github-md>
+              <textarea id="editable-description" class="hidden-by-js w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4" rows="3"></textarea>
+              <github-md><p class="text-gray-600 mb-4" id="meta-instructions"></p></github-md>
+            </br>
+              <small id="noteMark">Note to the Main Coder: Markdown can be used for styling</small>
+              <div class="mb-4">
+                <p class="text-sm text-gray-500"><i class="fa-solid fa-user" style="color: #63E6BE;" aria-hidden="true"></i><strong>Main Coder:</strong> <span id="meta-author"></span></p>
+                <p class="text-sm text-gray-500"><i class="fa-solid fa-calendar" style="color: #63E6BE;" aria-hidden="true"></i><strong> Created:</strong> <span id="meta-date"></span></p>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-4">
+                <div>
+                  <i class="fa-solid fa-eye" style="color: #63E6BE;" aria-hidden="true"></i>
+                  <p class="text-lg font-semibold text-indigo-600" id="meta-views">0</p>
+                  <p class="text-sm text-gray-500">Views</p>
+                </div>
+                <div>
+                  <i class="fa-solid fa-arrow-up" style="color: #63E6BE;" aria-hidden="true"></i>
+                  <p class="text-lg font-semibold text-blue-600" id="meta-loves">0</p>
+                  <p class="text-sm text-gray-500">Upvotes</p>
+                </div>
+                <div>
+                  <i class="fa-solid fa-star" style="color: #63E6BE;" aria-hidden="true"></i>
+                  <p class="text-lg font-semibold text-yellow-500" id="meta-favorites">0</p>
+                  <p class="text-sm text-gray-500">Favorites</p>
+                </div>
+                <div>
+                  <i class="fa-solid fa-clone" style="color: #63E6BE;" aria-hidden="true"></i>
+                  <p class="text-lg font-semibold text-green-600" id="meta-remixes">0</p>
+                  <p class="text-sm text-gray-500">Remixes</p>
+                </div>
+              </div>
+              <div class="alert hidden" id="share-project-btn2"> <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                This project is not shared &mdash; so only you can see it. Click share to let everyone see it!
+              </div>
+              <button id="share-project-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
+                  <i class="fa-solid fa-share-nodes mr-2"></i> Share Project
+              </button>
+              <button id="change-main-coder-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
+                  <i class="fa-solid fa-upload mr-2"></i> Upload Thumbnail
+              </button>
+                <button onclick="uploadAd()" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
+                  <i class="fa-solid fa-ad mr-2"></i> Create Temp Project Ad
+              </button>
+              <button id="save-changes-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
+                  <i class="fa-solid fa-save mr-2"></i> Save Changes
+              </button>
+              <div class="flex gap-4 mb-4">
+                <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
+                  <i class="fa-solid fa-arrow-up mr-2"></i> Upvote
+                </button>
+                <button id="fav-btn" class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg flex-1">
+                  <i class="fa-solid fa-star mr-2"></i> Favourite
+                </button>
+              </div>
+              <div class="flex gap-4">
+                <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
+                  <i class="fa-solid fa-code mr-2"></i> See Inside
+                </button>
+                <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
+                  <i class="fa-solid fa-clone mr-2"></i> Remix
+                </button>
+              </div>
+              <br>
+              <div class="flex gap-4">
+                <button onclick="copyToClipboard()" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
+                  <i class="fa-solid fa-link mr-2"></i> Copy Link
+                </button>
+              </div>
             </div>
-            <div>
-              <i class="fa-solid fa-arrow-up" style="color: #63E6BE;" aria-hidden="true"></i>
-              <p class="text-lg font-semibold text-blue-600" id="meta-loves">0</p>
-              <p class="text-sm text-gray-500">Upvotes</p>
-            </div>
-            <div>
-              <i class="fa-solid fa-star" style="color: #63E6BE;" aria-hidden="true"></i>
-              <p class="text-lg font-semibold text-yellow-500" id="meta-favorites">0</p>
-              <p class="text-sm text-gray-500">Favorites</p>
-            </div>
-            <div>
-              <i class="fa-solid fa-clone" style="color: #63E6BE;" aria-hidden="true"></i>
-              <p class="text-lg font-semibold text-green-600" id="meta-remixes">0</p>
-              <p class="text-sm text-gray-500">Remixes</p>
-            </div>
-          </div>
-          <div class="alert hidden" id="share-project-btn2"> <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            This project is not shared &mdash; so only you can see it. Click share to let everyone see it!
-          </div>
-          <button id="share-project-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
-              <i class="fa-solid fa-share-nodes mr-2"></i> Share Project
-          </button>
-          <button id="change-main-coder-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
-              <i class="fa-solid fa-upload mr-2"></i> Upload Thumbnail
-          </button>
-            <button onclick="uploadAd()" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
-              <i class="fa-solid fa-ad mr-2"></i> Create Temp Project Ad
-          </button>
-          <button id="save-changes-btn" class="hidden-by-js mt-4 px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full mb-4">
-              <i class="fa-solid fa-save mr-2"></i> Save Changes
-          </button>
-          <div class="flex gap-4 mb-4">
-            <button id="like-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg flex-1">
-              <i class="fa-solid fa-arrow-up mr-2"></i> Upvote
-            </button>
-            <button id="fav-btn" class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg flex-1">
-              <i class="fa-solid fa-star mr-2"></i> Favourite
-            </button>
-          </div>
-          <div class="flex gap-4">
-            <button id="see-inside-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
-              <i class="fa-solid fa-code mr-2"></i> See Inside
-            </button>
-            <button id="remix-btn" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
-              <i class="fa-solid fa-clone mr-2"></i> Remix
-            </button>
-          </div>
-          <br>
-          <div class="flex gap-4">
-            <button onclick="copyToClipboard()" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg flex-1">
-              <i class="fa-solid fa-link mr-2"></i> Copy Link
-            </button>
-          </div>
-        </div>
-      <button onclick="document.getElementById('id01').style.display='flex'" class="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg w-full max-w-xs mx-auto block">
+          <button onclick="document.getElementById('id01').style.display='flex'" class="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg w-full max-w-xs mx-auto block">
         <i class="fa-solid fa-circle-exclamation"></i> Report Project For Investigation
       </button>
       <div id="id01" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -528,8 +564,11 @@
       <p id="comments-error" class="hidden text-red-600">Failed to load comments.</p>
     </div>
   </section>
+    </div>
 
-  <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+    <aside class="ads-sidebar" id="ads-sidebar">
+      </aside>
+  </div> <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
     <div class="modal-content">
       <h2 id="login-modal-title" class="text-xl font-bold text-red-600 mb-4">Login Required</h2>
       <p class="mb-4">You need to be logged in to use this feature.</p>
@@ -538,8 +577,7 @@
     </div>
   </div>
 
-      <!-- 4. Fixed Bottom Anchor Ad Bar -->
-    <footer id="anchor-ad" class="fixed-bottom bg-gradient-to-r from-blue-700 to-cyan-600 text-white p-4 sm:p-5 shadow-lg rounded-t-xl flex items-center justify-between animate-fade-in-up">
+      <footer id="anchor-ad" class="fixed-bottom bg-gradient-to-r from-blue-700 to-cyan-600 text-white p-4 sm:p-5 shadow-lg rounded-t-xl flex items-center justify-between animate-fade-in-up">
         <div class="flex-grow flex items-center justify-center sm:justify-start">
             <p class="text-base sm:text-lg font-semibold mr-4">
                 Ad Banner
@@ -556,15 +594,12 @@
         </div>
     </footer>
 
-      <!-- 5. Vignette Ad Overlay -->
-    <div id="vignette-ad" class="viginette-ad" style="display: none;">
+      <div id="vignette-ad" class="viginette-ad" style="display: none;">
         <div class="vignette-content">
             <button id="close-vignette-ad" class="vignette-close-btn">&times;</button>
 
-            <!-- Ad Info/Report Dropdown Container (AdChoices style) -->
             <div class="ad-info-dropdown-container">
                 <button id="ad-info-toggle-btn" class="ad-info-toggle-btn">
-                    <!-- Using a simple info icon (can be SVG or actual icon font) -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                     </svg>
@@ -593,7 +628,6 @@
                 <a href="/claim-Vignette-Ad-slot" class="block w-full h-full text-white no-underline flex items-center justify-center">Claim Now!</a>
             </button>
 
-            <!-- Info Message for "Why this advert?" -->
             <div id="why-this-ad-message" class="info-message">
                 <p><b>Why This Advert?</b></p>
                 <p>Someone paid some MyScratchBucks to our team in exchange for this ad slot. It is currently shown to everyone.</p>
@@ -613,19 +647,58 @@
       return;
     }
 
-    function uploadAd() {
-      postAd(projectId)
+    // Function to fetch and display ads
+    async function fetchAndDisplayAds() {
+      const adsSidebar = document.getElementById('ads-sidebar');
+      adsSidebar.innerHTML = ''; // Clear previous ads
+
+      for (let i = 0; i < 5; i++) {
+        try {
+          const response = await fetch('https://editor-compiler.onrender.com/ad/random');
+          if (response.ok) {
+            const ad = await response.json();
+            // Create ad element
+            const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${ad.ads}/meta/test`);
+            if (res.ok) {
+              const json = await res.json();
+              const adItem = document.createElement('div');
+              adItem.classList.add('ad-item');
+              adItem.innerHTML = `
+                <h4>${ad.title || 'Untitled Ad'}</h4>
+                <p>${ad.description || 'No description available.'}</p>
+                ${ad.imageUrl ? `<img src="https://editor-compiler.onrender.com${json.image}" alt="${json.title || 'Ad Image'}">` : ''}
+                ${ad.link ? `<a href="/projects/#${ad.ads}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">${json.title}</a>` : ''}
+              `;
+              adsSidebar.appendChild(adItem);
+            }            
+          } else {
+            console.error(`Failed to fetch ad ${i + 1}:`, response.status, response.statusText);
+            // Optionally add a placeholder for failed ads
+            const adItem = document.createElement('div');
+            adItem.classList.add('ad-item');
+            adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Please try again later.</p>`;
+            adsSidebar.appendChild(adItem);
+          }
+        } catch (error) {
+          console.error(`Error fetching ad ${i + 1}:`, error);
+          const adItem = document.createElement('div');
+            adItem.classList.add('ad-item');
+            adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Network error.</p>`;
+            adsSidebar.appendChild(adItem);
+        }
+      }
     }
 
+    // Call the function to fetch and display ads when the page loads
+    fetchAndDisplayAds();
+
     uploadThumbnailBtn.addEventListener('click', () => {
-      // Create a hidden file input element on button click
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = 'image/*';
       fileInput.style.display = 'none';
       document.body.appendChild(fileInput);
 
-      // Listen for file selection
       fileInput.addEventListener('change', async (event) => {
         const file = event.target.files[0];
 
@@ -649,7 +722,6 @@
             const result = await response.json();
             alert('Thumbnail uploaded successfully!');
             console.log('Upload successful:', result);
-            // Optionally update the UI here
           } else {
             const errorData = await response.json();
             alert(`Failed to upload thumbnail: ${errorData.error || response.statusText}`);
@@ -660,15 +732,13 @@
           console.error('Network error or unexpected issue:', error);
         }
 
-        // Clean up: remove the file input after upload
         document.body.removeChild(fileInput);
       });
 
-      // Programmatically trigger the file picker
       fileInput.click();
     });
   });
 </script>
 
 </body>
-</html>
+      </html>
