@@ -62,12 +62,8 @@
         <button onclick="logout()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Logout</button>
         <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">My Projects</button>
         <button onclick="changeEmail()" class="mt-4 ml-2 bg-orange-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Change Email</button>
+        <button onclick="messsages()" class="mt-4 ml-2 bg-green-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Messages</button>
         <p id="scratchMessage" class="text-sm text-orange-600 mt-4"></p>
-      </div>
-
-      <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
-        <h3 class="text-xl font-semibold mb-2">Useful Links</h3>
-        <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Messages</button>
       </div>
 
       <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto mt-6">
@@ -204,7 +200,7 @@ async function checkAuth() {
   }
 }
 
-    function changeEmail() {
+  function changeEmail() {
     // Prompt user for email after successful authentication
       const email = prompt("Please enter your email to link your account:");
       if (email && /\S+@\S+\.\S+/.test(email)) {
