@@ -58,8 +58,10 @@
         <h2 id="welcomeMessage" class="text-2xl font-bold mb-4"></h2>
         <div id="mainText" class="text-left"></div>
         <b>Risk Of Getting Banned:</b> <p id="banRisk">Low risk</p>
+        <b>Email:</b> <p id="current-email">Loading...</p>
         <button onclick="logout()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Logout</button>
         <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">My Projects</button>
+        <button onclick="changeEmail()" class="mt-4 ml-2 bg-orange-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Change Email</button>
         <p id="scratchMessage" class="text-sm text-orange-600 mt-4"></p>
       </div>
 
@@ -177,6 +179,7 @@ async function checkAuth() {
       if (email && /\S+@\S+\.\S+/.test(email)) {
         // Send the email to the API via GET request
         await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
+        localStorage.setItem('current-email', email);
       } else if (email !== null) {
         // If user entered something invalid (but not cancelled)
         alert("Invalid email entered. Skipping email linking. You can sign out and sign back in to set a email, but it is fine for now.");
@@ -201,6 +204,18 @@ async function checkAuth() {
   }
 }
 
+    function changeEmail() {
+    // Prompt user for email after successful authentication
+      const email = prompt("Please enter your email to link your account:");
+      if (email && /\S+@\S+\.\S+/.test(email)) {
+        // Send the email to the API via GET request
+        await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
+        localStorage.setItem('current-email', email);
+      } else if (email !== null) {
+        // If user entered something invalid (but not cancelled)
+        alert("Invalid email entered. Skipping email linking. You can sign out and sign back in to set a email, but it is fine for now.");
+      }
+    }
 
     function registerScratchAuth() {
       const messageBox = document.getElementById("scratchMessage");
@@ -313,6 +328,9 @@ async function checkAuth() {
     document.getElementById('banRisk').style.color = 'SlateBlue';
 }
 
+const currentEmail = localStorage.getItem("current-email");
+document.getElementById("current-email").innerHTML = `${currentEmail}`;
+document.getElementById('current-email').style.color = 'green';
 
   </script>
 </body>
