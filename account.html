@@ -43,10 +43,6 @@
         Sign In With ScratchID
       </button>
       <br>
-      <button onclick="github()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
-        Sign In With Github
-      </button>
-    </br>
       <button onclick="guest()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
         Continue as a temporary guest user (temp removed) 
       </button>
@@ -62,7 +58,7 @@
         <button onclick="logout()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Logout</button>
         <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">My Projects</button>
         <button onclick="changeEmail()" class="mt-4 ml-2 bg-orange-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Change Email</button>
-        <button onclick="messsages()" class="mt-4 ml-2 bg-green-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Messages</button>
+        <button onclick="messages()" class="mt-4 ml-2 bg-green-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Messages</button>
         <p id="scratchMessage" class="text-sm text-orange-600 mt-4"></p>
       </div>
 
@@ -76,140 +72,136 @@
   </main>
 
   <script>
-const username22 = localStorage.getItem('username');
-if (username22 && username22.includes('GuestUser')) {
-  logout();
-}
+    const username22 = localStorage.getItem('username');
+    if (username22 && username22.includes('GuestUser')) {
+      logout();
+    }
 
+    // `window.onload` is now solely for initial authentication check (ScratchID, DevKey) and UI update.
+    // GitHub related logic has been removed.
     window.onload = async function() {
-  const code = new URLSearchParams(window.location.search).get('code');
-  if (code) {
-    try {
-      const client_id = 'Ov23liOrOfV9AEroertM'; // Updated with an application owned by myscratchblocks instead of a indivsual user
-      const client_secret = 'a44044061c29b317f0f1d8a30d6fceb165a9c6f3'; // WARNING: Unsafe to expose in frontend!
+      await checkAuth(); // Check for ScratchID or DevKey authentication params
 
-      // Step 1: Exchange code for access token
-      const tokenRes = await fetch(`https://corsproxy.io/?url=https://github.com/login/oauth/access_token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          client_id,
-          client_secret,
-          code
-        })
-      });
+      const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
+      const username = localStorage.getItem('username');
+      const currentEmail = localStorage.getItem("current-email");
 
-      const tokenData = await tokenRes.json();
-      const access_token = tokenData.access_token;
 
-      if (!access_token) {
-        console.error('GitHub token exchange failed', tokenData);
-        alert(tokenData);
-        return;
+      if (isLoggedIn && username) {
+        document.getElementById('authSection')?.classList.add('hidden');
+        document.getElementById('loggedInContent')?.classList.remove('hidden');
+        document.getElementById('welcomeMessage').textContent = `Welcome to your account dashboard, ${username}!`;
+
+        // Display email if available
+        document.getElementById("current-email").innerHTML = `${currentEmail || 'Not set'}`;
+        document.getElementById('current-email').style.color = currentEmail ? 'green' : 'gray';
+
+        try {
+          const res = await fetch(`https://editor-compiler.onrender.com/api/users/${username}`);
+          const json = await res.json();
+          const uploadedprojects = json.totalProjects ?? "N/A";
+          const views = json.totalViews ?? "N/A";
+          const likes = json.totalLikes ?? "N/A";
+          const favs = json.totalFavorites ?? "N/A";
+
+          document.getElementById('mainText').innerHTML = `
+            <p><strong>Number Of Projects I Uploaded:</strong> ${uploadedprojects}</p>
+            <p><strong>Total Views:</strong> ${views}</p>
+            <p><strong>Total Upvotes:</strong> ${likes}</p>
+            <p><strong>Total Favourites:</strong> ${favs}</p>
+          `;
+        } catch (err) {
+          document.getElementById('mainText').innerHTML = `<p class="text-red-500">Unable to fetch user stats. If you need to see your stats, please reload or/and try again later.</p>`;
+        }
+      }
+      
+      const guestUser = localStorage.getItem('guestUser');
+      if (guestUser) {
+        const messageBox = document.getElementById("scratchMessage");
+        messageBox.textContent = "WARNING: You are using a temporary guest account. After signing out, you will lose administrative access over your projects that you uploaded using Guest Mode.";
+        document.getElementById("banRisk").innerHTML = "Not Evaluated - Guest accounts can't be evaluated for a ban risk";
+        document.getElementById('banRisk').style.color = 'gray';
       }
 
-      // Step 2: Fetch GitHub user info
-      const userRes = await fetch(`https://corsproxy.io/?url=https://api.github.com/user`, {
-        headers: {
-          Authorization: `token ${access_token}`,
-          Accept: 'application/json'
+      // Update Ban Risk based on username
+      if (username == "bannie6") {
+        document.getElementById("banRisk").innerHTML = "Medium Risk";
+        document.getElementById('banRisk').style.color = 'orange';
+      } else if (username == "ENTER HIGH BAN RISK USER HERE") { // Placeholder for a high-risk user
+        document.getElementById("banRisk").innerHTML = "High Risk - Stop breaking the rules to avoid getting banned!";
+        document.getElementById('banRisk').style.color = 'red';
+      } else if (username == "ENTER SUPER HIGH BAN RISK USER HERE") { // Placeholder for a super high-risk user
+        document.getElementById("banRisk").innerHTML = "Super High Risk - Account Limited - Certain features are disabled, stop breaking the rules!";
+        document.getElementById('banRisk').style.color = 'SlateBlue';
+      }
+    }
+
+
+    async function checkAuth() {
+      const PC = new URLSearchParams(window.location.search).get('id');
+      localStorage.setItem('SECURE_ID', PC);
+      if (PC) {
+        try {
+          const res = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${PC}`);
+          const data = await res.json();
+          const key = Object.keys(data)[0];
+          const plainUsername = data[key].user;
+          const encodedUsername = btoa(plainUsername);
+
+          if (encodedUsername === 'ENTER BANNED USERS API KEYS HERE') { // Placeholder for banned users
+            localStorage.clear();
+            window.location.href = 'banscreen.html?reason=spam';
+            return;
+          }
+
+          const email = prompt("Please enter your email to link your account:");
+          if (email && /\S+@\S+\.\S+/.test(email)) {
+            await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
+            localStorage.setItem('current-email', email);
+          } else if (email !== null) {
+            alert("Invalid email entered. Skipping email linking. You can sign out and sign back in to set an email, but it is fine for now.");
+          }
+
+          localStorage.setItem('usernameEnc', encodedUsername);
+          localStorage.setItem('username', plainUsername);
+          localStorage.setItem('loggedIn', 'true');
+          window.location.href = 'account.html';
+        } catch (err) {
+          console.error('Token verification failed:', err);
         }
-      });
+      }
 
-      const userData = await userRes.json();
-      const username = userData.login;
-
-      if (username) {
-        const encodedUsername = btoa(username);
-        localStorage.setItem('usernameEnc', encodedUsername);
+      const DK = new URLSearchParams(window.location.search).get('devKey');
+      if (DK) {
+        const username = atob(DK);
+        localStorage.setItem('usernameEnc', DK);
         localStorage.setItem('username', username);
         localStorage.setItem('loggedIn', 'true');
         window.location.href = 'account.html';
       }
-    } catch (err) {
-      console.error('GitHub login failed:', err);
-      alert(err);
-    }
-  }
-}
-
-
-    function github() {
-      const clientId = 'Ov23liOrOfV9AEroertM'; // Replace with your GitHub OAuth App Client ID
-      const redirectUri = 'https://myscratchblocks.github.io/account'
-      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:read`;
-
-      window.location.href = githubAuthUrl;
     }
 
-    function encodeUsername(username) {
-      return btoa(username);
-    }
-
-    function decodeUsername(encodedUsername) {
-      return atob(encodedUsername);
-    }
-
-async function checkAuth() {
-  const PC = new URLSearchParams(window.location.search).get('id');
-  localStorage.setItem('SECURE_ID', PC);
-  if (PC) {
-    try {
-      const res = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${PC}`);
-      const data = await res.json();
-      const key = Object.keys(data)[0];
-      const plainUsername = data[key].user;
-      const encodedUsername = btoa(plainUsername);
-
-      if (encodedUsername === 'ENTER BANNED USERS API KEYS HERE') {
-        localStorage.clear();
-        window.location.href = 'banscreen.html?reason=spam';
+    async function changeEmail() {
+      const plainUsername = localStorage.getItem('username'); // Get username from localStorage
+      if (!plainUsername) {
+        alert("Please log in to change your email.");
         return;
       }
 
-      // Prompt user for email after successful authentication
-      const email = prompt("Please enter your email to link your account:");
+      const email = prompt("Please enter your new email:");
       if (email && /\S+@\S+\.\S+/.test(email)) {
-        // Send the email to the API via GET request
-        await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
-        localStorage.setItem('current-email', email);
+        try {
+          await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
+          localStorage.setItem('current-email', email);
+          alert("Email updated successfully!");
+          document.getElementById("current-email").innerHTML = `${email}`;
+          document.getElementById('current-email').style.color = 'green';
+        } catch (error) {
+          console.error("Error changing email:", error);
+          alert("Failed to update email. Please try again later.");
+        }
       } else if (email !== null) {
-        // If user entered something invalid (but not cancelled)
-        alert("Invalid email entered. Skipping email linking. You can sign out and sign back in to set a email, but it is fine for now.");
-      }
-      
-      localStorage.setItem('usernameEnc', encodedUsername);
-      localStorage.setItem('username', plainUsername);
-      localStorage.setItem('loggedIn', 'true');
-      window.location.href = 'account.html';
-    } catch (err) {
-      console.error('Token verification failed:', err);
-    }
-  }
-
-  const DK = new URLSearchParams(window.location.search).get('devKey');
-  if (DK) {
-    const username = atob(DK);
-    localStorage.setItem('usernameEnc', DK);
-    localStorage.setItem('username', username);
-    localStorage.setItem('loggedIn', 'true');
-    window.location.href = 'account.html';
-  }
-}
-
-  function changeEmail() {
-    // Prompt user for email after successful authentication
-      const email = prompt("Please enter your email to link your account:");
-      if (email && /\S+@\S+\.\S+/.test(email)) {
-        // Send the email to the API via GET request
-        await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
-        localStorage.setItem('current-email', email);
-      } else if (email !== null) {
-        // If user entered something invalid (but not cancelled)
-        alert("Invalid email entered. Skipping email linking. You can sign out and sign back in to set a email, but it is fine for now.");
+        alert("Invalid email entered. Email not updated.");
       }
     }
 
@@ -230,17 +222,17 @@ async function checkAuth() {
     }
 
     // function guest() {
-     // const DIGITS = 6;
-     // const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
-     // const randomId = randomNumber.toString().padStart(DIGITS, '0');
-     // const randomUsername = `GuestUser-${randomId}`;  
-     // const DK = btoa(randomUsername);
-     // localStorage.setItem('usernameEnc', DK);
-     // localStorage.setItem('username', randomUsername);
-     // localStorage.setItem('loggedIn', 'true');
-      // localStorage.setItem('guestUser', 'yes');
-      // window.location.href = 'account.html';
-//  }
+    //  const DIGITS = 6;
+    //  const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
+    //  const randomId = randomNumber.toString().padStart(DIGITS, '0');
+    //  const randomUsername = `GuestUser-${randomId}`;
+    //  const DK = btoa(randomUsername);
+    //  localStorage.setItem('usernameEnc', DK);
+    //  localStorage.setItem('username', randomUsername);
+    //  localStorage.setItem('loggedIn', 'true');
+    //  localStorage.setItem('guestUser', 'yes');
+    //  window.location.href = 'account.html';
+    // }
 
     function myprojects() {
       const username = localStorage.getItem('username');
@@ -255,15 +247,6 @@ async function checkAuth() {
         window.location.href = `https://myscratchblocks.github.io/messages`;
       }
     }
-    
-    
-      const guestUser = localStorage.getItem('guestUser');
-      if (guestUser) {
-        const messageBox = document.getElementById("scratchMessage");
-        messageBox.textContent = "WARNING: You are using a temporary guest account. After signing out, you will loose adminstrative access over your projects that you uploaded using Guest Mode.";
-        document.getElementById("banRisk").innerHTML = "Not Evaluated - Guest accounts can't be evaluated for a ban risk";
-        document.getElementById('banRisk').style.color = 'gray';
-      }
 
     function devToken() {
       const username = localStorage.getItem('username');
@@ -273,61 +256,6 @@ async function checkAuth() {
         devTokens.textContent = `Your dev token is: ${token} - Please do not share your dev token unless it is sharing it with something only you can see`;
       }
     }
-
-    window.onload = async function () {
-      const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
-      const username = localStorage.getItem('username');
-
-      if (isLoggedIn && username) {
-        document.getElementById('authSection')?.classList.add('hidden');
-        document.getElementById('loggedInContent')?.classList.remove('hidden');
-        document.getElementById('welcomeMessage').textContent = `Welcome to your account dashboard, ${username}!`;
-
-        try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/users/${username}`);
-          const json = await res.json();
-          const uploadedprojects = json.totalProjects ?? "N/A";
-          const views = json.totalViews ?? "N/A";
-          const likes = json.totalLikes ?? "N/A";
-          const favs = json.totalFavorites ?? "N/A";
-
-          document.getElementById('mainText').innerHTML = `
-            <p><strong>Number Of Projects I Uploaded:</strong> ${uploadedprojects}</p>
-            <p><strong>Total Views:<strong> ${views}</p>
-            <p><strong>Total Upvotes:<strong> ${likes}</p>
-            <p><strong>Total Favourites:<strong> ${favs}</p>
-          `;
-        } catch (err) {
-          document.getElementById('mainText').innerHTML = `<p class="text-red-500">Unable to fetch user stats. If you need to see your stats, please reload or/and try again later.</p>`;
-        }
-      } else {
-        await checkAuth();
-      }
-    }
-
-    const username = localStorage.getItem("username");
-    
-    if (username == "bannie6") {
-    document.getElementById("banRisk").innerHTML = "Medium Risk";
-    document.getElementById('banRisk').style.color = 'orange';
-}
-
-    // Update High Ban Risk
-    if (username == "ENTER HIGH BAN RISK USER HERE") {
-    document.getElementById("banRisk").innerHTML = "High Risk - Stop breaking the rules to avoid getting banned!";
-    document.getElementById('banRisk').style.color = 'red';
-}
-
-  // Update High Ban Risk
-    if (username == "ENTER SUPER HIGH BAN RISK USER HERE") {
-    document.getElementById("banRisk").innerHTML = "Super High Risk - Account Limited - Certain features are disabled, stop breaking the rules!";
-    document.getElementById('banRisk').style.color = 'SlateBlue';
-}
-
-const currentEmail = localStorage.getItem("current-email");
-document.getElementById("current-email").innerHTML = `${currentEmail}`;
-document.getElementById('current-email').style.color = 'green';
-
   </script>
 </body>
 
