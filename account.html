@@ -233,18 +233,18 @@ async function checkAuth() {
       window.location.href = 'account.html';
     }
 
-    function guest() {
-     const DIGITS = 6;
-     const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
-     const randomId = randomNumber.toString().padStart(DIGITS, '0');
-     const randomUsername = `GuestUser-${randomId}`;  
-     const DK = btoa(randomUsername);
-     localStorage.setItem('usernameEnc', DK);
-     localStorage.setItem('username', randomUsername);
-     localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('guestUser', 'yes');
-      window.location.href = 'account.html';
-  }
+    // function guest() {
+     // const DIGITS = 6;
+     // const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
+     // const randomId = randomNumber.toString().padStart(DIGITS, '0');
+     // const randomUsername = `GuestUser-${randomId}`;  
+     // const DK = btoa(randomUsername);
+     // localStorage.setItem('usernameEnc', DK);
+     // localStorage.setItem('username', randomUsername);
+     // localStorage.setItem('loggedIn', 'true');
+      // localStorage.setItem('guestUser', 'yes');
+      // window.location.href = 'account.html';
+//  }
 
     function myprojects() {
       const username = localStorage.getItem('username');
