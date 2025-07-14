@@ -63,6 +63,11 @@
         <p id="scratchMessage" class="text-sm text-orange-600 mt-4"></p>
       </div>
 
+      <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
+        <h3 class="text-xl font-semibold mb-2">Useful Links</h3>
+        <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Messages</button>
+      </div>
+
       <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto mt-6">
         <h3 class="text-xl font-semibold mb-2">Developer Token</h3>
         <p id="devTokens" class="text-green-600 font-medium mb-2"></p>
@@ -213,18 +218,18 @@ async function checkAuth() {
       window.location.href = 'account.html';
     }
 
-//    function guest() {
-//      const DIGITS = 6;
-//      const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
-//      const randomId = randomNumber.toString().padStart(DIGITS, '0');
-//      const randomUsername = `GuestUser-${randomId}`;  
-//      const DK = btoa(randomUsername);
-//      localStorage.setItem('usernameEnc', DK);
-//      localStorage.setItem('username', randomUsername);
-//      localStorage.setItem('loggedIn', 'true');
-//      localStorage.setItem('guestUser', 'yes');
-//      window.location.href = 'account.html';
-//    }
+    function guest() {
+     const DIGITS = 6;
+     const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
+     const randomId = randomNumber.toString().padStart(DIGITS, '0');
+     const randomUsername = `GuestUser-${randomId}`;  
+     const DK = btoa(randomUsername);
+     localStorage.setItem('usernameEnc', DK);
+     localStorage.setItem('username', randomUsername);
+     localStorage.setItem('loggedIn', 'true');
+      localStorage.setItem('guestUser', 'yes');
+      window.location.href = 'account.html';
+  }
 
     function myprojects() {
       const username = localStorage.getItem('username');
@@ -232,6 +237,14 @@ async function checkAuth() {
         window.location.href = `https://myscratchblocks.github.io/mystuff`;
       }
     }
+
+    function messages() {
+      const username = localStorage.getItem('username');
+      if (username) {
+        window.location.href = `https://myscratchblocks.github.io/messages`;
+      }
+    }
+    
     
       const guestUser = localStorage.getItem('guestUser');
       if (guestUser) {
