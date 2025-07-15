@@ -170,16 +170,8 @@
           console.error('Token verification failed:', err);
         }
       }
+     } 
 
-      const DK = new URLSearchParams(window.location.search).get('devKey');
-      if (DK) {
-        const username = atob(DK);
-        localStorage.setItem('usernameEnc', DK);
-        localStorage.setItem('username', username);
-        localStorage.setItem('loggedIn', 'true');
-        window.location.href = 'account.html';
-      }
-    }
 
     async function changeEmail() {
       const plainUsername = localStorage.getItem('username'); // Get username from localStorage
