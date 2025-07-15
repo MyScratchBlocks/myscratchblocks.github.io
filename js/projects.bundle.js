@@ -48,22 +48,8 @@ async function fetchMeta() {
     return;
   }
 
-  let currentUsername = 'test123'; // Default username
-
-  if (localStorage.getItem('SECURE_ID')) {
-    try {
-      const res5 = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${localStorage.getItem('SECURE_ID')}`);
-      if (!res5.ok) throw new Error(`Verification failed: ${res5.statusText}`);
-      const data = await res5.json();
-      const key = Object.keys(data)[0];
-      if (data[key] && data[key].user) {
-        currentUsername = data[key].user;
-      }
-    } catch (err) {
-      console.error('Error fetching secure ID verification:', err);
-      currentUsername = 'test123';
-    }
-  }
+  // Use localStorage.getItem('username') directly for the current username
+  const currentUsername = localStorage.getItem('username') || 'test123';
 
   if (!id) {
     console.warn("No project ID found in URL hash. Cannot fetch project metadata.");
@@ -125,7 +111,6 @@ async function fetchMeta() {
       }
 
       // Event listener for save changes button
-      // No need for dataset.listenerAttached with proper DOMContentLoaded usage
       saveChangesBtn.addEventListener('click', async () => {
         const updatedTitle = editableTitleInput.value.trim();
         const updatedDescription = editableDescriptionTextarea.value.trim();
@@ -250,24 +235,9 @@ async function fetchComments() {
 async function postNewComment(text) {
   if (!commentSubmitBtn || !commentInput) return;
 
-  let currentUsername = 'test123';
+  const currentUsername = localStorage.getItem('username'); // Use localStorage username
 
-  if (localStorage.getItem('SECURE_ID')) {
-    try {
-      const res4 = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${localStorage.getItem('SECURE_ID')}/`);
-      if (!res4.ok) throw new Error(`Verification failed: ${res4.statusText}`);
-      const data = await res4.json();
-      const key = Object.keys(data)[0];
-      if (data[key] && data[key].user) {
-        currentUsername = data[key].user;
-      }
-    } catch (err) {
-      console.error('Error fetching secure ID for comment:', err);
-      currentUsername = 'test123';
-    }
-  }
-
-  if (currentUsername === 'test123') {
+  if (!currentUsername) { // If username is not set, show login modal
     showLoginModal();
     return;
   }
@@ -305,24 +275,9 @@ async function postNewComment(text) {
 
 // Post a reply to an existing comment/reply
 async function postReply(commentId, text, formElement) {
-  let currentUsername = 'test123'; // Re-verify username for replies as well
+  const currentUsername = localStorage.getItem('username'); // Use localStorage username
 
-  if (localStorage.getItem('SECURE_ID')) {
-    try {
-      const res4 = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${localStorage.getItem('SECURE_ID')}/`);
-      if (!res4.ok) throw new Error(`Verification failed: ${res4.statusText}`);
-      const data = await res4.json();
-      const key = Object.keys(data)[0];
-      if (data[key] && data[key].user) {
-        currentUsername = data[key].user;
-      }
-    } catch (err) {
-      console.error('Error fetching secure ID for reply:', err);
-      currentUsername = 'test123';
-    }
-  }
-
-  if (currentUsername === 'test123') {
+  if (!currentUsername) { // If username is not set, show login modal
     showLoginModal();
     return;
   }
@@ -517,7 +472,7 @@ async function fetchAds() {
       return;
     }
 
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test123`);
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test123`); // 'test123' used as a placeholder if no username is needed for this public meta fetch
     if (!res2.ok) {
       throw new Error(`HTTP error! status: ${res2.status} for project meta with adId: ${adId}`);
     }
@@ -562,7 +517,7 @@ async function fetchAndDisplayAds() {
           continue;
         }
 
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test`);
+        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test`); // 'test' placeholder
         if (res.ok) {
           const json = await res.json();
           const adItem = document.createElement('div');
@@ -706,7 +661,7 @@ if (claimAdBtn) {
 
 async function postAd(projectIdToClaim) {
   try {
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectIdToClaim}/meta/test123`);
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectIdToClaim}/meta/test123`); // 'test123' placeholder
     if (res2.ok) {
       const res = await fetch(`https://editor-compiler.onrender.com/ad/${id}/set/${projectIdToClaim}`);
       if (res.ok) {
