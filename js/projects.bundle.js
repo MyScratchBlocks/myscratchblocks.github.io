@@ -495,8 +495,27 @@ async function fetchAds() {
   }
 }
 
+async function fetchads() {
+  const response = await fetch('https://editor-compiler.onrender.com/ad/random');
+  if (response.ok) {
+    const ad = await response.json();
+    if(ad.includes('undefined')) {
+      const res = await fetch('https://editor-compiler.onrender.com/ad/random');
+      if(res.ok) {
+        const ad = await res.json();
+        if (ads.includes(ad.ad.replace('ad:', ''))) {
+          fetchads();
+        } else {
+          return ad.ad.replace('ad:', '');
+        }
+      }
+    }
+  }
+}
+
 // Function to fetch and display ads in the sidebar
 async function fetchAndDisplayAds() {
+  let ads = {};
   const adsSidebar = document.getElementById('ads-sidebar');
   if (!adsSidebar) {
     console.error("Element with ID 'ads-sidebar' not found.");
@@ -504,15 +523,21 @@ async function fetchAndDisplayAds() {
   }
   adsSidebar.innerHTML = ''; // Clear previous ads
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 7; i++) {
     try {
       const response = await fetch('https://editor-compiler.onrender.com/ad/random');
       if (response.ok) {
         const ad = await response.json();
+        if(ad.includes('undefined')) {
+          const res = await fetch('https://editor-compiler.onrender.com/ad/random');
+          if(res.ok) {
+            const ad = await res.json();
+          }
+        }
         // Skip adId '21' as per logic in fetchAds
-        const adId = ad.ad.replace('ad:', '');
-        if (adId === '21') {
-          console.log("Skipping adId 21 for sidebar, fetching another ad.");
+        const adId = fetchads();
+      }
+        ads.push(adId);
           i--; // Decrement counter to ensure 5 ads are fetched
           continue;
         }
@@ -524,7 +549,7 @@ async function fetchAndDisplayAds() {
           adItem.classList.add('ad-item');
           adItem.innerHTML = `
             <h4>${json.title || 'Untitled Project'}</h4>
-            <img src="https://editor-compiler.onrender.com${json.image || '/default-thumbnail.png'}" alt="${json.title || 'Ad Image'}" onerror="this.onerror=null;this.src='/default-thumbnail.png';">
+            <img src="https://editor-compiler.onrender.com${json.image || '/images/No%20Cover%20Available.png'}" alt="${json.title || 'Ad Image'}" onerror="this.onerror=null;this.src='/images/No%20Cover%20Available.png';">
             <a href="/projects#${adId}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">By ${json.author?.username || 'Unknown'}</a>
           `;
           adsSidebar.appendChild(adItem);
