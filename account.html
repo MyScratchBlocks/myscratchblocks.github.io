@@ -12,6 +12,42 @@
       background-color: #f8fafc;
       color: #334155;
     }
+    /* Modal styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -49,6 +85,19 @@
       <p id="scratchMessage" class="text-sm text-green-600 mt-4"></p>
     </section>
 
+    <div id="emailModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="closeEmailModal()">&times;</span>
+        <h3 class="text-xl font-semibold mb-4">Enter Your Email</h3>
+        <p class="mb-4">Please provide your email address to link with your account. This is required.</p>
+        <input type="email" id="emailInput" class="w-full p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="your.email@example.com" required />
+        <button onclick="submitEmail()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
+          Submit Email
+        </button>
+        <p id="emailError" class="text-red-500 text-sm mt-2 hidden"></p>
+      </div>
+    </div>
+
     <section id="loggedInContent" class="hidden">
       <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
         <h2 id="welcomeMessage" class="text-2xl font-bold mb-4"></h2>
@@ -77,22 +126,21 @@
       logout();
     }
 
-    // `window.onload` is now solely for initial authentication check (ScratchID, DevKey) and UI update.
-    // GitHub related logic has been removed.
+    // Global variable to store plainUsername temporarily
+    let tempPlainUsername = null;
+
     window.onload = async function() {
-      await checkAuth(); // Check for ScratchID or DevKey authentication params
+      await checkAuth();
 
       const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
       const username = localStorage.getItem('username');
       const currentEmail = localStorage.getItem("current-email");
-
 
       if (isLoggedIn && username) {
         document.getElementById('authSection')?.classList.add('hidden');
         document.getElementById('loggedInContent')?.classList.remove('hidden');
         document.getElementById('welcomeMessage').textContent = `Welcome to your account dashboard, ${username}!`;
 
-        // Display email if available
         document.getElementById("current-email").innerHTML = `${currentEmail || 'Not set'}`;
         document.getElementById('current-email').style.color = currentEmail ? 'green' : 'gray';
 
@@ -123,19 +171,17 @@
         document.getElementById('banRisk').style.color = 'gray';
       }
 
-      // Update Ban Risk based on username
       if (username == "bannie6") {
         document.getElementById("banRisk").innerHTML = "Medium Risk";
         document.getElementById('banRisk').style.color = 'orange';
-      } else if (username == "ENTER HIGH BAN RISK USER HERE") { // Placeholder for a high-risk user
+      } else if (username == "ENTER HIGH BAN RISK USER HERE") {
         document.getElementById("banRisk").innerHTML = "High Risk - Stop breaking the rules to avoid getting banned!";
         document.getElementById('banRisk').style.color = 'red';
-      } else if (username == "ENTER SUPER HIGH BAN RISK USER HERE") { // Placeholder for a super high-risk user
+      } else if (username == "ENTER SUPER HIGH BAN RISK USER HERE") {
         document.getElementById("banRisk").innerHTML = "Super High Risk - Account Limited - Certain features are disabled, stop breaking the rules!";
         document.getElementById('banRisk').style.color = 'SlateBlue';
       }
     }
-
 
     async function checkAuth() {
       const PC = new URLSearchParams(window.location.search).get('id');
@@ -148,33 +194,62 @@
           const plainUsername = data[key].user;
           const encodedUsername = btoa(plainUsername);
 
-          if (encodedUsername === 'ENTER BANNED USERS API KEYS HERE') { // Placeholder for banned users
+          if (encodedUsername === 'ENTER BANNED USERS API KEYS HERE') {
             localStorage.clear();
             window.location.href = 'banscreen.html?reason=spam';
             return;
           }
 
-          const email = prompt("Please enter your email to link your account:");
-          if (email && /\S+@\S+\.\S+/.test(email)) {
-            await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
-            localStorage.setItem('current-email', email);
-          } else if (email !== null) {
-            alert("Invalid email entered. Skipping email linking. You can sign out and sign back in to set an email, but it is fine for now.");
-          }
+          // Store plainUsername in a global variable
+          tempPlainUsername = plainUsername;
 
-          localStorage.setItem('usernameEnc', encodedUsername);
-          localStorage.setItem('username', plainUsername);
-          localStorage.setItem('loggedIn', 'true');
-          window.location.href = 'account.html';
+          // Show the email modal
+          document.getElementById('emailModal').style.display = 'flex';
+          document.getElementById('emailInput').focus();
+
         } catch (err) {
           console.error('Token verification failed:', err);
         }
       }
-     } 
+    }
 
+    async function submitEmail() {
+      const emailInput = document.getElementById('emailInput');
+      const emailError = document.getElementById('emailError');
+      const email = emailInput.value;
+
+      if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        emailError.textContent = "Please enter a valid email address.";
+        emailError.classList.remove('hidden');
+        return;
+      }
+
+      emailError.classList.add('hidden');
+
+      if (tempPlainUsername) {
+        try {
+          await fetch(`https://editor-compiler.onrender.com/api/users/${tempPlainUsername}/email/set?email=${email}`);
+          localStorage.setItem('current-email', email);
+          localStorage.setItem('usernameEnc', btoa(tempPlainUsername));
+          localStorage.setItem('username', tempPlainUsername);
+          localStorage.setItem('loggedIn', 'true');
+          window.location.href = 'account.html';
+        } catch (error) {
+          console.error("Error setting email:", error);
+          emailError.textContent = "Failed to link email. Please try again.";
+          emailError.classList.remove('hidden');
+        }
+      }
+    }
+
+    function closeEmailModal() {
+      document.getElementById('emailModal').style.display = 'none';
+      // Clear temporary username if modal is closed without submitting email
+      tempPlainUsername = null;
+    }
 
     async function changeEmail() {
-      const plainUsername = localStorage.getItem('username'); // Get username from localStorage
+      const plainUsername = localStorage.getItem('username');
       if (!plainUsername) {
         alert("Please log in to change your email.");
         return;
@@ -213,18 +288,7 @@
       window.location.href = 'account.html';
     }
 
-    // function guest() {
-    //  const DIGITS = 6;
-    //  const randomNumber = Math.floor(Math.random() * (10 ** DIGITS));
-    //  const randomId = randomNumber.toString().padStart(DIGITS, '0');
-    //  const randomUsername = `GuestUser-${randomId}`;
-    //  const DK = btoa(randomUsername);
-    //  localStorage.setItem('usernameEnc', DK);
-    //  localStorage.setItem('username', randomUsername);
-    //  localStorage.setItem('loggedIn', 'true');
-    //  localStorage.setItem('guestUser', 'yes');
-    //  window.location.href = 'account.html';
-    // }
+    // Removed the guest() function as requested by the original HTML comment.
 
     function myprojects() {
       const username = localStorage.getItem('username');
@@ -250,5 +314,4 @@
     }
   </script>
 </body>
-
 </html>
