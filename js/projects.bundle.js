@@ -513,66 +513,70 @@ async function fetchads() {
   }
 }
 
-// Function to fetch and display ads in the sidebar
 async function fetchAndDisplayAds() {
-  let ads = {};
   const adsSidebar = document.getElementById('ads-sidebar');
   if (!adsSidebar) {
     console.error("Element with ID 'ads-sidebar' not found.");
     return;
   }
-  adsSidebar.innerHTML = ''; // Clear previous ads
 
-  for (let i = 0; i < 7; i++) {
+  adsSidebar.innerHTML = ''; // Clear previous ads
+  const seenAdIds = new Set();
+
+  while (seenAdIds.size < 7) {
     try {
       const response = await fetch('https://editor-compiler.onrender.com/ad/random');
-      if (response.ok) {
-        const ad = await response.json();
-        if(ad.includes('undefined')) {
-          const res = await fetch('https://editor-compiler.onrender.com/ad/random');
-          if(res.ok) {
-            const ad = await res.json();
-          }
-        }
-        // Skip adId '21' as per logic in fetchAds
-        const adId = fetchads();
+      if (!response.ok) {
+        console.error('Ad fetch failed:', response.statusText);
+        continue;
       }
-        ads.push(adId);
-          i--; // Decrement counter to ensure 5 ads are fetched
-          continue;
-        }
 
-        const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test`); // 'test' placeholder
-        if (res.ok) {
-          const json = await res.json();
-          const adItem = document.createElement('div');
-          adItem.classList.add('ad-item');
-          adItem.innerHTML = `
-            <h4>${json.title || 'Untitled Project'}</h4>
-            <img src="https://editor-compiler.onrender.com${json.image || '/images/No%20Cover%20Available.png'}" alt="${json.title || 'Ad Image'}" onerror="this.onerror=null;this.src='/images/No%20Cover%20Available.png';">
-            <a href="/projects#${adId}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">By ${json.author?.username || 'Unknown'}</a>
-          `;
-          adsSidebar.appendChild(adItem);
-        } else {
-          console.error(`Failed to fetch project meta for ad ${i + 1}:`, res.status, res.statusText);
-          const adItem = document.createElement('div');
-          adItem.classList.add('ad-item');
-          adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Details not available.</p>`;
-          adsSidebar.appendChild(adItem);
-        }
-      } else {
-        console.error(`Failed to fetch ad ${i + 1}:`, response.status, response.statusText);
-        const adItem = document.createElement('div');
-        adItem.classList.add('ad-item');
-        adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Please try again later.</p>`;
-        adsSidebar.appendChild(adItem);
+      const data = await response.json();
+      let rawAdId = data.ad;
+
+      if (!rawAdId || typeof rawAdId !== 'string' || rawAdId.includes('undefined')) {
+        console.warn('Invalid ad format, retrying...');
+        continue;
       }
+
+      const adId = rawAdId.replace('ad:', '');
+
+      if (adId === '21' || seenAdIds.has(adId)) {
+        // Skip duplicates and blocked ad ID
+        continue;
+      }
+
+      const metaRes = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test`);
+      if (!metaRes.ok) {
+        console.warn(`Meta fetch failed for adId ${adId}:`, metaRes.statusText);
+        continue;
+      }
+
+      const meta = await metaRes.json();
+
+      // Build ad element
+      const adItem = document.createElement('div');
+      adItem.classList.add('ad-item');
+      adItem.innerHTML = `
+        <h4>${meta.title || 'Untitled Project'}</h4>
+        <img src="https://editor-compiler.onrender.com${meta.image || '/images/No%20Cover%20Available.png'}"
+             alt="${meta.title || 'Ad Image'}"
+             onerror="this.onerror=null;this.src='/images/No%20Cover%20Available.png';">
+        <a href="/projects#${adId}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">
+          By ${meta.author?.username || 'Unknown'}
+        </a>
+      `;
+
+      adsSidebar.appendChild(adItem);
+      seenAdIds.add(adId);
+
     } catch (error) {
-      console.error(`Error fetching ad ${i + 1}:`, error);
+      console.error('Error fetching ad:', error);
       const adItem = document.createElement('div');
       adItem.classList.add('ad-item');
       adItem.innerHTML = `<h4>Ad failed to load.</h4><p>Network error.</p>`;
       adsSidebar.appendChild(adItem);
+      seenAdIds.add(`error-${Date.now()}`); // To prevent infinite loops
     }
   }
 }
