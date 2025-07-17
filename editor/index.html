@@ -22,7 +22,7 @@
   <iframe id="scratchFrame"></iframe>
 
   <script type="module">
-    document.getElementById('scratchFrame').src = `https://myscratchblocks.github.io/scratch-gui/editor#${window.location.hash.substring(1).replace("undefined", "").replace("#0", "")}`;
+    document.getElementById('scratchFrame').src = `https://MyScratchBlocks.ddns.net/scratch-gui/editor#${window.location.hash.substring(1).replace("undefined", "").replace("#0", "")}`;
     function wait(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -76,7 +76,7 @@
 
       // Load editor in iframe
       const hash = window.location.hash.substring(1);
-      const baseUrl = "https://myscratchblocks.github.io/scratch-gui/editor";
+      const baseUrl = "https://myscratchblocks.ddns.net/scratch-gui/editor";
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
       document.getElementById("scratchFrame").src = finalUrl;
       if(!localStorage.getItem('new-project') === '') {
