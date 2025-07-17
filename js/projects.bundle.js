@@ -460,13 +460,7 @@ async function fetchAds() {
 
     const adId = data.ad.replace('ad:', '');
 
-    if (adId === '21') {
-      console.log("Skipping adId 21, fetching another ad.");
-      setTimeout(fetchAds, 100);
-      return;
-    }
-
-    if (!adId || adId === 'undefined') {
+    if (!adId || adId === 'undefined' || adId = id) {
       console.warn("Invalid or undefined adId received after processing, retrying:", adId);
       setTimeout(fetchAds, 1000);
       return;
