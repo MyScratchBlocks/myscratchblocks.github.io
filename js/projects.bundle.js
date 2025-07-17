@@ -770,10 +770,10 @@ if (closeAnchorAdBtn) {
 // Main initialization logic
 document.addEventListener('DOMContentLoaded', async () => {
   await fetchAds(); // Fetch main project ad
-  await fetchAndDisplayAds(); // Fetch sidebar ads
-  await fetchMeta(); // Fetch project metadata
-  await fetchComments(); // Fetch comments
-
+  await fetchMeta();
+  await fetchComments();
+  fetchAndDisplayAds(); // Fetch sidebar ads
+  
   const accountElement = document.getElementById('account');
   const username = localStorage.getItem('username');
   const params = new URLSearchParams(window.location.search);
@@ -784,7 +784,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const element = document.getElementById(scrollToId);
       if (element) {
         element.scrollIntoView({
-          behavior: 'smooth'
+          behavior: 'auto'
         });
         element.style.outline = '2px solid red';
         setTimeout(() => {
