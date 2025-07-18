@@ -637,11 +637,9 @@ if (likeBtn) {
         await fetchMeta(); // Update UI after liking
       } else {
         console.error('Failed to like project:', await res.text());
-        alert('Failed to like project.');
       }
     } catch (err) {
       console.error('Like error:', err);
-      alert('An error occurred while liking the project.');
     }
   });
 }
@@ -667,11 +665,9 @@ if (favBtn) {
         await fetchMeta(); // Update UI after favoriting
       } else {
         console.error('Failed to favorite project:', await res.text());
-        alert('Failed to favorite project.');
       }
     } catch (err) {
       console.error('Favorite error:', err);
-      alert('An error occurred while favoriting the project.');
     }
   });
 }
