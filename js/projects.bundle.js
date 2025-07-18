@@ -185,6 +185,7 @@ async function fetchMeta() {
     loading.classList.add('hidden');
     content.classList.add('hidden');
   }
+  return meta;
 }
 
 // ========== COMMENTS FUNCTIONALITY ==========
@@ -703,44 +704,33 @@ async function postAd(projectIdToClaim) {
 
 // Event listener for uploading thumbnail
 const uploadThumbnailBtn = document.getElementById('change-main-coder-btn'); // Get the element again for this specific listener
+if (fetchMeta().visibility === visible) {
+  uploadThumbnailBtn.style.display = 'block';
+} else {
+  uploadThumbnailBtn.style.display = 'none';
+}
 if (uploadThumbnailBtn) {
   uploadThumbnailBtn.addEventListener('click', () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.style.display = 'none';
-    document.body.appendChild(fileInput);
-
-    fileInput.addEventListener('change', async (event) => {
-      const file = event.target.files[0];
-
-      if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file for the thumbnail.');
-        return;
-      }
-
+     if(localStorage.getItem('username')) {
       try {
-        const response = await fetch(`https://editor-compiler.onrender.com/api/upload/${id}`, { // Use global `id`
-          method: 'POST',
+        const response = await fetch(`https://editor-compiler.onrender.com/api/unshare/${id}`, { // Use global `id`
+          method: 'PUT',
           headers: {
-            'Content-Type': file.type
-          },
-          body: file
+            'Content-Type': 'application/json'
+          }
         });
 
         if (response.ok) {
           const result = await response.json();
-          alert('Thumbnail uploaded successfully!');
+          alert('Unshared Project!');
           console.log('Upload successful:', result);
         } else {
           const errorData = await response.json();
-          alert(`Failed to upload thumbnail: ${errorData.error || response.statusText}`);
+          alert(`Failed to unshare project: ${errorData.error || response.statusText}`);
           console.error('Upload failed:', errorData);
         }
       } catch (error) {
-        alert('An error occurred during upload. Please try again.');
+        alert('An error occurred. Please try again.');
         console.error('Network error or unexpected issue:', error);
       }
 
