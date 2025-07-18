@@ -206,14 +206,7 @@ async function fetchMeta() {
   }
 }
 
----
-
-### Comments Functionality
-
-The `baseUrl` constant for API calls.
-
-```javascript
-const baseUrl = '[https://editor-compiler.onrender.com](https://editor-compiler.onrender.com)';
+const baseUrl = 'https://editor-compiler.onrender.com';
 
 const commentsListContainer = document.getElementById('comments-list');
 const commentsLoading = document.getElementById('comments-loading');
@@ -491,11 +484,6 @@ if (commentsListContainer) {
   });
 }
 
----
-
-### Ad-Related Functions
-
-```javascript
 async function fetchAds() {
   try {
     const res = await fetch('https://editor-compiler.onrender.com/ad/random');
@@ -627,11 +615,7 @@ async function fetchAndDisplayAds() {
   }
 }
 
----
 
-### User Action Event Listeners
-
-```javascript
 // Event listener for liking project
 const likeBtn = document.getElementById('like-btn');
 if (likeBtn) {
