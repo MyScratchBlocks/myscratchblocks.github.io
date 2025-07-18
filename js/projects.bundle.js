@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (accountElement) accountElement.textContent = username;
     try {
       // Only record view if metaData was successfully fetched and project is visible
-      if (metaData && metaData.visibility !== 'unshared') { // Assuming 'unshared' means private
+      if (metaData) { // Assuming 'unshared' means private
         await fetch(`https://editor-compiler.onrender.com/api/${id}/views/${username}`, {
           method: 'POST'
         });
