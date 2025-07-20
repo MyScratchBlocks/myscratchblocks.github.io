@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MyScratchBlocks Account | Dashboard</title>
+  <title>MyScratchBlocks Account | Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -12,306 +12,144 @@
       background-color: #f8fafc;
       color: #334155;
     }
-    /* Modal styles */
-    .modal {
-      display: none; /* Hidden by default */
-      position: fixed; /* Stay in place */
-      z-index: 1000; /* Sit on top */
-      left: 0;
-      top: 0;
-      width: 100%; /* Full width */
-      height: 100%; /* Full height */
-      overflow: auto; /* Enable scroll if needed */
-      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-      justify-content: center;
-      align-items: center;
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.375rem;
+      margin-bottom: 1rem;
     }
-    .modal-content {
-      background-color: #fefefe;
-      margin: auto;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-    .close-button {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-    .close-button:hover,
-    .close-button:focus {
-      color: black;
-      text-decoration: none;
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.375rem;
+      background-color: #4f46e5;
+      color: white;
+      font-weight: 600;
       cursor: pointer;
+    }
+    button:hover {
+      background-color: #4338ca;
+    }
+    .error {
+      color: red;
+      margin-bottom: 1rem;
     }
   </style>
 </head>
-
 <body class="antialiased">
-  <header class="bg-white shadow-sm py-4">
-    <div class="container mx-auto px-4 flex justify-between items-center">
-      <a href="/#" class="flex items-center space-x-2 text-2xl font-bold text-indigo-600">
-        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z" />
-        </svg>
-        <span>MyScratchBlocks</span>
-      </a>
+  <main class="container mx-auto px-4 py-12 max-w-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center">Login / Register</h2>
+    <div id="authBox" class="bg-white p-6 rounded-lg shadow-md">
+      <p class="text-sm text-gray-600 mb-2">Username</p>
+      <input type="text" id="username" placeholder="Enter your username">
+      
+      <p class="text-sm text-gray-600 mb-2">Email</p>
+      <input type="email" id="email" placeholder="Enter your email">
+      
+      <p class="text-sm text-gray-600 mb-2">Password</p>
+      <input type="password" id="password" placeholder="Enter your password">
 
-      <nav class="hidden md:flex space-x-6">
-        <a href="/" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
-        <a href="/#features" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">Features</a>
-        <a href="/#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">About</a>
-        <a id="account" href="account.html" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200">
-          <span id="navUsername">Account</span>
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container mx-auto px-4 py-12">
-    <section id="authSection" class="bg-white shadow-md rounded-lg p-6 max-w-lg mx-auto text-center">
-      <h2 class="text-2xl font-semibold mb-4">Login</h2>
-      <button onclick="registerScratchAuth()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
-        Sign In With ScratchID
-      </button>
-      <br>
-      <button onclick="guest()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
-        Continue as a temporary guest user (temp removed) 
-      </button>
-      <p id="scratchMessage" class="text-sm text-green-600 mt-4"></p>
-    </section>
-
-    <div id="emailModal" class="modal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeEmailModal()">&times;</span>
-        <h3 class="text-xl font-semibold mb-4">Enter Your Email</h3>
-        <p class="mb-4">Please provide your email address to link with your account. This is required.</p>
-        <input type="email" id="emailInput" class="w-full p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="your.email@example.com" required />
-        <button onclick="submitEmail()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
-          Submit Email
-        </button>
-        <p id="emailError" class="text-red-500 text-sm mt-2 hidden"></p>
+      <p id="error" class="error hidden"></p>
+      <div class="flex space-x-4">
+        <button onclick="register()">Register</button>
+        <button onclick="login()">Login</button>
       </div>
     </div>
 
-    <section id="loggedInContent" class="hidden">
-      <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
-        <h2 id="welcomeMessage" class="text-2xl font-bold mb-4"></h2>
-        <div id="mainText" class="text-left"></div>
-        <b>Risk Of Getting Banned:</b> <p id="banRisk">Low risk</p>
-        <b>Email:</b> <p id="current-email">Loading...</p>
-        <button onclick="logout()" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Logout</button>
-        <button onclick="myprojects()" class="mt-4 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">My Projects</button>
-        <button onclick="changeEmail()" class="mt-4 ml-2 bg-orange-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Change Email</button>
-        <button onclick="messages()" class="mt-4 ml-2 bg-green-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Messages</button>
-        <p id="scratchMessage" class="text-sm text-orange-600 mt-4"></p>
-      </div>
-
-      <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto mt-6">
-        <h3 class="text-xl font-semibold mb-2">Developer Token</h3>
-        <p id="devTokens" class="text-green-600 font-medium mb-2"></p>
-        <button onclick="devToken()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded">Generate Dev Token</button>
-        <a href="https://myscratchblocks.github.io/API/docs" class="block mt-2 text-indigo-600 hover:underline">Developer Docs</a>
-      </div>
-    </section>
+    <div id="dashboard" class="bg-white p-6 rounded-lg shadow-md mt-8 hidden">
+      <h3 class="text-xl font-semibold mb-4">Welcome, <span id="userDisplay"></span>!</h3>
+      <p>Email: <span id="emailDisplay"></span></p>
+      <button class="mt-4 bg-red-500 hover:bg-red-600" onclick="logout()">Logout</button>
+    </div>
   </main>
 
   <script>
-    const username22 = localStorage.getItem('username');
-    if (username22 && username22.includes('GuestUser')) {
-      logout();
+    const API_BASE = "/api";
+
+    function showError(msg) {
+      const err = document.getElementById("error");
+      err.textContent = msg;
+      err.classList.remove("hidden");
     }
 
-    // Global variable to store plainUsername temporarily
-    let tempPlainUsername = null;
+    function hideError() {
+      document.getElementById("error").classList.add("hidden");
+    }
 
-    window.onload = async function() {
-      await checkAuth();
+    async function register() {
+      hideError();
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-      const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
-      const username = localStorage.getItem('username');
-      const currentEmail = localStorage.getItem("current-email");
-
-      if (isLoggedIn && username) {
-        document.getElementById('authSection')?.classList.add('hidden');
-        document.getElementById('loggedInContent')?.classList.remove('hidden');
-        document.getElementById('welcomeMessage').textContent = `Welcome to your account dashboard, ${username}!`;
-
-        document.getElementById("current-email").innerHTML = `${currentEmail || 'Not set'}`;
-        document.getElementById('current-email').style.color = currentEmail ? 'green' : 'gray';
-
-        try {
-          const res = await fetch(`https://editor-compiler.onrender.com/api/users/${username}`);
-          const json = await res.json();
-          const uploadedprojects = json.totalProjects ?? "N/A";
-          const views = json.totalViews ?? "N/A";
-          const likes = json.totalLikes ?? "N/A";
-          const favs = json.totalFavorites ?? "N/A";
-
-          document.getElementById('mainText').innerHTML = `
-            <p><strong>Number Of Projects I Uploaded:</strong> ${uploadedprojects}</p>
-            <p><strong>Total Views:</strong> ${views}</p>
-            <p><strong>Total Upvotes:</strong> ${likes}</p>
-            <p><strong>Total Favourites:</strong> ${favs}</p>
-          `;
-        } catch (err) {
-          document.getElementById('mainText').innerHTML = `<p class="text-red-500">Unable to fetch user stats. If you need to see your stats, please reload or/and try again later.</p>`;
-        }
-      }
-      
-      const guestUser = localStorage.getItem('guestUser');
-      if (guestUser) {
-        const messageBox = document.getElementById("scratchMessage");
-        messageBox.textContent = "WARNING: You are using a temporary guest account. After signing out, you will lose administrative access over your projects that you uploaded using Guest Mode.";
-        document.getElementById("banRisk").innerHTML = "Not Evaluated - Guest accounts can't be evaluated for a ban risk";
-        document.getElementById('banRisk').style.color = 'gray';
+      if (!username || !email || !password) {
+        return showError("All fields are required.");
       }
 
-      if (username == "bannie6") {
-        document.getElementById("banRisk").innerHTML = "Medium Risk";
-        document.getElementById('banRisk').style.color = 'orange';
-      } else if (username == "ENTER HIGH BAN RISK USER HERE") {
-        document.getElementById("banRisk").innerHTML = "High Risk - Stop breaking the rules to avoid getting banned!";
-        document.getElementById('banRisk').style.color = 'red';
-      } else if (username == "ENTER SUPER HIGH BAN RISK USER HERE") {
-        document.getElementById("banRisk").innerHTML = "Super High Risk - Account Limited - Certain features are disabled, stop breaking the rules!";
-        document.getElementById('banRisk').style.color = 'SlateBlue';
+      const res = await fetch(`${API_BASE}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        showError(data.error || "Registration failed.");
+      } else {
+        localStorage.setItem("username", username);
+        localStorage.setItem("email", email);
+        showDashboard();
       }
     }
 
-    async function checkAuth() {
-      const PC = new URLSearchParams(window.location.search).get('id');
-      localStorage.setItem('SECURE_ID', PC);
-      if (PC) {
-        try {
-          const res = await fetch(`https://corsproxy.io/?url=https://scratch-id.onrender.com/verification/${PC}`);
-          const data = await res.json();
-          const key = Object.keys(data)[0];
-          const plainUsername = data[key].user;
-          const encodedUsername = btoa(plainUsername);
+    async function login() {
+      hideError();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-          if (encodedUsername === 'ENTER BANNED USERS API KEYS HERE') {
-            localStorage.clear();
-            window.location.href = 'banscreen.html?reason=spam';
-            return;
-          }
+      if (!username || !password) {
+        return showError("Username and password are required.");
+      }
 
-          // Store plainUsername in a global variable
-          tempPlainUsername = plainUsername;
+      const res = await fetch(`${API_BASE}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
 
-          // Show the email modal
-          document.getElementById('emailModal').style.display = 'flex';
-          document.getElementById('emailInput').focus();
-
-        } catch (err) {
-          console.error('Token verification failed:', err);
-        }
+      const data = await res.json();
+      if (!res.ok) {
+        showError(data.error || "Login failed.");
+      } else {
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
+        showDashboard();
       }
     }
 
-    async function submitEmail() {
-      const emailInput = document.getElementById('emailInput');
-      const emailError = document.getElementById('emailError');
-      const email = emailInput.value;
+    function showDashboard() {
+      const username = localStorage.getItem("username");
+      const email = localStorage.getItem("email");
+      if (!username || !email) return;
 
-      if (!email || !/\S+@\S+\.\S+/.test(email)) {
-        emailError.textContent = "Please enter a valid email address.";
-        emailError.classList.remove('hidden');
-        return;
-      }
-
-      emailError.classList.add('hidden');
-
-      if (tempPlainUsername) {
-        try {
-          await fetch(`https://editor-compiler.onrender.com/api/users/${tempPlainUsername}/email/set?email=${email}`);
-          localStorage.setItem('current-email', email);
-          localStorage.setItem('usernameEnc', btoa(tempPlainUsername));
-          localStorage.setItem('username', tempPlainUsername);
-          localStorage.setItem('loggedIn', 'true');
-          window.location.href = 'account.html';
-        } catch (error) {
-          console.error("Error setting email:", error);
-          emailError.textContent = "Failed to link email. Please try again.";
-          emailError.classList.remove('hidden');
-        }
-      }
-    }
-
-    function closeEmailModal() {
-      document.getElementById('emailModal').style.display = 'none';
-      // Clear temporary username if modal is closed without submitting email
-      tempPlainUsername = null;
-    }
-
-    async function changeEmail() {
-      const plainUsername = localStorage.getItem('username');
-      if (!plainUsername) {
-        alert("Please log in to change your email.");
-        return;
-      }
-
-      const email = prompt("Please enter your new email:");
-      if (email && /\S+@\S+\.\S+/.test(email)) {
-        try {
-          await fetch(`https://editor-compiler.onrender.com/api/users/${plainUsername}/email/set?email=${email}`);
-          localStorage.setItem('current-email', email);
-          alert("Email updated successfully!");
-          document.getElementById("current-email").innerHTML = `${email}`;
-          document.getElementById('current-email').style.color = 'green';
-        } catch (error) {
-          console.error("Error changing email:", error);
-          alert("Failed to update email. Please try again later.");
-        }
-      } else if (email !== null) {
-        alert("Invalid email entered. Email not updated.");
-      }
-    }
-
-    function registerScratchAuth() {
-      const messageBox = document.getElementById("scratchMessage");
-      const redirectLocation = btoa(window.location.href);
-      const authUrl = `https://scratch-id.onrender.com/?redirect=${redirectLocation}&name=MyScratchBlocks`;
-
-      messageBox.textContent = "Redirecting to ScratchID...";
-      setTimeout(() => {
-        window.location.href = authUrl;
-      }, 2000);
+      document.getElementById("userDisplay").textContent = username;
+      document.getElementById("emailDisplay").textContent = email;
+      document.getElementById("authBox").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
     }
 
     function logout() {
       localStorage.clear();
-      window.location.href = 'account.html';
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("authBox").classList.remove("hidden");
     }
 
-    // Removed the guest() function as requested by the original HTML comment.
-
-    function myprojects() {
-      const username = localStorage.getItem('username');
-      if (username) {
-        window.location.href = `https://myscratchblocks.github.io/mystuff`;
+    window.onload = function () {
+      if (localStorage.getItem("username")) {
+        showDashboard();
       }
-    }
-
-    function messages() {
-      const username = localStorage.getItem('username');
-      if (username) {
-        window.location.href = `https://myscratchblocks.github.io/messages`;
-      }
-    }
-
-    function devToken() {
-      const username = localStorage.getItem('username');
-      const devTokens = document.getElementById('devTokens');
-      if (username && devTokens) {
-        const token = btoa(username);
-        devTokens.textContent = `Your dev token is: ${token} - Please do not share your dev token unless it is sharing it with something only you can see`;
-      }
-    }
+    };
   </script>
 </body>
-</html>
+</html>"
