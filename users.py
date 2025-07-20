@@ -345,7 +345,6 @@ def register_login(app):
 
         return jsonify({"message": f"You have unfollowed {username}."})
 
-    # Followers page route
     @app.route('/users/<username>/followers')
     def followers_page(username):
         user_data = get_user_file(username)
@@ -354,7 +353,8 @@ def register_login(app):
 
         user_data.pop('password', None)
         user_data.pop('_sha', None)
-        return render_template('followers.html', profile_user=user_data)
+        followers = user_data.get('followers', [])
+        return render_template('followers.html', profile_user=user_data, followers=followers)
 
     # Following page route
     @app.route('/users/<username>/following')
@@ -365,4 +365,5 @@ def register_login(app):
 
         user_data.pop('password', None)
         user_data.pop('_sha', None)
-        return render_template('following.html', profile_user=user_data)
+        following = user_data.get('following', [])
+        return render_template('following.html', profile_user=user_data, following=following)
