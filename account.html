@@ -60,6 +60,8 @@
     <div id="dashboard" class="bg-white p-6 rounded-lg shadow-md mt-8 hidden">
       <h3 class="text-xl font-semibold mb-4">Welcome, <span id="userDisplay"></span>!</h3>
       <p>Email: <span id="emailDisplay"></span></p>
+      <button class="mt-4 bg-red-500 hover:bg-red-600" onclick="home()">Home</button>
+      <button class="mt-4 bg-red-500 hover:bg-red-600" onclick="mystuff()">My Stuff</button>
       <button class="mt-4 bg-red-500 hover:bg-red-600" onclick="logout()">Logout</button>
     </div>
   </main>
@@ -122,15 +124,15 @@
       if (!res.ok) {
         showError(data.error || "Login failed.");
       } else {
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("email", data.email);
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('email', data.email);
         showDashboard();
       }
     }
 
     function showDashboard() {
-      const username = localStorage.getItem("username");
-      const email = localStorage.getItem("email");
+      const username = localStorage.getItem('username');
+      const email = localStorage.getItem('email');
       if (!username || !email) return;
 
       document.getElementById("userDisplay").textContent = username;
@@ -150,6 +152,14 @@
         showDashboard();
       }
     };
+
+    function home() {
+      window.location.href = '/';
+    }
+
+    function mystuff() {
+      window.location.href = '/mystuff';
+    }
   </script>
 </body>
 </html>"
