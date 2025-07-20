@@ -1,11 +1,12 @@
 import os
 import base64
 import json
+from datetime import datetime
+
 import requests
 from flask import request, jsonify, session, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from datetime import datetime
 
 def register_login(app):
     GH_KEY = os.getenv('GH_KEY')
@@ -62,14 +63,15 @@ def register_login(app):
         available_ids = fetch_available_project_ids()
         filtered = [proj for proj in user_data.get("projects", []) if proj["id"] in available_ids]
         user_data["projects"] = filtered
-        r = requests.get(f'https://editor-compiler.onrender.com/userapi/{user_data["username"]}') 
-        json = r.json()
-        user_data["stats"] = json["stats"] 
+        r = requests.get(f'https://editor-compiler.onrender.com/userapi/{user_data["username"]}')
+        stats_data = r.json()
+        user_data["stats"] = stats_data.get("stats", {})
         return user_data
 
     def save_profile_picture(file, username):
         if not file:
             return None
+        os.makedirs("static/uploads", exist_ok=True)
         filename = secure_filename(f"{username}_{datetime.utcnow().timestamp()}.png")
         upload_path = os.path.join("static/uploads", filename)
         file.save(upload_path)
@@ -105,8 +107,9 @@ def register_login(app):
             "totalLikes": 0,
             "totalFavorites": 0,
             "achievements": [],
-            "created_at": ""
+            "created_at": datetime.utcnow().isoformat()
         }
+
         success = create_or_update_user_file(username, user_data)
         if not success:
             return jsonify({"error": "Failed to save user"}), 500
@@ -226,8 +229,7 @@ def register_login(app):
         user_data.pop('password', None)
         user_data.pop('_sha', None)
 
-        is_owner = False
-        if 'user' in session and session['user']['username'] == username:
-            is_owner = True
+        is_owner = session.get('user', {}).get('username') == username
 
         return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, logged_in_username=session.get('username'))
+ 
