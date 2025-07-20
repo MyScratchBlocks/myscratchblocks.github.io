@@ -7,7 +7,7 @@ def register_routes(app):
     JS_DIR = os.path.join(ROOT_DIR, 'js')                       # /js
     INDEX_PATH = os.path.join(BASE_DIR, 'index.html')           # /projects/index.html
 
-    def serve_index(id):
+    def serve_root(id):
         try:
             with open(INDEX_PATH, 'r') as f:
                 html = f.read()
@@ -18,5 +18,5 @@ def register_routes(app):
     def serve_js(filename):
         return send_from_directory(JS_DIR, filename)
 
-    app.add_url_rule('/projects/<id>', 'serve_index', serve_index)
+    app.add_url_rule('/projects/<id>', 'serve_root', serve_root)
     app.add_url_rule('/js/<path:filename>', 'serve_js', serve_js)
