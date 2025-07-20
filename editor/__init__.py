@@ -15,4 +15,4 @@ def register(app):
         except FileNotFoundError:
             return "index.html not found", 404
 
-    app.add_url_rule('/editor/<id>', 'serve_editor', serve_editor)
+    app.add_url_rule('/editor/<int:id>', 'serve_editor', serve_editor)
