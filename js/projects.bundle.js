@@ -424,7 +424,7 @@ function createCommentElement(comment, depth = 0) {
 
   const authorDiv = document.createElement('span');
   authorDiv.className = 'font-semibold text-blue-700';
-  authorDiv.textContent = username;
+  authorDiv.innerHTML = `<a href="/users/${username}">${username}</a>`;
   headerDiv.appendChild(authorDiv);
 
   const timestampDiv = document.createElement('span');
@@ -676,7 +676,7 @@ if (favBtn) {
 const seeInsideBtnGlobal = document.getElementById('see-inside-btn');
 if (seeInsideBtnGlobal) {
   seeInsideBtnGlobal.addEventListener('click', () => {
-    window.location.href = `/editor/#${id}`;
+    window.location.href = `/editor/${id}`;
   });
 }
 
