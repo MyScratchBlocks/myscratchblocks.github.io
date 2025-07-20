@@ -199,7 +199,7 @@ def serve_index(path):
     return send_from_directory(os.getcwd(), path)
 
 @app.errorhandler(404)
-def notfound():
+def notfound(e):
     return send_from_directory(os,getcwd(), '404.html')
     
 # Optional: add a root route
