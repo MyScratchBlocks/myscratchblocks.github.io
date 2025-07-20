@@ -8,7 +8,7 @@ if (loginModal) loginModal.style.display = 'none';
 
 // Extract project ID from URL hash
 const hash = window.location.hash.substring(1);
-const id = hash.split('?')[0];
+const id = window.PI;
 
 // Set iframe source to embed Scratch GUI with project ID
 const iframe = document.getElementById('id-frame');
@@ -593,7 +593,7 @@ async function fetchAndDisplayAds() {
              alt="${meta.title || 'Ad Image'}"
              class="w-full h-24 object-cover rounded-md mb-2"
              onerror="this.onerror=null;this.src='/images/No%20Cover%20Available.png';">
-        <a href="/projects#${adId}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">
+        <a href="/projects/${adId}" target="_blank" class="text-blue-500 hover:underline text-sm mt-2 block">
           By ${meta.author?.username || 'Unknown'}
         </a>
       `;
@@ -711,7 +711,7 @@ function copyToClipboard() {
 const claimAdBtn = document.getElementById('claimAd');
 if (claimAdBtn) {
   claimAdBtn.addEventListener('click', () => {
-    const project = prompt('What is your project link? (e.g., [https://myscratchblocks.ddns.net/projects#YOUR_PROJECT_ID](https://myscratchblocks.ddns.net/projects#YOUR_PROJECT_ID))');
+    const project = prompt('What is your project link? (e.g., [https://myscratchblocks.ddns.net/projects/YOUR_PROJECT_ID](https://myscratchblocks.ddns.net/projects/YOUR_PROJECT_ID))');
     if (!project) return; // User cancelled
 
     if (!project.includes('myscratchblocks.ddns.net/projects#')) { // Updated domain check
@@ -719,7 +719,7 @@ if (claimAdBtn) {
       return;
     }
 
-    const projectIdMatch = project.match(/#([a-zA-Z0-9]+)$/);
+    const projectIdMatch = project.match(/([a-zA-Z0-9]+)$/);
     let projectIdToClaim = '';
     if (projectIdMatch && projectIdMatch[1]) {
       projectIdToClaim = projectIdMatch[1];
