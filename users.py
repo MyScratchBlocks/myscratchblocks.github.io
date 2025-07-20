@@ -57,7 +57,18 @@ def register_login(app):
         r = requests.get(PROJECTS_API)
         if r.status_code != 200:
             return set()
-        return {project["id"] for project in r.json()}
+
+        try:
+            data = r.json()
+            if isinstance(data, list):
+                if all(isinstance(item, dict) and "id" in item for item in data):
+                    return {project["id"] for project in data}
+                elif all(isinstance(item, str) for item in data):
+                    return set(data)
+        except ValueError:
+            pass
+
+        return set()
 
     def filter_user_projects(user_data):
         available_ids = fetch_available_project_ids()
@@ -76,8 +87,6 @@ def register_login(app):
         upload_path = os.path.join("static/uploads", filename)
         file.save(upload_path)
         return f"/static/uploads/{filename}"
-
-    # --- API Endpoints ---
 
     @app.route('/api/register', methods=['POST'])
     def register():
@@ -231,5 +240,4 @@ def register_login(app):
 
         is_owner = session.get('user', {}).get('username') == username
 
-        return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, logged_in_username=session.get('username'))
- 
+        return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, logged_in_usernam
