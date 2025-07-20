@@ -2,3 +2,4 @@ flask
 scratchattach
 requests
 pillow
+werkzeug
