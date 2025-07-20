@@ -1,22 +1,22 @@
 import os
-from flask import Flask, render_template_string, send_from_directory
+from flask import render_template_string, send_from_directory
 
-app = Flask(__name__)
+def register_routes(app):
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))       # /projects
+    ROOT_DIR = os.path.dirname(BASE_DIR)                        # /
+    JS_DIR = os.path.join(ROOT_DIR, 'js')                       # /js
+    INDEX_PATH = os.path.join(BASE_DIR, 'index.html')           # /projects/index.html
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(BASE_DIR)  # Go up one level to reach / (for /js access)
+    def serve_index(id):
+        try:
+            with open(INDEX_PATH, 'r') as f:
+                html = f.read()
+            return render_template_string(html, id=id)
+        except FileNotFoundError:
+            return "index.html not found", 404
 
-@app.route('/projects/<id>')
-def serve_index_with_id(id):
-    index_path = os.path.join(BASE_DIR, 'index.html')
-    try:
-        with open(index_path, 'r') as f:
-            html = f.read()
-        return render_template_string(html, id=id)
-    except FileNotFoundError:
-        return "index.html not found", 404
+    def serve_js(filename):
+        return send_from_directory(JS_DIR, filename)
 
-@app.route('/js/<path:filename>')
-def serve_js(filename):
-    js_path = os.path.join(ROOT_DIR, 'js')
-    return send_from_directory(js_path, filename)
+    app.add_url_rule('/projects/<id>', 'serve_index', serve_index)
+    app.add_url_rule('/js/<path:filename>', 'serve_js', serve_js)
