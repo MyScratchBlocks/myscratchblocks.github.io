@@ -22,7 +22,10 @@
   <iframe id="scratchFrame"></iframe>
 
   <script type="module">
-    document.getElementById('scratchFrame').src = `https://MyScratchBlocks.ddns.net/scratch-gui/editor#${{{ id }}.replace("undefined", "").replace("#0", "")}`;
+    const idVal = {{ id|tojson }};
+
+    document.getElementById('scratchFrame').src = `https://MyScratchBlocks.ddns.net/scratch-gui/editor#${idVal.replace("undefined", "").replace("#0", "")}`;
+
     function wait(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -36,28 +39,30 @@
 
       const params = new URLSearchParams(window.location.search);
       const remix = params.get('remix');
+
       if(remix && username) {
         const res = await fetch(`https://editor-compiler.onrender.com/remix/${remix}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ remixId: remix, username: localStorage.getItem('username') })
+          body: JSON.stringify({ remixId: remix, username: username })
         });
 
         const json = await res.json();
         window.location.href = `/projects#${json.id}`;
+        return;
       }
         
       // If no hash and both username and sb3 exist, try to share the
-      if ({{ id }} && username && !remix) {
+      if (idVal && username && !remix) {
         try {
           const response = await fetch('https://editor-compiler.onrender.com/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username: localStorage.getItem('username') })
+            body: JSON.stringify({ username: username })
           });
 
           const res = await response.json();
@@ -75,11 +80,12 @@
       }
 
       // Load editor in iframe
-      const hash = {{ id }};
+      const hash = idVal;
       const baseUrl = "https://myscratchblocks.ddns.net/scratch-gui/editor";
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
       document.getElementById("scratchFrame").src = finalUrl;
-      if(!localStorage.getItem('new-project') === '') {
+
+      if(localStorage.getItem('new-project') === '') {
         window.location.href = `projects/#${hash}`;
         localStorage.setItem('new-project', '');
       }
@@ -112,9 +118,9 @@
 
     const iframe = document.getElementById('scratchFrame');
     const iframeSrc = iframe.getAttribute('src');
-    const expectedSrc = `https://myscratchblocks.github.io/editor/#${res.id}`;
+    const expectedSrc = `https://myscratchblocks.github.io/editor/#${idVal}`;
     if (iframeSrc !== expectedSrc) {
-      window.pid = {{ id }};
+      window.pid = idVal;
       window.location.href = `projects/${window.pid}`;
     }
   </script>
