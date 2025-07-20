@@ -27,7 +27,7 @@
         {% for user in followers %}
         <li class="flex items-center py-4 space-x-4">
           <img src="{{ user.profile_pic_url }}" alt="{{ user.username }} avatar" class="avatar" onerror="this.src='/images/default-avatar.png'">
-          <a href="/profile/{{ user.username }}" class="font-semibold text-indigo-600 hover:underline">{{ user.username }}</a>
+          <a href="/users/{{ user.username }}" class="font-semibold text-indigo-600 hover:underline">{{ user.username }}</a>
         </li>
         {% endfor %}
       </ul>
