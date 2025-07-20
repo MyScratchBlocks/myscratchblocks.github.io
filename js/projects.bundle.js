@@ -78,11 +78,6 @@ async function fetchMeta() {
   }
 
   // Use the globally available currentUsername
-  if (!currentUsername) {
-    console.warn("Username not available. Cannot fetch project metadata.");
-    loading.classList.add('hidden');
-    return null;
-  }
 
 
   if (!id) {
@@ -92,7 +87,7 @@ async function fetchMeta() {
   }
 
   try {
-    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername}`, {
+    const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/meta/${currentUsername || 'test'}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
