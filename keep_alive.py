@@ -186,10 +186,16 @@ def list_sb3_files_in_zip():
 def status():
     return jsonify({"logs": upload_logs})
 
+@app.route('/')
+def serve_index():
+    # Serve index.html from the current working directory
+    return send_from_directory(os.getcwd(), 'index.html')
+
 @app.route('/<path:filename>')
-def serve_static_files(filename):
-    return send_from_directory('.', filename)
-  
+def serve_files(filename):
+    # Serve any other file from the current working directory
+    return send_from_directory(os.getcwd(), filename)
+    
 def run():
     app.run(host='0.0.0.0')
 
