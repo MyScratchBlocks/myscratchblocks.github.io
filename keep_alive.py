@@ -5,10 +5,12 @@ from io import BytesIO
 import os, base64, requests, zipfile
 from projects import register_routes
 from editor import register
+from users import register_login
 
 app = Flask(__name__)
 register_routes(app)
 register(app)
+register_login(app)
 GITHUB_USER = 'MyScratchBlocks'
 REPO_NAME = 'Project-DB'
 GITHUB_API_BASE = f'https://api.github.com/repos/{GITHUB_USER}/{REPO_NAME}/contents'
