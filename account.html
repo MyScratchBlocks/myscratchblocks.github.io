@@ -20,13 +20,16 @@
       margin-bottom: 1rem;
     }
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 1.5rem; /* wider horizontally */
       border: none;
       border-radius: 0.375rem;
       background-color: #4f46e5;
       color: white;
       font-weight: 600;
       cursor: pointer;
+      transition: background-color 0.2s;
+      min-width: 100px;
+      text-align: center;
     }
     button:hover {
       background-color: #4338ca;
@@ -42,13 +45,13 @@
     <h2 class="text-2xl font-bold mb-6 text-center">Login / Register</h2>
     <div id="authBox" class="bg-white p-6 rounded-lg shadow-md">
       <p class="text-sm text-gray-600 mb-2">Username</p>
-      <input type="text" id="username" placeholder="Enter your username">
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="username" />
       
       <p class="text-sm text-gray-600 mb-2">Email</p>
-      <input type="email" id="email" placeholder="Enter your email">
+      <input type="email" id="email" placeholder="Enter your email" autocomplete="email" />
       
       <p class="text-sm text-gray-600 mb-2">Password</p>
-      <input type="password" id="password" placeholder="Enter your password">
+      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" />
 
       <p id="error" class="error hidden"></p>
       <div class="flex space-x-4">
@@ -60,9 +63,11 @@
     <div id="dashboard" class="bg-white p-6 rounded-lg shadow-md mt-8 hidden">
       <h3 class="text-xl font-semibold mb-4">Welcome, <span id="userDisplay"></span>!</h3>
       <p>Email: <span id="emailDisplay"></span></p>
-      <button class="mt-4 bg-red-500 hover:bg-red-600" onclick="home()">Home</button>
-      <button class="mt-4 bg-red-500 hover:bg-red-600" onclick="mystuff()">My Stuff</button>
-      <button class="mt-4 bg-red-500 hover:bg-red-600" onclick="logout()">Logout</button>
+      <div class="flex space-x-4 mt-4">
+        <button class="bg-red-500 hover:bg-red-600" onclick="home()">Home</button>
+        <button class="bg-red-500 hover:bg-red-600" onclick="mystuff()">My Stuff</button>
+        <button class="bg-red-500 hover:bg-red-600" onclick="logout()">Logout</button>
+      </div>
     </div>
   </main>
 
@@ -76,64 +81,86 @@
     }
 
     function hideError() {
-      document.getElementById("error").classList.add("hidden");
+      const err = document.getElementById("error");
+      err.textContent = '';
+      err.classList.add("hidden");
     }
 
     async function register() {
       hideError();
-      const username = document.getElementById("username").value;
-      const email = document.getElementById("email").value;
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
       if (!username || !email || !password) {
         return showError("All fields are required.");
       }
 
-      const res = await fetch(`${API_BASE}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password })
-      });
+      try {
+        const res = await fetch(`${API_BASE}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        });
 
-      const data = await res.json();
-      if (!res.ok) {
-        showError(data.error || "Registration failed.");
-      } else {
-        localStorage.setItem('username', username);
-        localStorage.setItem('email', email);
-        showDashboard();
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || "Registration failed.");
+        } else {
+          // Store username and email from response if available, fallback to input
+          localStorage.setItem("username", data.username || username);
+          localStorage.setItem("email", data.email || email);
+          showDashboard();
+        }
+      } catch (err) {
+        showError("Network error. Please try again.");
       }
     }
 
     async function login() {
       hideError();
-      const username = document.getElementById("username").value;
+      const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
 
       if (!username || !password) {
         return showError("Username and password are required.");
       }
 
-      const res = await fetch(`${API_BASE}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
 
-      const data = await res.json();
-      if (!res.ok) {
-        showError(data.error || "Login failed.");
-      } else {
-        localStorage.setItem('username', data.username);
-        localStorage.setItem('email', data.email);
-        showDashboard();
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || "Login failed.");
+        } else {
+          // Store username and email from response (email required)
+          if (!data.username || !data.email) {
+            return showError("Login response missing username or email.");
+          }
+          localStorage.setItem('username', data.username);
+          localStorage.setItem('email', data.email);
+          showDashboard();
+        }
+      } catch (err) {
+        showError("Network error. Please try again.");
       }
     }
 
     function showDashboard() {
       const username = localStorage.getItem('username');
       const email = localStorage.getItem('email');
-      if (!username || !email) return;
+
+      if (!username || !email) {
+        // Data missing — logout just in case
+        logout();
+        return;
+      }
 
       document.getElementById("userDisplay").textContent = username;
       document.getElementById("emailDisplay").textContent = email;
@@ -145,10 +172,15 @@
       localStorage.clear();
       document.getElementById("dashboard").classList.add("hidden");
       document.getElementById("authBox").classList.remove("hidden");
+      hideError();
+      // Clear input fields for convenience
+      document.getElementById("username").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
     }
 
     window.onload = function () {
-      if (localStorage.getItem('username')) {
+      if (localStorage.getItem("username") && localStorage.getItem("email")) {
         showDashboard();
       }
     };
@@ -162,4 +194,4 @@
     }
   </script>
 </body>
-</html>"
+</html>
