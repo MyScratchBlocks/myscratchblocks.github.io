@@ -53,10 +53,15 @@ def register_login(app):
         return r.status_code in [200, 201]
 
     def fetch_available_project_ids():
-        r = requests.get(PROJECTS_API)
-        if r.status_code != 200:
+        try:
+            r = requests.get(PROJECTS_API)
+            r.raise_for_status()
+            data = r.json()
+            # If data is a dict with 'projects' key, adjust here accordingly
+            projects = data if isinstance(data, list) else data.get('projects', [])
+            return {project["id"] for project in projects}
+        except Exception:
             return set()
-        return {project["id"] for project in r.json()}
 
     def filter_user_projects(user_data):
         available_ids = fetch_available_project_ids()
@@ -64,9 +69,9 @@ def register_login(app):
         user_data["projects"] = filtered
         user_data["stats"] = {
             "totalProjects": len(filtered),
-            "totalViews": sum(p["stats"].get("views", 0) for p in filtered),
-            "totalLikes": sum(p["stats"].get("loves", 0) for p in filtered),
-            "totalFavorites": sum(p["stats"].get("favorites", 0) for p in filtered),
+            "totalViews": sum(p.get("stats", {}).get("views", 0) for p in filtered),
+            "totalLikes": sum(p.get("stats", {}).get("loves", 0) for p in filtered),
+            "totalFavorites": sum(p.get("stats", {}).get("favorites", 0) for p in filtered),
         }
         return user_data
 
@@ -103,12 +108,9 @@ def register_login(app):
             "discord_link": "#",
             "followers": 0,
             "following": 0,
-            "totalProjects": 0,
-            "totalViews": 0,
-            "totalLikes": 0,
-            "totalFavorites": 0,
+            "projects": [],
             "achievements": [],
-            "created_at": ""
+            "created_at": datetime.utcnow().isoformat() + "Z"
         }
         success = create_or_update_user_file(username, user_data)
         if not success:
@@ -198,7 +200,7 @@ def register_login(app):
 
         editable_fields = [
             "profile_bio", "profile_pic_url", "discord_link", "email", "achievements",
-            "followers", "following", "totalProjects", "totalViews", "totalLikes", "totalFavorites"
+            "followers", "following", "projects"
         ]
 
         for field in editable_fields:
