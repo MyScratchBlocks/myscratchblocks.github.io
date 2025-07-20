@@ -140,11 +140,11 @@
           showError(data.error || "Login failed.");
         } else {
           // Store username and email from response (email required)
-          if (!data.username || !data.email) {
+          if (!data.message) {
             return showError("Login response missing username or email.");
           }
-          localStorage.setItem('username', data.username);
-          localStorage.setItem('email', data.email);
+          localStorage.setItem('username', username);
+          localStorage.setItem('email', document.getElementById("email").value);
           showDashboard();
         }
       } catch (err) {
