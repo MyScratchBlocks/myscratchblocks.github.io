@@ -149,8 +149,8 @@ def register_login(app):
                 users.append(user_data)
         return jsonify(users)
 
-    @app.route('/api/update_profile/<username>', methods=['PUT'])
-    def update_profile(username):
+    @app.route('/api/edit_profile/<username>', methods=['PUT'])
+    def edit_profile(username):
         if 'user' not in session or session['user']['username'] != username:
             return jsonify({"error": "Unauthorized"}), 401
 
@@ -159,9 +159,25 @@ def register_login(app):
         if not user_data:
             return jsonify({"error": "User not found"}), 404
 
-        user_data['profile_bio'] = data.get('profile_bio', user_data.get('profile_bio'))
-        user_data['profile_pic_url'] = data.get('profile_pic_url', user_data.get('profile_pic_url'))
-        user_data['discord_link'] = data.get('discord_link', user_data.get('discord_link'))
+    # Fields allowed to be updated
+        editable_fields = [
+            "profile_bio",
+            "profile_pic_url",
+            "discord_link",
+            "email",
+            "achievements",
+            "followers",
+            "following",
+            "totalProjects",
+            "totalViews",
+            "totalLikes",
+            "totalFavorites",
+        # Add more fields here as needed
+        ]
+
+        for field in editable_fields:
+            if field in data:
+                user_data[field] = data[field]
 
         success = create_or_update_user_file(username, user_data)
         if not success:
