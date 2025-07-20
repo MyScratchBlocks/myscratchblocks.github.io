@@ -8,6 +8,7 @@ from flask import request, jsonify, session, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
+
 def register_login(app):
     GH_KEY = os.getenv('GH_KEY')
     GITHUB_REPO = "kRxZykRxZy/ScratchGems-MAIN"
@@ -111,6 +112,8 @@ def register_login(app):
             "discord_link": "#",
             "followers": 0,
             "following": 0,
+            "followers_list": [],
+            "following_list": [],
             "totalProjects": 0,
             "totalViews": 0,
             "totalLikes": 0,
@@ -240,4 +243,126 @@ def register_login(app):
 
         is_owner = session.get('user', {}).get('username') == username
 
-        return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, logged_in_username=session.get('username')) 
+        return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, logged_in_username=session.get('username'))
+
+    # Followers and Following endpoints
+
+    @app.route('/api/users/<username>/followers', methods=['GET'])
+    def get_followers(username):
+        user_data = get_user_file(username)
+        if not user_data:
+            return jsonify({"error": "User not found"}), 404
+
+        followers_list = user_data.get('followers_list', [])
+
+        followers_info = []
+        for follower_username in followers_list:
+            follower_data = get_user_file(follower_username)
+            if follower_data:
+                follower_data.pop('password', None)
+                follower_data.pop('_sha', None)
+                followers_info.append({
+                    "username": follower_data['username'],
+                    "profile_pic_url": follower_data.get("profile_pic_url"),
+                    "profile_bio": follower_data.get("profile_bio", "")
+                })
+        return jsonify(followers_info)
+
+    @app.route('/api/users/<username>/following', methods=['GET'])
+    def get_following(username):
+        user_data = get_user_file(username)
+        if not user_data:
+            return jsonify({"error": "User not found"}), 404
+
+        following_list = user_data.get('following_list', [])
+
+        following_info = []
+        for following_username in following_list:
+            following_data = get_user_file(following_username)
+            if following_data:
+                following_data.pop('password', None)
+                following_data.pop('_sha', None)
+                following_info.append({
+                    "username": following_data['username'],
+                    "profile_pic_url": following_data.get("profile_pic_url"),
+                    "profile_bio": following_data.get("profile_bio", "")
+                })
+        return jsonify(following_info)
+
+    @app.route('/api/users/<username>/follow', methods=['POST'])
+    def follow_user(username):
+        current_user = session.get('username')
+        if not current_user or current_user == username:
+            return jsonify({"error": "Invalid follow action"}), 400
+
+        user_to_follow = get_user_file(username)
+        current_user_data = get_user_file(current_user)
+
+        if not user_to_follow or not current_user_data:
+            return jsonify({"error": "User not found"}), 404
+
+        if username not in current_user_data.get('following_list', []):
+            current_user_data.setdefault('following_list', []).append(username)
+            current_user_data['following'] = len(current_user_data['following_list'])
+
+        if current_user not in user_to_follow.get('followers_list', []):
+            user_to_follow.setdefault('followers_list', []).append(current_user)
+            user_to_follow['followers'] = len(user_to_follow['followers_list'])
+
+        success1 = create_or_update_user_file(current_user, current_user_data)
+        success2 = create_or_update_user_file(username, user_to_follow)
+
+        if not (success1 and success2):
+            return jsonify({"error": "Failed to update follow status"}), 500
+
+        return jsonify({"message": f"You are now following {username}."})
+
+    @app.route('/api/users/<username>/unfollow', methods=['POST'])
+    def unfollow_user(username):
+        current_user = session.get('username')
+        if not current_user or current_user == username:
+            return jsonify({"error": "Invalid unfollow action"}), 400
+
+        user_to_unfollow = get_user_file(username)
+        current_user_data = get_user_file(current_user)
+
+        if not user_to_unfollow or not current_user_data:
+            return jsonify({"error": "User not found"}), 404
+
+        if username in current_user_data.get('following_list', []):
+            current_user_data['following_list'].remove(username)
+            current_user_data['following'] = len(current_user_data['following_list'])
+
+        if current_user in user_to_unfollow.get('followers_list', []):
+            user_to_unfollow['followers_list'].remove(current_user)
+            user_to_unfollow['followers'] = len(user_to_unfollow['followers_list'])
+
+        success1 = create_or_update_user_file(current_user, current_user_data)
+        success2 = create_or_update_user_file(username, user_to_unfollow)
+
+        if not (success1 and success2):
+            return jsonify({"error": "Failed to update unfollow status"}), 500
+
+        return jsonify({"message": f"You have unfollowed {username}."})
+
+    # Followers page route
+    @app.route('/users/<username>/followers')
+    def followers_page(username):
+        user_data = get_user_file(username)
+        if not user_data:
+            return "User not found", 404
+
+        user_data.pop('password', None)
+        user_data.pop('_sha', None)
+        return render_template('followers.html', profile_user=user_data)
+
+    # Following page route
+    @app.route('/users/<username>/following')
+    def following_page(username):
+        user_data = get_user_file(username)
+        if not user_data:
+            return "User not found", 404
+
+        user_data.pop('password', None)
+        user_data.pop('_sha', None)
+        return render_template('following.html', profile_user=user_data)
