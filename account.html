@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MyScratchBlocks Account | Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -11,68 +11,93 @@
       font-family: 'Inter', sans-serif;
       background-color: #f8fafc;
       color: #334155;
-    }
-    input {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 0.375rem;
-      margin-bottom: 1rem;
-    }
-    button {
-      padding: 0.5rem 1.5rem; /* wider horizontally */
-      border: none;
-      border-radius: 0.375rem;
-      background-color: #4f46e5;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      min-width: 100px;
-      text-align: center;
-    }
-    button:hover {
-      background-color: #4338ca;
-    }
-    .error {
-      color: red;
-      margin-bottom: 1rem;
+      min-height: 100vh;
     }
   </style>
 </head>
-<body class="antialiased">
-  <main class="container mx-auto px-4 py-12 max-w-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center">Login / Register</h2>
-    <div id="authBox" class="bg-white p-6 rounded-lg shadow-md">
-      <p class="text-sm text-gray-600 mb-2">Username</p>
-      <input type="text" id="username" placeholder="Enter your username" autocomplete="username" />
-      
-      <p class="text-sm text-gray-600 mb-2">Email</p>
-      <input type="email" id="email" placeholder="Enter your email" autocomplete="email" />
-      
-      <p class="text-sm text-gray-600 mb-2">Password</p>
-      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" />
+<body class="antialiased flex items-center justify-center">
+  <main class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-8 text-center text-indigo-600">Login / Register</h2>
 
-      <p id="error" class="error hidden"></p>
-      <div class="flex space-x-4">
-        <button onclick="register()">Register</button>
-        <button onclick="login()">Login</button>
+    <div id="authBox">
+      <label for="username" class="block mb-1 text-sm font-medium text-gray-700">Username</label>
+      <input
+        type="text"
+        id="username"
+        placeholder="Enter your username"
+        autocomplete="username"
+        class="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+
+      <div id="emailGroup">
+        <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          class="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <label for="password" class="block mb-1 text-sm font-medium text-gray-700">Password</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        class="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+
+      <p id="error" class="text-red-600 mb-4 hidden"></p>
+
+      <div class="flex justify-between space-x-4">
+        <button
+          onclick="register()"
+          class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-md transition"
+        >
+          Register
+        </button>
+        <button
+          onclick="login()"
+          class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 rounded-md transition"
+        >
+          Login
+        </button>
       </div>
     </div>
 
-    <div id="dashboard" class="bg-white p-6 rounded-lg shadow-md mt-8 hidden">
-      <h3 class="text-xl font-semibold mb-4">Welcome, <span id="userDisplay"></span>!</h3>
-      <p>Email: <span id="emailDisplay"></span></p>
-      <div class="flex space-x-4 mt-4">
-        <button class="bg-red-500 hover:bg-red-600" onclick="home()">Home</button>
-        <button class="bg-red-500 hover:bg-red-600" onclick="mystuff()">My Stuff</button>
-        <button class="bg-red-500 hover:bg-red-600" onclick="logout()">Logout</button>
+    <div id="dashboard" class="hidden mt-8 p-6 bg-indigo-50 rounded-lg shadow-inner text-indigo-900">
+      <h3 class="text-2xl font-semibold mb-3">Welcome, <span id="userDisplay"></span>!</h3>
+      <p class="mb-6">Email: <span id="emailDisplay"></span></p>
+      <div class="flex justify-between space-x-4">
+        <button
+          onclick="home()"
+          class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-md transition"
+        >
+          Home
+        </button>
+        <button
+          onclick="mystuff()"
+          class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-md transition"
+        >
+          My Stuff
+        </button>
+        <button
+          onclick="logout()"
+          class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-md transition"
+        >
+          Logout
+        </button>
       </div>
     </div>
   </main>
 
   <script>
     const API_BASE = "/api";
+
+    // Hide/show email input on login/register
+    const emailGroup = document.getElementById("emailGroup");
 
     function showError(msg) {
       const err = document.getElementById("error");
@@ -82,12 +107,14 @@
 
     function hideError() {
       const err = document.getElementById("error");
-      err.textContent = '';
+      err.textContent = "";
       err.classList.add("hidden");
     }
 
     async function register() {
       hideError();
+      emailGroup.style.display = "block"; // show email for register
+
       const username = document.getElementById("username").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
@@ -100,26 +127,26 @@
         const res = await fetch(`${API_BASE}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password })
+          body: JSON.stringify({ username, email, password }),
         });
-
         const data = await res.json();
 
         if (!res.ok) {
           showError(data.error || "Registration failed.");
         } else {
-          // Store username and email from response if available, fallback to input
           localStorage.setItem("username", data.username || username);
           localStorage.setItem("email", data.email || email);
           showDashboard();
         }
-      } catch (err) {
+      } catch {
         showError("Network error. Please try again.");
       }
     }
 
     async function login() {
       hideError();
+      emailGroup.style.display = "none"; // hide email on login
+
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
 
@@ -131,33 +158,28 @@
         const res = await fetch(`${API_BASE}/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ username, password }),
         });
-
         const data = await res.json();
 
-        if (!res.ok) {
+        if (!res.ok || !data.message) {
           showError(data.error || "Login failed.");
         } else {
-          // Store username and email from response (email required)
-          if (!data.message) {
-            return showError("Login response missing username or email.");
-          }
-          localStorage.setItem('username', username);
-          localStorage.setItem('email', document.getElementById("email").value);
+          localStorage.setItem("username", username);
+          // Email unknown on login, fallback to stored or empty
+          if (!localStorage.getItem("email")) localStorage.setItem("email", "");
           showDashboard();
         }
-      } catch (err) {
+      } catch {
         showError("Network error. Please try again.");
       }
     }
 
     function showDashboard() {
-      const username = localStorage.getItem('username');
-      const email = localStorage.getItem('email');
+      const username = localStorage.getItem("username");
+      const email = localStorage.getItem("email") || "No email available";
 
-      if (!username || !email) {
-        // Data missing — logout just in case
+      if (!username) {
         logout();
         return;
       }
@@ -173,24 +195,26 @@
       document.getElementById("dashboard").classList.add("hidden");
       document.getElementById("authBox").classList.remove("hidden");
       hideError();
-      // Clear input fields for convenience
+      // Clear inputs
       document.getElementById("username").value = "";
       document.getElementById("email").value = "";
       document.getElementById("password").value = "";
+      emailGroup.style.display = "block"; // show email by default (for registration)
     }
 
-    window.onload = function () {
-      if (localStorage.getItem("username") && localStorage.getItem("email")) {
+    window.onload = () => {
+      emailGroup.style.display = "block"; // show email input by default for registration
+      if (localStorage.getItem("username")) {
         showDashboard();
       }
     };
 
     function home() {
-      window.location.href = '/';
+      window.location.href = "/";
     }
 
     function mystuff() {
-      window.location.href = '/mystuff';
+      window.location.href = "/mystuff";
     }
   </script>
 </body>
