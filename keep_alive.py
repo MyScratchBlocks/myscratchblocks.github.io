@@ -11,6 +11,7 @@ app = Flask(__name__)
 register_routes(app)
 register(app)
 register_login(app)
+app.secret_key = 'a9f3d7c0e1b24f6d9e8a5c3b7f1d2e0c'
 GITHUB_USER = 'MyScratchBlocks'
 REPO_NAME = 'Project-DB'
 GITHUB_API_BASE = f'https://api.github.com/repos/{GITHUB_USER}/{REPO_NAME}/contents'
