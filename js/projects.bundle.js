@@ -26,6 +26,27 @@ function showLoginModal() {
   if (loginModal) loginModal.style.display = 'flex';
 }
 
+// Global variable to store the current username
+let currentUsername = null;
+
+// Function to fetch the username from /api/profile
+async function fetchUsername() {
+  try {
+    const response = await fetch('/api/profile');
+    if (!response.ok) {
+      // If the user is not logged in or there's an error,
+      // you might want to handle it (e.g., redirect to login or use a guest username)
+      console.warn('Failed to fetch profile. User might not be logged in.');
+      return null;
+    }
+    const data = await response.json();
+    return data.username;
+  } catch (error) {
+    console.error('Error fetching username:', error);
+    return null;
+  }
+}
+
 // Fetch and display project metadata (title, description, author, stats, etc)
 async function fetchMeta() {
   const loading = document.getElementById('meta-loading');
@@ -56,7 +77,13 @@ async function fetchMeta() {
     return null;
   }
 
-  const currentUsername = localStorage.getItem('username') || 'test123'; // Default to 'test123' if no username
+  // Use the globally available currentUsername
+  if (!currentUsername) {
+    console.warn("Username not available. Cannot fetch project metadata.");
+    loading.classList.add('hidden');
+    return null;
+  }
+
 
   if (!id) {
     console.warn("No project ID found in URL hash. Cannot fetch project metadata.");
@@ -254,8 +281,7 @@ async function fetchComments() {
 async function postNewComment(text) {
   if (!commentSubmitBtn || !commentInput) return; // Exit if elements are missing
 
-  const currentUsername = localStorage.getItem('username');
-
+  // Use the globally available currentUsername
   if (!currentUsername) {
     showLoginModal(); // Prompt user to log in
     alert('You must be logged in to post a comment.');
@@ -295,8 +321,7 @@ async function postNewComment(text) {
 
 // Post a reply to an existing comment/reply
 async function postReply(commentId, text, formElement) {
-  const currentUsername = localStorage.getItem('username');
-
+  // Use the globally available currentUsername
   if (!currentUsername) {
     showLoginModal(); // Prompt user to log in
     alert('You must be logged in to post a reply.');
@@ -507,7 +532,12 @@ async function fetchAds() {
     }
 
     // Fetch metadata for the random ad project
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test123`); // 'test123' used as a placeholder
+    // Use the globally available currentUsername for this request
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/${currentUsername}`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     if (!res2.ok) {
       throw new Error(`HTTP error! status: ${res2.status} for project meta with adId: ${adId}`);
     }
@@ -529,8 +559,6 @@ async function fetchAds() {
     setTimeout(fetchAds, 2000); // Retry after 2 seconds on general error
   }
 }
-
-// Removed the redundant and problematic `fetchads()` function.
 
 async function fetchAndDisplayAds() {
   const adsSidebar = document.getElementById('ads-sidebar');
@@ -570,7 +598,12 @@ async function fetchAndDisplayAds() {
         continue;
       }
 
-      const metaRes = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/test`); // 'test' placeholder
+      // Use the globally available currentUsername for this request
+      const metaRes = await fetch(`https://editor-compiler.onrender.com/api/projects/${adId}/meta/${currentUsername}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       if (!metaRes.ok) {
         console.warn(`Meta fetch failed for adId ${adId}:`, metaRes.statusText);
         continue;
@@ -603,14 +636,6 @@ async function fetchAndDisplayAds() {
 
     } catch (error) {
       console.error('Error fetching ad for sidebar:', error);
-      // Add a placeholder if an ad fails to load, but don't count it towards seenAdIds for successful display
-      // For simplicity, we'll just log and continue. If you want to show a "failed ad" box, you can uncomment below.
-      /*
-      const adItem = document.createElement('div');
-      adItem.classList.add('ad-item', 'bg-red-100', 'p-3', 'rounded-lg', 'mb-4');
-      adItem.innerHTML = `<h4>Ad failed to load.</h4><p class="text-red-600 text-sm">Network error or invalid ad data.</p>`;
-      adsSidebar.appendChild(adItem);
-      */
     }
   }
 }
@@ -620,17 +645,17 @@ async function fetchAndDisplayAds() {
 const likeBtn = document.getElementById('like-btn');
 if (likeBtn) {
   likeBtn.addEventListener('click', async () => {
-    const username = localStorage.getItem('username');
-    if (!username) {
+    // Use the globally available currentUsername
+    if (!currentUsername) {
       showLoginModal();
       return;
     }
 
     try {
-      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love/${username}`, {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/love/${currentUsername}`, {
         method: 'POST',
         headers: {
-          'Authorization': username // Ensure authorization header is sent
+          'Authorization': currentUsername // Ensure authorization header is sent
         }
       });
       if (res.ok) {
@@ -648,17 +673,17 @@ if (likeBtn) {
 const favBtn = document.getElementById('fav-btn');
 if (favBtn) {
   favBtn.addEventListener('click', async () => {
-    const username = localStorage.getItem('username');
-    if (!username) {
+    // Use the globally available currentUsername
+    if (!currentUsername) {
       showLoginModal();
       return;
     }
 
     try {
-      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite/${username}`, {
+      const res = await fetch(`https://editor-compiler.onrender.com/api/projects/${id}/favourite/${currentUsername}`, {
         method: 'POST',
         headers: {
-          'Authorization': username // Ensure authorization header is sent
+          'Authorization': currentUsername // Ensure authorization header is sent
         }
       });
       if (res.ok) {
@@ -684,7 +709,8 @@ if (seeInsideBtnGlobal) {
 // Using `remixBtn` as defined at the top
 if (remixBtn) {
   remixBtn.addEventListener('click', () => {
-    if (!localStorage.getItem('username')) {
+    // Use the globally available currentUsername
+    if (!currentUsername) {
       showLoginModal();
       return;
     }
@@ -735,7 +761,8 @@ if (claimAdBtn) {
 async function postAd(projectIdToClaim) {
   try {
     // First, validate the project exists by fetching its metadata
-    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectIdToClaim}/meta/test123`); // 'test123' placeholder
+    // Use the globally available currentUsername for this request
+    const res2 = await fetch(`https://editor-compiler.onrender.com/api/projects/${projectIdToClaim}/meta/${currentUsername}`);
     if (!res2.ok) {
       alert('Invalid Project Link! Project not found or accessible. ' + (await res2.text()));
       return;
@@ -755,12 +782,11 @@ async function postAd(projectIdToClaim) {
 }
 
 // Event listener for the "change-main-coder-btn" which currently triggers unsharing
-// Note: Its ID 'change-main-coder-btn' suggests changing a coder, but the code performs 'unshare'.
-// If intended for thumbnail upload, this section needs significant change.
 const uploadThumbnailBtn = document.getElementById('change-main-coder-btn');
 if (uploadThumbnailBtn) {
-  uploadThumbnailBtn.addEventListener('click', async () => { // Made the function async
-    if (!localStorage.getItem('username')) {
+  uploadThumbnailBtn.addEventListener('click', async () => {
+    // Use the globally available currentUsername
+    if (!currentUsername) {
       showLoginModal();
       return;
     }
@@ -778,7 +804,6 @@ if (uploadThumbnailBtn) {
       });
 
       if (response.ok) {
-        // const result = await response.json(); // If API returns JSON, handle it
         alert('Project unshared successfully!');
         await fetchMeta(); // Re-fetch meta to update UI (e.g., share button visibility)
         console.log('Project unshared successfully.');
@@ -791,8 +816,6 @@ if (uploadThumbnailBtn) {
       alert('An error occurred while unsharing the project. Please try again.');
       console.error('Network error or unexpected issue during unshare:', error);
     }
-    // The `fileInput` and `document.body.removeChild(fileInput)` lines were removed
-    // as they indicate a file upload process that is not implemented here.
   });
 }
 
@@ -808,14 +831,21 @@ if (closeAnchorAdBtn) {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Fetch username first
+  currentUsername = await fetchUsername();
+  const accountElement = document.getElementById('account');
+  if (accountElement && currentUsername) {
+    accountElement.textContent = `Welcome, ${currentUsername}!`; // Example of using the fetched username
+  } else if (accountElement) {
+    accountElement.textContent = 'Welcome, Guest!';
+  }
+
   // Execute initial fetches
   await fetchAds(); // Fetch main project ad banner
   const metaData = await fetchMeta(); // Fetch project metadata
   await fetchComments();
   fetchAndDisplayAds(); // Fetch sidebar ads
 
-  const accountElement = document.getElementById('account');
-  const username = localStorage.getItem('username');
   const params = new URLSearchParams(window.location.search);
   const scrollToId = params.get('commentId');
 
@@ -835,30 +865,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log(`Successfully scrolled to comment ID: ${scrollToId}`);
       } else {
         alert(`Comment with ID '${scrollToId}' not found on the page.`);
-        console.error(`Element with ID 'comment-${scrollToId}' not found for scrolling after comments loaded.`);
+        console.error(`Element with ID 'comment-${scrollToId}' not found for scrolling.`);
       }
-    }, 500); // Increased timeout slightly
-  } else {
-    console.log("No 'commentId' parameter found in URL for scrolling.");
-  }
-
-  // Update account display and record project view if user is logged in
-  if (username) {
-    if (accountElement) accountElement.textContent = username;
-    try {
-      // Only record view if metaData was successfully fetched and project is visible
-      if (metaData) { // Assuming 'unshared' means private
-        await fetch(`https://editor-compiler.onrender.com/api/${id}/views/${username}`, {
-          method: 'POST'
-        });
-        console.log(`View recorded for user: ${username} on project: ${id}`);
-      } else if (!metaData) {
-        console.warn("View not recorded: Project metadata could not be fetched.");
-      } else {
-        console.log("View not recorded: Project is unshared/private.");
-      }
-    } catch (err) {
-      console.warn("Failed to record view:", err);
-    }
+    }, 500); // 500ms delay
   }
 });
