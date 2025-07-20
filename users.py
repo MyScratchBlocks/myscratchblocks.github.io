@@ -240,4 +240,4 @@ def register_login(app):
 
         is_owner = session.get('user', {}).get('username') == username
 
-        return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, logged_in_usernam
+        return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, logged_in_username) 
