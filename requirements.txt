@@ -1,0 +1,4 @@
+flask
+scratchattach
+requests
+pillow
