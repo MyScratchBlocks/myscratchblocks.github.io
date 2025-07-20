@@ -33,6 +33,18 @@
       {% if profile_user.email %}
         <p class="text-sm text-gray-500 mt-1"><strong>Email:</strong> {{ profile_user.email }}</p>
       {% endif %}
+
+      <!-- Follow/Unfollow Button -->
+      {% if not is_owner and session.get('username') %}
+      <div class="mt-4">
+        <button
+          id="follow-btn"
+          class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded font-semibold"
+        >
+          Loading...
+        </button>
+      </div>
+      {% endif %}
     </div>
 
     <!-- Stats Section -->
@@ -132,6 +144,52 @@
         }
       });
     }
+
+    {% if not is_owner and session.get('username') %}
+    document.addEventListener('DOMContentLoaded', async () => {
+      const followBtn = document.getElementById('follow-btn');
+      const profileUsername = "{{ profile_user.username }}";
+
+      // Check if current user follows profile user
+      async function checkFollowing() {
+        try {
+          const res = await fetch(`/api/users/${profileUsername}/followers`);
+          if (!res.ok) throw new Error("Failed to fetch followers");
+          const followers = await res.json();
+          const currentUser = "{{ session.get('username') }}";
+          const isFollowing = followers.some(f => f.username === currentUser);
+          followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
+          followBtn.dataset.following = isFollowing;
+        } catch {
+          followBtn.textContent = "Follow";
+          followBtn.dataset.following = false;
+        }
+      }
+
+      // Toggle follow/unfollow
+      followBtn.addEventListener('click', async () => {
+        followBtn.disabled = true;
+        const following = followBtn.dataset.following === "true";
+        const url = `/api/users/${profileUsername}/${following ? 'unfollow' : 'follow'}`;
+        try {
+          const res = await fetch(url, { method: 'POST' });
+          const result = await res.json();
+          if (res.ok) {
+            followBtn.textContent = following ? "Follow" : "Unfollow";
+            followBtn.dataset.following = (!following).toString();
+          } else {
+            alert(result.error || "Failed to update follow status");
+          }
+        } catch (e) {
+          alert("Error contacting server.");
+        }
+        followBtn.disabled = false;
+      });
+
+      checkFollowing();
+    });
+    {% endif %}
   </script>
+
 </body>
 </html>
