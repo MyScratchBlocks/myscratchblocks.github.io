@@ -3,9 +3,10 @@ from threading import Thread
 from datetime import datetime
 from io import BytesIO
 import os, base64, requests, zipfile
+from projects import register_routes
 
 app = Flask(__name__)
-
+register_routes(app)
 GITHUB_USER = 'MyScratchBlocks'
 REPO_NAME = 'Project-DB'
 GITHUB_API_BASE = f'https://api.github.com/repos/{GITHUB_USER}/{REPO_NAME}/contents'
