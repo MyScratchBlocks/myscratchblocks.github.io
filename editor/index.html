@@ -22,7 +22,7 @@
   <iframe id="scratchFrame"></iframe>
 
   <script type="module">
-    document.getElementById('scratchFrame').src = `https://MyScratchBlocks.ddns.net/scratch-gui/editor#${window.location.hash.substring(1).replace("undefined", "").replace("#0", "")}`;
+    document.getElementById('scratchFrame').src = `https://MyScratchBlocks.ddns.net/scratch-gui/editor#${{{ id }}.replace("undefined", "").replace("#0", "")}`;
     function wait(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -49,8 +49,8 @@
         window.location.href = `/projects#${json.id}`;
       }
         
-      // If no hash and both username and sb3 exist, try to share the project
-      if (!window.location.hash.substring(1) && username && !remix) {
+      // If no hash and both username and sb3 exist, try to share the
+      if ({{ id }} && username && !remix) {
         try {
           const response = await fetch('https://editor-compiler.onrender.com/', {
             method: 'POST',
@@ -75,7 +75,7 @@
       }
 
       // Load editor in iframe
-      const hash = window.location.hash.substring(1);
+      const hash = {{ id }};
       const baseUrl = "https://myscratchblocks.ddns.net/scratch-gui/editor";
       const finalUrl = hash ? `${baseUrl}#${hash}` : baseUrl;
       document.getElementById("scratchFrame").src = finalUrl;
@@ -114,7 +114,8 @@
     const iframeSrc = iframe.getAttribute('src');
     const expectedSrc = `https://myscratchblocks.github.io/editor/#${res.id}`;
     if (iframeSrc !== expectedSrc) {
-      window.location.href = `projects#${window.location.hash.substring(1)}`;
+      window.pid = {{ id }};
+      window.location.href = `projects/${window.pid}`;
     }
   </script>
 </body>
