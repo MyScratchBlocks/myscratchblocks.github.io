@@ -66,7 +66,7 @@ def register_login(app):
 
     def filter_user_projects(user_data):
         available_ids = fetch_available_project_ids()
-        filtered = [proj for proj["author"] in user_data.get("username", []) if proj["id"] in available_ids]
+        filtered = [proj for proj in user_projects if proj.get("id") in available_ids]
         user_data["projects"] = filtered
         try:
             r = requests.get(f'https://editor-compiler.onrender.com/userapi/{user_data["username"]}')
