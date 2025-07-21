@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 
-def register_login(app: Flask):
+def register_login(app):
     GH_KEY = os.getenv('GH_KEY')
     GITHUB_REPO = "kRxZykRxZy/ScratchGems-MAIN"
     GITHUB_BRANCH = "main"
