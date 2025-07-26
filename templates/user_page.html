@@ -235,6 +235,15 @@
 
       updateFollowStatus();
     }
+
+    // *** NEW: Wrap each comment in a styled container ***
+    // Assumes each direct child inside #comments-container is a comment element
+    document.addEventListener("DOMContentLoaded", () => {
+      const comments = document.querySelectorAll("#comments-container > *");
+      comments.forEach(comment => {
+        comment.classList.add("p-4", "mb-4", "bg-white", "rounded", "shadow");
+      });
+    });
   </script>
 </body>
 </html>
