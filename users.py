@@ -1,22 +1,20 @@
-import os
-import base64
-import json
-import uuid
-from datetime import datetime
-
-import requests
-from flask import Flask, request, jsonify, session, render_template
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
-
 def register_login(app):
+    import os
+    import base64
+    import json
+    import uuid
+    from datetime import datetime
+    import requests
+    from flask import request, jsonify, session, render_template
+    from werkzeug.security import generate_password_hash, check_password_hash
+    from werkzeug.utils import secure_filename
+
     GH_KEY = os.getenv('GH_KEY')
     GITHUB_REPO = "kRxZykRxZy/ScratchGems-MAIN"
     GITHUB_BRANCH = "main"
     DB_PATH = "db/myscratchblocks"
     GH_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{DB_PATH}?ref={GITHUB_BRANCH}"
     PROJECTS_API = "https://editor-compiler.onrender.com/api/projects"
-
     app.secret_key = os.getenv("SECRET_KEY", "dev-secret")
 
     headers = {
@@ -160,7 +158,7 @@ def register_login(app):
 
         data = request.json
         text = data.get("text", "").strip()
-        parent_id = data.get("parent_id")  # optional for replies
+        parent_id = data.get("parent_id")
 
         if not text:
             return jsonify({"error": "Comment cannot be empty"}), 400
@@ -197,6 +195,65 @@ def register_login(app):
 
         return jsonify({"message": "Comment posted"})
 
+    @app.route('/api/users/<username>/follow', methods=['POST'])
+    def follow_user(username):
+        if 'username' not in session or session['username'] == username:
+            return jsonify({'error': 'Invalid operation'}), 400
+
+        follower = session['username']
+        target = get_user_file(username)
+        follower_data = get_user_file(follower)
+
+        if not target or not follower_data:
+            return jsonify({'error': 'User not found'}), 404
+
+        if follower in target.get('followers_list', []):
+            return jsonify({'message': 'Already following'}), 200
+
+        target.setdefault('followers_list', []).append(follower)
+        target['followers'] = len(target['followers_list'])
+
+        follower_data.setdefault('following_list', []).append(username)
+        follower_data['following'] = len(follower_data['following_list'])
+
+        success1 = create_or_update_user_file(username, target)
+        success2 = create_or_update_user_file(follower, follower_data)
+
+        return jsonify({'message': 'Followed'}), 200 if success1 and success2 else 500
+
+    @app.route('/api/users/<username>/unfollow', methods=['POST'])
+    def unfollow_user(username):
+        if 'username' not in session or session['username'] == username:
+            return jsonify({'error': 'Invalid operation'}), 400
+
+        follower = session['username']
+        target = get_user_file(username)
+        follower_data = get_user_file(follower)
+
+        if not target or not follower_data:
+            return jsonify({'error': 'User not found'}), 404
+
+        target['followers_list'] = [u for u in target.get('followers_list', []) if u != follower]
+        target['followers'] = len(target['followers_list'])
+
+        follower_data['following_list'] = [u for u in follower_data.get('following_list', []) if u != username]
+        follower_data['following'] = len(follower_data['following_list'])
+
+        success1 = create_or_update_user_file(username, target)
+        success2 = create_or_update_user_file(follower, follower_data)
+
+        return jsonify({'message': 'Unfollowed'}), 200 if success1 and success2 else 500
+
+    @app.route('/api/users/<username>/status')
+    def follow_status(username):
+        if 'username' not in session:
+            return jsonify({'is_following': False})
+        viewer = session['username']
+        user = get_user_file(username)
+        if not user:
+            return jsonify({'is_following': False})
+        return jsonify({'is_following': viewer in user.get('followers_list', [])})
+
     @app.route('/users/<username>')
     def user_page(username):
         user_data = get_user_file(username)
@@ -206,7 +263,6 @@ def register_login(app):
         user_data = filter_user_projects(user_data)
         user_data.pop('password', None)
         user_data.pop('_sha', None)
-
         is_owner = session.get('username') == username
 
         def build_comment_tree(comments):
@@ -217,9 +273,6 @@ def register_login(app):
                 <div class="comment">
                     <p><a href="/users/{author}">{author}</a>: {c['text']}</p>
                     <small>{c['timestamp']}</small>
-                    {"<form method='post' action='/api/users/{0}/comment' class='reply-form'>\
-                    <input name='text' placeholder='Reply' required>\
-                    <input type='hidden' name='parent_id' value='{1}'><button type='submit'>Reply</button></form>".format(username, c['id']) if session.get('username') else ""}
                     <div class="replies">{replies_html}</div>
                 </div>
                 """
@@ -229,7 +282,6 @@ def register_login(app):
 
         return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, comments_html=comments_html)
 
-    # Other routes (edit, follow, unfollow, etc.) remain unchanged
     @app.route('/api/profile')
     def profile():
         return jsonify(dict(session))
