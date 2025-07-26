@@ -232,4 +232,4 @@ def register_login(app):
     # Other routes (edit, follow, unfollow, etc.) remain unchanged
     @app.route('/api/profile')
     def profile():
-        return jsonify(session)
+        return jsonify(dict(session))
