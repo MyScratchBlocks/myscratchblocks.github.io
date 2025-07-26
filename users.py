@@ -230,3 +230,6 @@ def register_login(app):
         return render_template('user_page.html', profile_user=user_data, is_owner=is_owner, comments_html=comments_html)
 
     # Other routes (edit, follow, unfollow, etc.) remain unchanged
+    @app.route('/api/profile')
+    def profile():
+        return jsonify(session)
