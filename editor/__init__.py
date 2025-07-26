@@ -1,18 +1,16 @@
 import os
-from flask import render_template_string, send_from_directory
+from flask import render_template, Blueprint
 
 def register(app):
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))       # /projects
-    ROOT_DIR = os.path.dirname(BASE_DIR)                        # /
-    JS_DIR = os.path.join(ROOT_DIR, 'js')                       # /js
-    INDEX_PATH = os.path.join(BASE_DIR, 'index.html')           # /editor/index.html
+    # Locate the directory containing this file
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+    # Register a Blueprint so Flask can find templates in a custom path
+    editor_bp = Blueprint('editor', __name__, template_folder='.')
+
+    @editor_bp.route('/editor/<int:id>')
     def serve_editor(id):
-        try:
-            with open(INDEX_PATH, 'r') as f:
-                html = f.read()
-            return render_template_string(html, id=id)
-        except FileNotFoundError:
-            return "index.html not found", 404
+        return render_template('index.html', id=id)
 
-    app.add_url_rule('/editor/<int:id>', 'serve_editor', serve_editor)
+    # Register the blueprint
+    app.register_blueprint(editor_bp)
