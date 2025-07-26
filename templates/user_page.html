@@ -20,6 +20,7 @@
 <body class="bg-gray-100">
 
   <div class="max-w-5xl mx-auto p-6 bg-white mt-10 rounded-lg shadow-lg">
+
     <!-- Profile Header -->
     <div class="flex flex-col items-center">
       <img id="avatar-preview" src="{{ profile_user.profile_pic_url }}" alt="Profile Picture" class="profile-avatar mb-4 shadow">
@@ -46,7 +47,7 @@
     </div>
 
     <!-- Stats Section -->
-    <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+    <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
       <div class="p-4 bg-gray-50 rounded shadow">
         <h3 class="text-lg font-semibold text-gray-700">Projects</h3>
         <p class="text-indigo-600 text-xl font-bold">{{ profile_user.stats.totalProjects }}</p>
@@ -62,6 +63,14 @@
       <div class="p-4 bg-gray-50 rounded shadow">
         <h3 class="text-lg font-semibold text-gray-700">Favorites</h3>
         <p class="text-indigo-600 text-xl font-bold">{{ profile_user.stats.totalFavorites }}</p>
+      </div>
+      <div class="p-4 bg-gray-50 rounded shadow">
+        <h3 class="text-lg font-semibold text-gray-700">Followers</h3>
+        <p class="text-indigo-600 text-xl font-bold">{{ profile_user.followers }}</p>
+      </div>
+      <div class="p-4 bg-gray-50 rounded shadow">
+        <h3 class="text-lg font-semibold text-gray-700">Following</h3>
+        <p class="text-indigo-600 text-xl font-bold">{{ profile_user.following }}</p>
       </div>
     </div>
 
@@ -111,7 +120,7 @@
     <div class="mt-12 max-w-2xl mx-auto">
       <h2 class="text-2xl font-bold mb-4 text-center">Comments</h2>
 
-      {% if session.get('username') and not is_owner %}
+      {% if session.get('username') %}
       <form id="comment-form" class="mb-6">
         <textarea id="comment-text" class="w-full p-3 border rounded mb-2" rows="3" placeholder="Write a comment..." required></textarea>
         <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded font-semibold">Post Comment</button>
@@ -124,7 +133,7 @@
     </div>
   </div>
 
-  <!-- Template for replies injected dynamically -->
+  <!-- Template for replies -->
   <template id="reply-form-template">
     <form class="reply-form mt-2 space-y-2">
       <textarea class="reply-text w-full p-2 border rounded" rows="2" placeholder="Write a reply..." required></textarea>
@@ -132,7 +141,7 @@
     </form>
   </template>
 
-  <!-- JS -->
+  <!-- JS Logic -->
   <script>
     const previewImage = (event) => {
       const file = event.target.files[0];
@@ -163,7 +172,6 @@
       });
     }
 
-    // Comment POST
     const commentForm = document.getElementById("comment-form");
     if (commentForm) {
       commentForm.addEventListener("submit", async e => {
@@ -180,7 +188,7 @@
       });
     }
 
-    // Reply forms
+    // Reply button logic
     document.querySelectorAll(".reply-button").forEach(btn => {
       btn.addEventListener("click", () => {
         const parentId = btn.dataset.commentId;
@@ -203,7 +211,30 @@
         btn.insertAdjacentElement("afterend", form.querySelector("form"));
       });
     });
-  </script>
 
+    // Follow / Unfollow Logic
+    const followBtn = document.getElementById("follow-btn");
+    if (followBtn) {
+      async function updateFollowStatus() {
+        const res = await fetch(`/api/users/{{ profile_user.username }}/status`);
+        const data = await res.json();
+        followBtn.textContent = data.is_following ? "Unfollow" : "Follow";
+      }
+
+      followBtn.addEventListener("click", async () => {
+        const action = followBtn.textContent.toLowerCase();
+        const endpoint = action === "follow" ? "follow" : "unfollow";
+        const res = await fetch(`/api/users/{{ profile_user.username }}/${endpoint}`, {
+          method: "POST"
+        });
+        if (res.ok) {
+          await updateFollowStatus();
+          location.reload();
+        }
+      });
+
+      updateFollowStatus();
+    }
+  </script>
 </body>
 </html>
