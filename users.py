@@ -270,7 +270,7 @@ def register_login(app):
                 replies_html = "".join(render(reply) for reply in c.get("replies", []))
                 author = c['author']
                 return f"""
-                <div class="comment">
+                <div class="comment" id="comments-container">
                     <p><a href="/users/{author}">{author}</a>: {c['text']}</p>
                     <small>{c['timestamp']}</small>
                     <div class="replies">{replies_html}</div>
