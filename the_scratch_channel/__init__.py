@@ -100,19 +100,8 @@ def register_articles(app):
         file_content = get_file_content(article_path)
         if not file_content:
             return jsonify({"error": "Article not found"}), 404
-
-        # Extract metadata table
-        match = re.search(r"\| *Title *\| *Author *\| *Date *\|\s*\|---\|---\|---\|\s*\|(.+?)\|(.+?)\|(.+?)\|", file_content, re.DOTALL)
-        if not match:
-            return jsonify({"error": "Metadata not found"}), 400
-
-        title, author, date = [m.strip() for m in match.groups()]
-
-        return jsonify({
-            "title": title,
-            "author": author,
-            "date": date
-        })
+        else:
+            return file_content
 
     @app.route('/the-scratch-channel/articles/index.json', methods=['GET'])
     def get_articles_index():
