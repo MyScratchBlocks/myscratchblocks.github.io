@@ -62,15 +62,9 @@ def register_articles(app):
         if file.filename == '':
             return jsonify({"error": "No selected file"}), 400
 
-        filename = file.filename
-        article_name = os.path.splitext(filename)[0]
-        file_content = file.read().decode("utf-8").replace("_", "") + ".md"
+        content_raw = file.read().decode("utf-8").strip()
 
-        # Upload article markdown
-        article_path = f"{ARTICLES_PATH}/{filename}"
-        update_file(article_path, file_content, f"Add article {filename}")
-
-        # Update index.json
+        # Load or create index
         index_path = f"{ARTICLES_PATH}/index.json"
         index_content = get_file_content(index_path)
         if index_content:
@@ -78,9 +72,32 @@ def register_articles(app):
         else:
             index_data = []
 
-        if article_name not in index_data:
-            index_data.insert(0, article_name)
-            update_file(index_path, json.dumps(index_data, indent=2), "Update article index")
+        # Determine next filename (max number +1)
+        if index_data:
+            numbers = [int(os.path.splitext(name)[0]) for name in index_data]
+            next_number = max(numbers) + 1
+        else:
+            next_number = 1
+        filename = f"{next_number}.md"
+
+        # Create markdown content with metadata table
+        title = "My Title"
+        author = "My Name"
+        date = "29/07/25"
+        md_content = f"""|Title|Author|Date|
+|---|---|---|
+|{title}|{author}|{date}|
+
+{content_raw}
+"""
+
+        # Upload article
+        article_path = f"{ARTICLES_PATH}/{filename}"
+        update_file(article_path, md_content, f"Add article {filename}")
+
+        # Update index (newest first)
+        index_data.insert(0, filename)
+        update_file(index_path, json.dumps(index_data, indent=2), "Update article index")
 
         return jsonify({"message": "Article uploaded successfully", "filename": filename})
 
@@ -92,22 +109,21 @@ def register_articles(app):
             return jsonify({"error": "Article not found"}), 404
 
         # Extract metadata table
-        match = re.search(r"\| *(.+?) *\| *(.+?) *\| *(.+?) *\|", file_content)
+        match = re.search(r"\| *Title *\| *Author *\| *Date *\|\s*\|---\|---\|---\|\s*\|(.+?)\|(.+?)\|(.+?)\|", file_content, re.DOTALL)
         if not match:
             return jsonify({"error": "Metadata not found"}), 400
 
-        title, author, date = match.groups()
+        title, author, date = [m.strip() for m in match.groups()]
 
         return jsonify({
-            "title": title.strip(),
-            "author": author.strip(),
-            "date": date.strip()
+            "title": title,
+            "author": author,
+            "date": date
         })
 
     @app.route('/the-scratch-channel/articles/index.json', methods=['GET'])
     def get_articles_index():
-        index_path = f"{ARTICLES_PATH}/index.json"
-        content = get_file_content(index_path)
+        content = get_file_content(f"{ARTICLES_PATH}/index.json")
         if not content:
             return jsonify([])
         return jsonify(json.loads(content))
