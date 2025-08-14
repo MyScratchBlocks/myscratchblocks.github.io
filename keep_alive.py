@@ -2,6 +2,7 @@ from flask import *
 from threading import Thread
 from datetime import datetime
 from io import BytesIO
+from flask_cors import CORS
 import os, base64, requests, zipfile
 from projects import register_routes
 from editor import register
@@ -9,6 +10,7 @@ from users import register_login
 from the_scratch_channel import register_articles
 
 app = Flask(__name__)
+CORS(app)
 register_routes(app)
 register(app)
 register_login(app)
