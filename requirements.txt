@@ -3,3 +3,4 @@ scratchattach
 requests
 pillow
 werkzeug
+flask_cors
