@@ -64,7 +64,7 @@ def register_articles(app):
 
         filename = file.filename
         article_name = os.path.splitext(filename)[0]
-        file_content = file.read().decode("utf-8")
+        file_content = file.read().decode("utf-8").replace("_", "") + ".md"
 
         # Upload article markdown
         article_path = f"{ARTICLES_PATH}/{filename}"
