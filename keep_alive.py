@@ -6,7 +6,7 @@ import os, base64, requests, zipfile
 from projects import register_routes
 from editor import register
 from users import register_login
-from the-scratch-channel import register_articles
+from the_scratch_channel import register_articles
 
 app = Flask(__name__)
 register_routes(app)
