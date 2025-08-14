@@ -81,15 +81,8 @@ def register_articles(app):
         filename = f"{next_number}.md"
 
         # Create markdown content with metadata table
-        title = "My Title"
-        author = "My Name"
-        date = "29/07/25"
-        md_content = f"""|Title|Author|Date|
-|---|---|---|
-|{title}|{author}|{date}|
 
-{content_raw}
-"""
+        md_content = content_raw
 
         # Upload article
         article_path = f"{ARTICLES_PATH}/{filename}"
