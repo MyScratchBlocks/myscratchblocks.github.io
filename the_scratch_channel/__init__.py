@@ -7,7 +7,7 @@ from flask import request, jsonify
 
 def register_articles(app):
     GH_TOKEN = os.environ.get("GH_TOKEN")
-    REPO = "MyScratchBlocks/storage"
+    REPO = "MyScratchBlocks/myscratchblocks.github.io"
     BRANCH = "main"
     ARTICLES_PATH = "scratch-channel/articles"
     API_BASE = "https://api.github.com"
