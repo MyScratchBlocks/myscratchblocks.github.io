@@ -1,6 +1,5 @@
 import os
 import json
-import re
 import base64
 import requests
 from flask import request, jsonify
@@ -53,6 +52,24 @@ def register_articles(app):
             raise RuntimeError(f"GitHub API error: {r.status_code} {r.text}")
         return r.json()
 
+    def extract_metadata(md_content: str):
+        """
+        Parse metadata table at the top of markdown file.
+        Expects a header row like: | Title | Author | Date | Category |
+        """
+        lines = md_content.splitlines()
+        for line in lines:
+            if line.strip().startswith("|") and not line.strip().startswith("| Title"):
+                cells = [c.strip() for c in line.split("|")[1:-1]]  # strip outer bars
+                if len(cells) >= 4:
+                    return {
+                        "title": cells[0],
+                        "author": cells[1],
+                        "date": cells[2],
+                        "category": cells[3]
+                    }
+        return {}
+
     @app.route('/the-scratch-channel/articles/create', methods=['POST'])
     def create_article():
         if 'file' not in request.files:
@@ -72,36 +89,53 @@ def register_articles(app):
         else:
             index_data = []
 
-        # Determine next filename (max number +1)
+        # Determine next filename
         if index_data:
-            numbers = [int(os.path.splitext(name)[0]) for name in index_data]
+            numbers = [int(os.path.splitext(article["filename"])[0]) for article in index_data]
             next_number = max(numbers) + 1
         else:
             next_number = 1
         filename = f"{next_number}.md"
 
-        # Create markdown content with metadata table
-
-        md_content = content_raw
+        # Parse metadata
+        metadata = extract_metadata(content_raw)
+        metadata["filename"] = filename
 
         # Upload article
         article_path = f"{ARTICLES_PATH}/{filename}"
-        update_file(article_path, md_content, f"Add article {filename}")
+        update_file(article_path, content_raw, f"Add article {filename}")
 
         # Update index (newest first)
-        index_data.insert(0, filename)
+        index_data.insert(0, metadata)
         update_file(index_path, json.dumps(index_data, indent=2), "Update article index")
 
-        return jsonify({"message": "Article uploaded successfully", "filename": filename})
+        return jsonify({"message": "Article uploaded successfully", "filename": filename, "category": metadata.get("category")})
 
-    @app.route('/the-scratch-channel/articles/<articlename>.md', methods=['GET'])
-    def get_article_metadata(articlename):
-        article_path = f"{ARTICLES_PATH}/{articlename}.md"
+    @app.route('/the-scratch-channel/articles/<articlename>/<category>', methods=['GET'])
+    def get_article_metadata(articlename, category):
+        """Get an article only if the category matches index.json"""
+        index_path = f"{ARTICLES_PATH}/index.json"
+        index_content = get_file_content(index_path)
+        if not index_content:
+            return jsonify({"error": "Index not found"}), 404
+
+        index_data = json.loads(index_content)
+
+        # Find article in index with matching filename and category
+        article_meta = next((a for a in index_data if a["filename"] == articlename and a["category"] == category), None)
+        if not article_meta:
+            return jsonify({"error": "Article not found for this category"}), 404
+
+        # Load markdown content
+        article_path = f"{ARTICLES_PATH}/{articlename}"
         file_content = get_file_content(article_path)
         if not file_content:
-            return jsonify({"error": "Article not found"}), 404
-        else:
-            return file_content
+            return jsonify({"error": "Article file not found"}), 404
+
+        return jsonify({
+            "metadata": article_meta,
+            "content": file_content
+        })
 
     @app.route('/the-scratch-channel/articles/index.json', methods=['GET'])
     def get_articles_index():
