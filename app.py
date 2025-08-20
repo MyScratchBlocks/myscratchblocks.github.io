@@ -374,6 +374,7 @@ def ask(prompt, user):
 
 keep_alive()
 client1.start()
+client6.start()
 client2.start()
 client3.start()
 client4.start()
