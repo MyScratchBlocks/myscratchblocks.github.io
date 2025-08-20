@@ -362,7 +362,7 @@ def ping():
 def ask(prompt, user):
     return f"AI: {askAI(prompt, user)}"
 
-@client6.request
+@client5.request
 def ping():
     return "AI: Welcome To ScratchGPT, Ask Any Question You Want!"
 
