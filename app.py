@@ -278,6 +278,8 @@ def on_ready():
 
 cloud5 = session.connect_cloud(1192979296)
 client5 = cloud5.requests()
+cloud6 = session.connect_cloud(1206391475) 
+client6 = cloud6.requests()
 
 # Directory to store chat histories per user
 CHAT_DIR = "chat_histories"
@@ -352,7 +354,15 @@ def askAI(prompt, user, chat_name=None):
     except Exception as e:
         return "Failed To Get Response!"
 
-@client5.request
+@client6.request
+def ping():
+    return "AI: Welcome To ScratchAI, Ask Any Question You Want!"
+
+@client6.request
+def ask(prompt, user):
+    return f"AI: {askAI(prompt, user)}"
+
+@client6.request
 def ping():
     return "AI: Welcome To ScratchGPT, Ask Any Question You Want!"
 
