@@ -6,9 +6,9 @@ from flask import request, jsonify
 
 def register_articles(app):
     GH_TOKEN = os.environ.get("GH_TOKEN")
-    REPO = "MyScratchBlocks/myscratchblocks.github.io"
+    REPO = "The-Scratch-Channel/the-scratch-channel.github.io"
     BRANCH = "main"
-    ARTICLES_PATH = "scratch-channel/articles"
+    ARTICLES_PATH = "AUTOADDED-ARTICLES"
     API_BASE = "https://api.github.com"
 
     if not GH_TOKEN:
