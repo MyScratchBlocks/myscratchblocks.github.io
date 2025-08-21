@@ -111,8 +111,8 @@ def register_articles(app):
 
         return jsonify({"message": "Article uploaded successfully", "filename": filename, "category": metadata.get("category")})
 
-    @app.route('/the-scratch-channel/articles/<articlename>/<category>', methods=['GET'])
-    def get_article_metadata(articlename, category):
+    @app.route('/the-scratch-channel/articles/<articlename>/', methods=['GET'])
+    def get_article_metadata(articlename):
         """Get an article only if the category matches index.json"""
         index_path = f"{ARTICLES_PATH}/index.json"
         index_content = get_file_content(index_path)
@@ -122,7 +122,7 @@ def register_articles(app):
         index_data = json.loads(index_content)
 
         # Find article in index with matching filename and category
-        article_meta = next((a for a in index_data if a["filename"] == articlename and a["category"] == category), None)
+        article_meta = next((a for a in index_data if a["filename"] == articlename), None)
         if not article_meta:
             return jsonify({"error": "Article not found for this category"}), 404
 
