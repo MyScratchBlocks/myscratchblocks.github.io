@@ -28,7 +28,7 @@ def register_articles(app):
         return None
 
     def get_file_content(path):
-        """Get decoded content of a file."""
+        """Get decoded content of a file from GitHub."""
         url = f"{API_BASE}/repos/{REPO}/contents/{path}?ref={BRANCH}"
         r = requests.get(url, headers=HEADERS)
         if r.status_code == 200:
@@ -52,26 +52,9 @@ def register_articles(app):
             raise RuntimeError(f"GitHub API error: {r.status_code} {r.text}")
         return r.json()
 
-    def extract_metadata(md_content: str):
-        """
-        Parse metadata table at the top of markdown file.
-        Expects a header row like: | Title | Author | Date | Category |
-        """
-        lines = md_content.splitlines()
-        for line in lines:
-            if line.strip().startswith("|") and not line.strip().startswith("| Title"):
-                cells = [c.strip() for c in line.split("|")[1:-1]]  # strip outer bars
-                if len(cells) >= 4:
-                    return {
-                        "title": cells[0],
-                        "author": cells[1],
-                        "date": cells[2],
-                        "category": cells[3]
-                    }
-        return {}
-
     @app.route('/the-scratch-channel/articles/create', methods=['POST'])
     def create_article():
+        """Upload a new article and update index.json"""
         if 'file' not in request.files:
             return jsonify({"error": "No file uploaded"}), 400
 
@@ -85,61 +68,76 @@ def register_articles(app):
         index_path = f"{ARTICLES_PATH}/index.json"
         index_content = get_file_content(index_path)
         if index_content:
-            index_data = json.loads(index_content)
+            try:
+                index_data = json.loads(index_content)
+            except Exception:
+                index_data = []
         else:
             index_data = []
 
         # Determine next filename
         if index_data:
-            numbers = [int(os.path.splitext(article["filename"])[0]) for article in index_data]
-            next_number = max(numbers) + 1
+            try:
+                numbers = [int(os.path.splitext(fname)[0]) for fname in index_data]
+                next_number = max(numbers) + 1
+            except Exception:
+                next_number = 1
         else:
             next_number = 1
         filename = f"{next_number}.md"
 
-        # Parse metadata
-        metadata = extract_metadata(content_raw)
-        metadata["filename"] = filename
-
-        # Upload article
+        # Upload article file
         article_path = f"{ARTICLES_PATH}/{filename}"
         update_file(article_path, content_raw, f"Add article {filename}")
 
         # Update index (newest first)
-        index_data.insert(0, metadata)
+        index_data.insert(0, filename)
         update_file(index_path, json.dumps(index_data, indent=2), "Update article index")
 
-        return jsonify({"message": "Article uploaded successfully", "filename": filename, "category": metadata.get("category")})
+        return jsonify({"message": "Article uploaded successfully", "filename": filename})
 
-    @app.route('/the-scratch-channel/articles/<articlename>/', methods=['GET'])
-    def get_article_metadata(articlename):
-        """Get an article only if the category matches index.json"""
+    @app.route('/the-scratch-channel/articles/<articlename>', methods=['GET'])
+    def get_article(articlename):
+        """Get article content only if filename exists in index.json"""
         index_path = f"{ARTICLES_PATH}/index.json"
         index_content = get_file_content(index_path)
         if not index_content:
             return jsonify({"error": "Index not found"}), 404
 
-        index_data = json.loads(index_content)
+        try:
+            index_data = json.loads(index_content)
+        except Exception as e:
+            return jsonify({"error": f"Corrupted index.json: {str(e)}"}), 500
 
-        # Find article in index with matching filename and category
-        article_meta = next((a for a in index_data if a["filename"] == articlename), None)
-        if not article_meta:
-            return jsonify({"error": "Article not found for this category"}), 404
+        if articlename not in index_data:
+            return jsonify({"error": f"Article '{articlename}' not listed in index"}), 404
 
         # Load markdown content
         article_path = f"{ARTICLES_PATH}/{articlename}"
         file_content = get_file_content(article_path)
         if not file_content:
-            return jsonify({"error": "Article file not found"}), 404
+            return jsonify({"error": f"Article file '{articlename}' not found"}), 404
 
         return jsonify({
-            "metadata": article_meta,
+            "filename": articlename,
             "content": file_content
         })
 
     @app.route('/the-scratch-channel/articles/index.json', methods=['GET'])
     def get_articles_index():
+        """Return index.json as a list of filenames"""
         content = get_file_content(f"{ARTICLES_PATH}/index.json")
         if not content:
             return jsonify([])
-        return jsonify(json.loads(content))
+        try:
+            return jsonify(json.loads(content))
+        except Exception:
+            return jsonify([])
+
+    @app.route('/the-scratch-channel/articles/debug/index', methods=['GET'])
+    def debug_index():
+        """Debug endpoint: return raw index.json text"""
+        content = get_file_content(f"{ARTICLES_PATH}/index.json")
+        if not content:
+            return "Index not found", 404
+        return content, 200, {"Content-Type": "text/plain"}
